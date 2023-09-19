@@ -1,54 +1,45 @@
 import math
-import pygame as py
+import pygame
+
 
 class Road:
-    def __init__(self, image_path, frame_width, frame_height, scroll_speed):
-        self.bg = py.image.load(image_path).convert()
-        self.frame_width = frame_width
-        self.frame_height = frame_height
-        self.scroll_speed = scroll_speed
-        self.scroll = 0
-        self.tiles = math.ceil(self.frame_height / self.bg.get_height()) + 1
+    def __init__(self):
+        self.image = pygame.image.load("img/road.png").convert()
+        self.rect = self.image.get_rect(bottomleft=(0, 800))
+        self.tiles = math.ceil(800 / self.image.get_height()) + 1
+        self.scroll_speed = 0
+
+    def animation_cycle(self):
+        self.rect.y += 1
 
     def update(self):
-        self.scroll += self.scroll_speed  # Changed to subtract for opposite direction
-        if self.scroll >= self.bg.get_height():
-            self.scroll = 0
+        self.animation_cycle()
 
-    def render(self, screen):
-        for i in range(self.tiles):
-            screen.blit(self.bg, (0, self.bg.get_height() * i + self.scroll))
 
-def main():
-    py.init()
-    clock = py.time.Clock()
+pygame.init()
+clock = pygame.time.Clock()
 
-    FrameHeight = 800
-    FrameWidth = 600
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 800
+running = True
 
-    # PYGAME FRAME WINDOW
-    py.display.set_caption("Endless Scrolling in pygame")
-    screen = py.display.set_mode((FrameWidth, FrameHeight))
+pygame.display.set_caption("Endless Scrolling")
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    road = Road("img/road.png", FrameWidth, FrameHeight, 2)  # Adjust the scroll speed as needed
+road = Road()
 
-    # MAIN LOOP
-    running = True
-    while running:
-        for event in py.event.get():
-            if event.type == py.QUIT:
-                running = False
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-        # Clear the screen
-        screen.fill((0, 0, 0))
+    # Clear the screen
+    screen.fill((0, 0, 0))
 
-        road.render(screen)
-        road.update()
+    road.update()
 
-        py.display.update()
-        clock.tick(60)  # Adjust the frame rate as needed
+    pygame.display.update()
+    clock.tick(60)
 
-    py.quit()
+pygame.quit()
 
-if __name__ == "__main__":
-    main()
