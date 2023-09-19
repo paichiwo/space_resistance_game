@@ -2,8 +2,9 @@ import math
 import pygame
 
 
-class Road:
+class Road(pygame.sprite.Sprite):
     def __init__(self):
+        super().__init__()
         self.image = pygame.image.load("img/road.png").convert()
         self.rect = self.image.get_rect(bottomleft=(0, 800))
         self.tiles = math.ceil(800 / self.image.get_height()) + 1
@@ -26,7 +27,8 @@ running = True
 pygame.display.set_caption("Endless Scrolling")
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-road = Road()
+road = pygame.sprite.GroupSingle()
+road.add(Road())
 
 while running:
     for event in pygame.event.get():
@@ -36,6 +38,7 @@ while running:
     # Clear the screen
     screen.fill((0, 0, 0))
 
+    road.draw(screen)
     road.update()
 
     pygame.display.update()
