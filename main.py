@@ -11,6 +11,7 @@ class Road:
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
     def scrolling(self):
+        """Endless scroll method"""
         self.scroll += 3.5
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
@@ -19,7 +20,7 @@ class Road:
                 self.scroll = 0
 
     def movement(self):
-        """Slow down or speed up"""
+        """Adjust scrolling speed based on user input"""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.scroll += 5
@@ -39,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(300, 750))
 
     def movement(self):
-        """Move player left or right"""
+        """Move the player's car left or right based on user input."""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.rect.x -= 3
@@ -55,7 +56,7 @@ class Player(pygame.sprite.Sprite):
 
 
 def fps_counter():
-    """Display the FPS rate"""
+    """Display the current FPS rate"""
     fps = str(round(clock.get_fps(), 2))
     fps_text = FONT.render(fps, 1, "Black")
     screen.blit(fps_text, (0, 0))
