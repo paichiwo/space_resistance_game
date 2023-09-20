@@ -7,29 +7,62 @@ class Road:
     def __init__(self):
         self.image = pygame.image.load("img/road.png").convert_alpha()
         self.image_height = self.image.get_height()
+
         self.scroll = 0
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
+        self.speed = 70
+        self.min_speed = 30
+        self.max_speed = 160
+        self.increase = False
+        self.decrease = False
+        self.acc = 0
+
     def scrolling(self):
         """Endless scroll method"""
-        self.scroll += 3.5
+        self.scroll += 4
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
             screen.blit(self.image, (0, y_pos))
             if abs(self.scroll) >= self.image_height:
                 self.scroll = 0
 
+    def update_speed(self):
+        if self.increase:
+            self.speed += 1
+        elif self.decrease:
+            self.speed -= 1
+        else:
+            self.speed = 70
+        self.speed = max(self.min_speed, min(self.max_speed, self.speed))
+
+        speed_text = FONT.render(f"{int(self.speed)} km/h", 1, "Black")
+        screen.blit(speed_text, (10, 750))
+
     def movement(self):
         """Adjust scrolling speed based on user input"""
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_UP]:
-            self.scroll += 5
+            self.acc += 0.5
+            self.scroll += self.acc
+            self.increase = True
+            self.decrease = False
+        else:
+            self.increase = False
+
         if keys[pygame.K_DOWN]:
-            self.scroll -= 1.7
+            self.acc += 0.03
+            self.scroll -= self.acc
+            self.increase = False
+            self.decrease = True
+        else:
+            self.decrease = False
 
     def update(self):
         self.scrolling()
         self.movement()
+        self.update_speed()
 
 
 class Player(pygame.sprite.Sprite):
