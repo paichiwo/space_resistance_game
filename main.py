@@ -11,7 +11,7 @@ class Road:
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
     def scrolling(self):
-        self.scroll += 3
+        self.scroll += 3.5
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
             screen.blit(self.image, (0, y_pos))
@@ -24,7 +24,7 @@ class Road:
         if keys[pygame.K_UP]:
             self.scroll += 5
         if keys[pygame.K_DOWN]:
-            self.scroll -= 1.6
+            self.scroll -= 1.7
 
     def update(self):
         self.scrolling()
@@ -39,13 +39,14 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(300, 750))
 
     def movement(self):
+        """Move player left or right"""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
-            self.rect.x -= 2
+            self.rect.x -= 3
             if self.rect.x <= 160:
                 self.rect.x += 10
         if keys[pygame.K_RIGHT]:
-            self.rect.x += 2
+            self.rect.x += 3
             if self.rect.x >= 390:
                 self.rect.x -= 10
 
