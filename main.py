@@ -10,7 +10,7 @@ class Road:
         self.scroll = 0
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
-    def update(self):
+    def scrolling(self):
         self.scroll += 3
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
@@ -18,19 +18,39 @@ class Road:
             if abs(self.scroll) >= self.image_height:
                 self.scroll = 0
 
+    def movement(self):
+        """Slow down or speed up"""
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            self.scroll += 5
+        if keys[pygame.K_DOWN]:
+            self.scroll -= 1.6
+
+    def update(self):
+        self.scrolling()
+        self.movement()
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("img/car.png").convert_alpha()
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
-        self.rect = self.image.get_rect(midbottom=(300, 700))
+        self.rect = self.image.get_rect(midbottom=(300, 750))
 
     def movement(self):
-        pass
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= 2
+            if self.rect.x <= 160:
+                self.rect.x += 10
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 2
+            if self.rect.x >= 390:
+                self.rect.x -= 10
 
     def update(self):
-        pass
+        self.movement()
 
 
 def fps_counter():
