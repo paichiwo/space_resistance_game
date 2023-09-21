@@ -12,15 +12,15 @@ class Road:
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
         self.acc = 0
-        self.speed = 30
-        self.min_speed = 30
+        self.speed = 70
+        self.min_speed = 70
         self.max_speed = 160
         self.increase = False
         self.decrease = False
 
     def scrolling(self):
         """Endless scroll method"""
-        self.scroll += 1
+        self.scroll += 4
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
             screen.blit(self.image, (0, y_pos))
@@ -47,11 +47,11 @@ class Road:
             self.increase = True
             self.decrease = False
             # don't speed forever
-            self.acc = min(self.acc, 10)
+            self.acc = min(self.acc, 9)
         else:
             # Gradually reduce acceleration when no UP key is pressed
             if self.acc > 0:
-                self.acc -= 0.1  # Adjust this value for the desired rate of decrease
+                self.acc -= 0.1  # rate of decrease
                 self.speed -= 3
                 self.increase = True
                 self.decrease = False
