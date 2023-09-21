@@ -121,7 +121,6 @@ while running:
             running = False
 
     road.update()
-
     player.draw(screen)
     player.update()
 
