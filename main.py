@@ -11,7 +11,7 @@ class Road:
         self.scroll = 0
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
-        self.speed = 70
+        self.speed = 30
         self.min_speed = 30
         self.max_speed = 160
         self.increase = False
@@ -20,20 +20,19 @@ class Road:
 
     def scrolling(self):
         """Endless scroll method"""
-        self.scroll += 4
+        self.scroll += 1
         for i in range(self.panels):
             y_pos = int((i * self.image_height) + self.scroll - self.image_height)
             screen.blit(self.image, (0, y_pos))
             if abs(self.scroll) >= self.image_height:
                 self.scroll = 0
 
-    def update_speed(self):
+    def update_speed_string(self):
         if self.increase:
-            self.speed += 1
+            self.speed += 1.5
         elif self.decrease:
             self.speed -= 1
-        else:
-            self.speed = 70
+
         self.speed = max(self.min_speed, min(self.max_speed, self.speed))
 
         speed_text = FONT.render(f"{int(self.speed)} km/h", 1, "Black")
@@ -42,27 +41,31 @@ class Road:
     def movement(self):
         """Adjust scrolling speed based on user input"""
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_UP]:
-            self.acc += 0.5
-            self.scroll += self.acc
+            self.acc += 0.15
             self.increase = True
             self.decrease = False
+            # don't speed forever
+            self.acc = min(self.acc, 10)
         else:
-            self.increase = False
+            # Gradually reduce acceleration when no UP key is pressed
+            if self.acc > 0:
+                self.acc -= 0.1  # Adjust this value for the desired rate of decrease
+                self.speed -= 3
+                self.increase = True
+                self.decrease = False
+                if self.scroll <= 0.02:
+                    self.scroll = 0
+            elif self.acc < 0:
+                self.decrease = True
+                self.increase = False
 
-        if keys[pygame.K_DOWN]:
-            self.acc += 0.03
-            self.scroll -= self.acc
-            self.increase = False
-            self.decrease = True
-        else:
-            self.decrease = False
+        self.scroll += self.acc
 
     def update(self):
         self.scrolling()
         self.movement()
-        self.update_speed()
+        self.update_speed_string()
 
 
 class Player(pygame.sprite.Sprite):
