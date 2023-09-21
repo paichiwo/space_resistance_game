@@ -70,6 +70,7 @@ class Road:
 
 
 class Player(pygame.sprite.Sprite):
+    """Creates a player object"""
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("img/car.png").convert_alpha()
@@ -111,10 +112,10 @@ pygame.display.set_caption("Endless Scrolling")
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SCALED, vsync=1)
 
 road = Road()
-
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+# MAIN GAME LOOP
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
