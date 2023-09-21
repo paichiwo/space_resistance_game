@@ -11,12 +11,12 @@ class Road:
         self.scroll = 0
         self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
 
+        self.acc = 0
         self.speed = 30
         self.min_speed = 30
         self.max_speed = 160
         self.increase = False
         self.decrease = False
-        self.acc = 0
 
     def scrolling(self):
         """Endless scroll method"""
@@ -28,6 +28,7 @@ class Road:
                 self.scroll = 0
 
     def update_speed_string(self):
+        """Display and update speed"""
         if self.increase:
             self.speed += 1.5
         elif self.decrease:
