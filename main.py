@@ -17,6 +17,7 @@ class Road:
         self.max_speed = 160
         self.increase = False
         self.decrease = False
+        self.distance = 0
 
     def scrolling(self):
         """Endless scroll method"""
@@ -33,11 +34,17 @@ class Road:
             self.speed += 1.5
         elif self.decrease:
             self.speed -= 1
-
         self.speed = max(self.min_speed, min(self.max_speed, self.speed))
-
         speed_text = FONT.render(f"{int(self.speed)} km/h", 1, "Black")
         screen.blit(speed_text, (10, 750))
+
+    def update_distance_string(self):
+        if self.distance <= 796:
+            self.distance += self.scroll
+        if self.distance >= 796:
+            self.distance += 1000
+        distance_text = FONT.render("{:.2f} km".format(self.distance/1_000_000), 1, "Black")
+        screen.blit(distance_text, (10, 700))
 
     def movement(self):
         """Adjust scrolling speed based on user input"""
@@ -67,6 +74,7 @@ class Road:
         self.scrolling()
         self.movement()
         self.update_speed_string()
+        self.update_distance_string()
 
 
 class Player(pygame.sprite.Sprite):
@@ -105,6 +113,7 @@ clock = pygame.time.Clock()
 
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800
+REFERENCE_POINT = 0
 FONT = pygame.font.SysFont("Arial", 25, bold=True)
 running = True
 
