@@ -22,7 +22,6 @@ class Road:
         self.distance = 0
         self.start_time = time.time()
 
-
     def scrolling(self):
         """Endless scroll method"""
         self.scroll += 4
