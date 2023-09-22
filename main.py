@@ -1,10 +1,12 @@
 import math
 import pygame
+import time
 
 
 class Road:
     """Endless scrolling, TOPDOWN [ top to bottom ]"""
     def __init__(self):
+        self.elapsed_time = None
         self.image = pygame.image.load("img/road.png").convert_alpha()
         self.image_height = self.image.get_height()
 
@@ -18,6 +20,8 @@ class Road:
         self.increase = False
         self.decrease = False
         self.distance = 0
+        self.start_time = time.time()
+
 
     def scrolling(self):
         """Endless scroll method"""
@@ -39,11 +43,13 @@ class Road:
         screen.blit(speed_text, (10, 750))
 
     def update_distance_string(self):
-        if self.distance <= 796:
-            self.distance += self.scroll
-        if self.distance >= 796:
-            self.distance += 1000
-        distance_text = FONT.render("{:.2f} km".format(self.distance/1_000_000), 1, "Black")
+        self.elapsed_time = time.time() - self.start_time
+        # convert h to s
+        t = self.elapsed_time * 0.000278
+        # calculate distance
+        self.distance = self.speed * t
+
+        distance_text = FONT.render("{:.2f} km".format(self.distance), 1, "Black")
         screen.blit(distance_text, (10, 700))
 
     def movement(self):
@@ -104,8 +110,8 @@ class Player(pygame.sprite.Sprite):
 def fps_counter():
     """Display the current FPS rate"""
     fps = str(round(clock.get_fps(), 2))
-    fps_text = FONT.render(f"{fps} FPS", 1, "Black")
-    screen.blit(fps_text, (470, 750))
+    fps_text = FONT.render(f"FPS {fps}", 1, "Black")
+    screen.blit(fps_text, (460, 750))
 
 
 pygame.init()
@@ -114,7 +120,7 @@ clock = pygame.time.Clock()
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800
 REFERENCE_POINT = 0
-FONT = pygame.font.SysFont("Arial", 20, bold=True)
+FONT = pygame.font.Font('font/joystix_mono.otf', 18)
 running = True
 
 pygame.display.set_caption("Endless Scrolling")
