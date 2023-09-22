@@ -104,8 +104,8 @@ class Player(pygame.sprite.Sprite):
 def fps_counter():
     """Display the current FPS rate"""
     fps = str(round(clock.get_fps(), 2))
-    fps_text = FONT.render(fps, 1, "Black")
-    screen.blit(fps_text, (0, 0))
+    fps_text = FONT.render(f"{fps} FPS", 1, "Black")
+    screen.blit(fps_text, (470, 750))
 
 
 pygame.init()
@@ -114,7 +114,7 @@ clock = pygame.time.Clock()
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800
 REFERENCE_POINT = 0
-FONT = pygame.font.SysFont("Arial", 25, bold=True)
+FONT = pygame.font.SysFont("Arial", 20, bold=True)
 running = True
 
 pygame.display.set_caption("Endless Scrolling")
