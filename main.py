@@ -42,14 +42,16 @@ class Road:
         screen.blit(speed_text, (10, 750))
 
     def update_distance_string(self):
-        self.elapsed_time = time.time() - self.start_time
-        # convert h to s
-        t = self.elapsed_time * 0.000278
-        # calculate distance
-        self.distance = self.speed * t
+        current_time = time.time()
+        delta_time = current_time - self.start_time
+        delta_time_seconds = delta_time * 0.000278
+        delta_distance = self.speed * delta_time_seconds + (self.acc * delta_time_seconds ** 2) / 2
+
+        self.distance += delta_distance
 
         distance_text = FONT.render("{:.2f} km".format(self.distance), 1, "Black")
         screen.blit(distance_text, (10, 700))
+        self.start_time = current_time
 
     def movement(self):
         """Adjust scrolling speed based on user input"""
