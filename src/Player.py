@@ -1,5 +1,6 @@
 import pygame
 
+
 class Player(pygame.sprite.Sprite):
     """Creates a player object"""
     def __init__(self):
