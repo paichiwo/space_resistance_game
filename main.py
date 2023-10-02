@@ -1,8 +1,9 @@
 import sys
 import pygame
 from src.Road import Road
-from src.Player import Player
 from src.Dashboard import DashBoard
+from src.Player import Player
+from src.Obstacle import Obstacle
 
 
 class Game:
@@ -25,6 +26,7 @@ class Game:
         self.road = Road(self.screen, self.window_height)
         self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width)
         self.player = pygame.sprite.GroupSingle(Player())
+        self.obstacle = pygame.sprite.GroupSingle(Obstacle())
 
         self.running = True
 
@@ -39,6 +41,8 @@ class Game:
                 self.road.update()
                 self.player.draw(self.screen)
                 self.player.update()
+                self.obstacle.draw(self.screen)
+                self.obstacle.update(self.road.increase, self.road.acc)
                 self.dashboard.update(self.road.speed, self.road.distance)
 
             pygame.display.update()
