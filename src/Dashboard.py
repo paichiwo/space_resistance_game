@@ -43,7 +43,7 @@ class DashBoard:
     def show_speed(self, speed):
         """Display speed information"""
         speed_text = self.font.render(f"{speed} km/h", 0, self.font_color)
-        self.screen.blit(speed_text, (self.header_x_positions[1]-5, self.data_y_pos))
+        self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
 
     def show_distance(self, distance):
         """Display distance information"""
