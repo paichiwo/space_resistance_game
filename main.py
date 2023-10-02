@@ -40,7 +40,7 @@ class Game:
                 self.road.update()
                 self.player.draw(self.screen)
                 self.player.update()
-                self.dashboard.update(self.road.speed)
+                self.dashboard.update(self.road.speed, self.road.distance)
 
             pygame.display.update()
             self.clock.tick(self.fps)
