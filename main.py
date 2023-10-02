@@ -1,86 +1,5 @@
-import math
 import pygame
-import time
-
-
-class Road:
-    """Endless scrolling, TOPDOWN [ top to bottom ]"""
-    def __init__(self):
-        self.image = pygame.image.load("img/road.png").convert_alpha()
-        self.image_height = self.image.get_height()
-
-        self.scroll = 0
-        self.panels = math.ceil(WINDOW_HEIGHT / self.image_height + 2)
-
-        self.acc = 0
-        self.speed = 70
-        self.min_speed = 70
-        self.max_speed = 160
-        self.increase = False
-        self.decrease = False
-        self.distance = 0
-        self.start_time = time.time()
-
-    def scrolling(self):
-        """Endless scroll method"""
-        self.scroll += 4
-        for i in range(self.panels):
-            y_pos = int((i * self.image_height) + self.scroll - self.image_height)
-            screen.blit(self.image, (0, y_pos))
-            if abs(self.scroll) >= self.image_height:
-                self.scroll = 0
-
-    def update_speed_string(self):
-        """Display and update speed"""
-        if self.increase:
-            self.speed += 1.5
-        elif self.decrease:
-            self.speed -= 1
-        self.speed = max(self.min_speed, min(self.max_speed, self.speed))
-        speed_text = FONT.render(f"{int(self.speed)} km/h", 1, "Black")
-        screen.blit(speed_text, (10, 750))
-
-    def update_distance_string(self):
-        current_time = time.time()
-        delta_time = current_time - self.start_time
-        delta_time_seconds = delta_time * 0.000278
-        delta_distance = self.speed * delta_time_seconds + (self.acc * delta_time_seconds ** 2) / 2
-
-        self.distance += delta_distance
-
-        distance_text = FONT.render("{:.2f} km".format(self.distance), 1, "Black")
-        screen.blit(distance_text, (10, 700))
-        self.start_time = current_time
-
-    def movement(self):
-        """Adjust scrolling speed based on user input"""
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.acc += 0.15
-            self.increase = True
-            self.decrease = False
-            # don't speed forever
-            self.acc = min(self.acc, 9)
-        else:
-            # Gradually reduce acceleration when no UP key is pressed
-            if self.acc > 0:
-                self.acc -= 0.1  # rate of decrease
-                self.speed -= 3
-                self.increase = True
-                self.decrease = False
-                if self.scroll <= 0.02:
-                    self.scroll = 0
-            elif self.acc < 0:
-                self.decrease = True
-                self.increase = False
-
-        self.scroll += self.acc
-
-    def update(self):
-        self.scrolling()
-        self.movement()
-        self.update_speed_string()
-        self.update_distance_string()
+from src.Road import Road
 
 
 class Player(pygame.sprite.Sprite):
@@ -139,7 +58,7 @@ start_time = pygame.time.get_ticks()
 pygame.display.set_caption("Endless Scrolling")
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SCALED, vsync=1)
 
-road = Road()
+road = Road(WINDOW_HEIGHT, FONT, screen)
 player = pygame.sprite.GroupSingle(Player())
 
 # MAIN GAME LOOP
