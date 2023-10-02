@@ -1,56 +1,53 @@
+import sys
+
 import pygame
 from src.Road import Road
 from src.Player import Player
+from src.Dashboard import DashBoard
 
 
-def fps_counter():
-    """Display the current FPS rate"""
-    fps = str(round(clock.get_fps(), 2))
-    fps_text = FONT.render(f"FPS {fps}", 1, "Black")
-    screen.blit(fps_text, (460, 750))
+class Game:
+    def __init__(self):
+        super().__init__()
+
+        self.window_width = 600
+        self.window_height = 800
+        self.fps = 60
+
+        pygame.init()
+        pygame.display.set_caption("Racing Game")
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
+        self.clock = pygame.time.Clock()
+
+        self.font = pygame.font.Font("font/joystix_mono.otf", 18)
+        self.start_time = pygame.time.get_ticks()
+
+        # Create game objects
+        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.font)
+        self.road = Road(self.screen, self.window_height, self.font)
+        self.player = pygame.sprite.GroupSingle(Player())
+
+        self.running = True
+
+    def game_loop(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            if self.running:
+                self.road.update()
+                self.player.draw(self.screen)
+                self.player.update()
+                self.dashboard.update()
+
+            pygame.display.update()
+            self.clock.tick(self.fps)
+
+    def run(self):
+        self.game_loop()
 
 
-def show_time(start):
-    current_time = pygame.time.get_ticks()
-    elapsed_time = (current_time-start) // 1000
-    minutes = elapsed_time // 60
-    seconds = elapsed_time % 60
-    timer_text = "{:02}:{:02}".format(minutes, seconds)
-
-    time_text = FONT.render(timer_text, 1, "Black")
-    screen.blit(time_text, (460, 700))
-
-
-pygame.init()
-clock = pygame.time.Clock()
-
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 800
-FONT = pygame.font.Font('font/joystix_mono.otf', 18)
-running = True
-
-start_time = pygame.time.get_ticks()
-
-pygame.display.set_caption("Endless Scrolling")
-screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SCALED, vsync=1)
-
-road = Road(WINDOW_HEIGHT, FONT, screen)
-player = pygame.sprite.GroupSingle(Player())
-
-# MAIN GAME LOOP
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    road.update()
-    player.draw(screen)
-    player.update()
-
-    fps_counter()
-    show_time(start_time)
-
-    pygame.display.update()
-    clock.tick(60)
-
-pygame.quit()
+if __name__ == "__main__":
+    Game().run()
