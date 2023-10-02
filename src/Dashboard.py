@@ -4,28 +4,30 @@ import pygame
 class DashBoard:
     """Creates a dashboard object containing game statistics"""
 
-    def __init__(self, screen, clock, start_time):
+    def __init__(self, screen, clock, start_time, screen_width):
         super().__init__()
 
         self.screen = screen
         self.clock = clock
         self.start_time = start_time
-        self.font = pygame.font.Font("font/PIXEARG_.TTF", 13)
-        self.font_color = "White"
+        self.screen_width = screen_width
 
-    def draw(self):
-        """Draw and display the dashboard background"""
+        self.font_color = "White"
+        self.font = pygame.font.Font("font/pixela_regular.ttf", 14)
+        self.font_bold = pygame.font.Font("font/pixela_bold.ttf", 14)
+
+        self.headers = ["TIME", "SPEED", "DIST", "FPS"]
+        self.header_x_positions = [20, 120, 450, 550]
+        self.header_y_pos = 740
+        self.data_y_pos = 770
+
+    def draw_background_and_headers(self):
+        """Draw a dashboard background and headers"""
         pygame.draw.rect(self.screen, "black", pygame.Rect(0, 730, 600, 70))
 
-    def show_speed(self, speed):
-        """Display speed information"""
-        speed_text = self.font.render(f"{speed} km/h", 0, self.font_color)
-        self.screen.blit(speed_text, (10, 750))
-
-    def show_distance(self, distance):
-        """Display distance information"""
-        distance_text = self.font.render("{:.2f} km".format(distance), 0, self.font_color)
-        self.screen.blit(distance_text, (10, 700))
+        text_list = [self.font_bold.render(header, 0, self.font_color) for header in self.headers]
+        for i, text in enumerate(text_list):
+            self.screen.blit(text, (self.header_x_positions[i], 740))
 
     def show_time(self):
         """Display elapsed time information"""
@@ -35,17 +37,26 @@ class DashBoard:
         seconds = elapsed_time % 60
         timer_text = "{:02}:{:02}".format(minutes, seconds)
         time_text = self.font.render(timer_text, 0, self.font_color)
-        self.screen.blit(time_text, (460, 700))
+        self.screen.blit(time_text, (self.header_x_positions[0], self.data_y_pos))
 
-    def show_fps_counter(self):
+    def show_speed(self, speed):
+        """Display speed information"""
+        speed_text = self.font.render(f"{speed} km/h", 0, self.font_color)
+        self.screen.blit(speed_text, (self.header_x_positions[1]-5, self.data_y_pos))
+
+    def show_distance(self, distance):
+        """Display distance information"""
+        distance_text = self.font.render("{:.2f} km".format(distance), 0, self.font_color)
+        self.screen.blit(distance_text, (self.header_x_positions[2]-10, self.data_y_pos))
+
+    def show_fps(self):
         """Display the current FPS rate"""
-        fps = str(round(self.clock.get_fps(), 2))
-        fps_text = self.font.render(f"FPS {fps}", 0, self.font_color)
-        self.screen.blit(fps_text, (460, 750))
+        fps_text = self.font.render(str(round(self.clock.get_fps(), 2)), 0, self.font_color)
+        self.screen.blit(fps_text, (self.header_x_positions[3]-5, self.data_y_pos))
 
     def update(self, speed, distance):
-        self.draw()
+        self.draw_background_and_headers()
+        self.show_time()
         self.show_speed(speed)
         self.show_distance(distance)
-        self.show_time()
-        self.show_fps_counter()
+        self.show_fps()
