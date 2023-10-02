@@ -17,12 +17,13 @@ class DashBoard:
         self.font_bold = pygame.font.Font("font/pixela_bold.ttf", 14)
 
         self.headers = ["TIME", "SPEED", "DIST", "FPS"]
-        self.header_x_positions = [20, 120, 450, 550]
+        self.header_x_positions = [20, 120, 440, 540]
         self.header_y_pos = 740
         self.data_y_pos = 770
 
     def draw_background_and_headers(self):
         """Draw a dashboard background and headers"""
+        pygame.draw.rect(self.screen, "#BBBBBB", pygame.Rect(0, 728, 600, 2))
         pygame.draw.rect(self.screen, "black", pygame.Rect(0, 730, 600, 70))
 
         text_list = [self.font_bold.render(header, 0, self.font_color) for header in self.headers]
