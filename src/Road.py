@@ -43,16 +43,12 @@ class Road:
             self.speed -= 1
         self.speed = int(max(self.min_speed, min(self.max_speed, self.speed)))
 
-    def update_distance_string(self):
+    def update_distance(self):
         current_time = time.time()
         delta_time = current_time - self.start_time
         delta_time_seconds = delta_time * 0.000278
         delta_distance = self.speed * delta_time_seconds + (self.acc * delta_time_seconds ** 2) / 2
-
         self.distance += delta_distance
-
-        distance_text = self.font.render("{:.2f} km".format(self.distance), 1, "Black")
-        self.screen.blit(distance_text, (10, 700))
         self.start_time = current_time
 
     def movement(self):
@@ -83,4 +79,4 @@ class Road:
         self.scrolling()
         self.movement()
         self.update_speed()
-        self.update_distance_string()
+        self.update_distance()
