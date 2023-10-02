@@ -19,12 +19,11 @@ class Game:
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
 
-        self.font = pygame.font.Font("font/joystix_mono.otf", 18)
         self.start_time = pygame.time.get_ticks()
 
         # Create game objects
         self.road = Road(self.screen, self.window_height)
-        self.dashboard = DashBoard(self.screen, self.clock, self.start_time)
+        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width)
         self.player = pygame.sprite.GroupSingle(Player())
 
         self.running = True
