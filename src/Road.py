@@ -35,15 +35,13 @@ class Road:
             if abs(self.scroll) >= self.image_height:
                 self.scroll = 0
 
-    def update_speed_string(self):
+    def update_speed(self):
         """Display and update speed"""
         if self.increase:
             self.speed += 1.5
         elif self.decrease:
             self.speed -= 1
-        self.speed = max(self.min_speed, min(self.max_speed, self.speed))
-        speed_text = self.font.render(f"{int(self.speed)} km/h", 1, "Black")
-        self.screen.blit(speed_text, (10, 750))
+        self.speed = int(max(self.min_speed, min(self.max_speed, self.speed)))
 
     def update_distance_string(self):
         current_time = time.time()
@@ -84,5 +82,5 @@ class Road:
     def update(self):
         self.scrolling()
         self.movement()
-        self.update_speed_string()
+        self.update_speed()
         self.update_distance_string()
