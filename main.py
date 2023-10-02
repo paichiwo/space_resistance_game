@@ -23,8 +23,8 @@ class Game:
         self.start_time = pygame.time.get_ticks()
 
         # Create game objects
-        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.font)
         self.road = Road(self.screen, self.window_height, self.font)
+        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.font)
         self.player = pygame.sprite.GroupSingle(Player())
 
         self.running = True
@@ -40,7 +40,7 @@ class Game:
                 self.road.update()
                 self.player.draw(self.screen)
                 self.player.update()
-                self.dashboard.update()
+                self.dashboard.update(self.road.speed)
 
             pygame.display.update()
             self.clock.tick(self.fps)
