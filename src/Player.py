@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
 
         self.image = pygame.image.load("img/car.png").convert_alpha()
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
-        self.rect = self.image.get_rect(midbottom=(300, 750))
+        self.rect = self.image.get_rect(midbottom=(300, 700))
 
     def movement(self):
         """Move the player's car left or right based on user input."""
