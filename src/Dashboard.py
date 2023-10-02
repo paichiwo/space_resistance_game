@@ -8,7 +8,14 @@ class DashBoard:
         self.screen = screen
         self.clock = clock
         self.start_time = start_time
+        self.speed = 0
         self.font = font
+
+    def show_speed(self, speed):
+        speed_text = self.font.render(f"{speed} km/h", 1, "Black")
+        self.screen.blit(speed_text, (10, 750))
+
+
 
     def show_fps_counter(self):
         """Display the current FPS rate"""
@@ -25,7 +32,8 @@ class DashBoard:
         time_text = self.font.render(timer_text, 1, "Black")
         self.screen.blit(time_text, (460, 700))
 
-    def update(self):
+    def update(self, speed):
+        self.show_speed(speed)
         self.show_fps_counter()
         self.show_time()
 
