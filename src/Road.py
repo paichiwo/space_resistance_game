@@ -5,11 +5,11 @@ import time
 
 class Road:
     """Endless scrolling, TOPDOWN [ top to bottom ]"""
-    def __init__(self, window_height, font, screen):
+    def __init__(self, screen, window_height, font):
 
+        self.screen = screen
         self.window_height = window_height
         self.font = font
-        self.screen = screen
 
         self.image = pygame.image.load("img/road.png").convert_alpha()
         self.image_height = self.image.get_height()
