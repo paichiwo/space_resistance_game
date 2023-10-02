@@ -1,5 +1,4 @@
 import sys
-
 import pygame
 from src.Road import Road
 from src.Player import Player
