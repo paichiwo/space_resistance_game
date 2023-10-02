@@ -7,6 +7,7 @@ from src.Dashboard import DashBoard
 
 
 class Game:
+
     def __init__(self):
         super().__init__()
 

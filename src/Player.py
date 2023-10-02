@@ -3,8 +3,10 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     """Creates a player object"""
+
     def __init__(self):
         super().__init__()
+
         self.image = pygame.image.load("img/car.png").convert_alpha()
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
         self.rect = self.image.get_rect(midbottom=(300, 750))

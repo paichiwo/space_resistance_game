@@ -5,6 +5,7 @@ import time
 
 class Road:
     """Endless scrolling, TOPDOWN [ top to bottom ]"""
+
     def __init__(self, screen, window_height, font):
 
         self.screen = screen
@@ -36,7 +37,7 @@ class Road:
                 self.scroll = 0
 
     def update_speed(self):
-        """Display and update speed"""
+        """Adjust road speed based on player input"""
         if self.increase:
             self.speed += 1.5
         elif self.decrease:
@@ -44,6 +45,7 @@ class Road:
         self.speed = int(max(self.min_speed, min(self.max_speed, self.speed)))
 
     def update_distance(self):
+        """Count distance based on time and speed"""
         current_time = time.time()
         delta_time = current_time - self.start_time
         delta_time_seconds = delta_time * 0.000278
