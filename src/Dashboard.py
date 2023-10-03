@@ -60,7 +60,7 @@ class DashBoard:
 
     def show_fps(self):
         """Display the current FPS rate"""
-        fps_text = self.font.render(str(round(self.clock.get_fps(), 2)), 0, self.font_color)
+        fps_text = self.font.render("{:.2f}".format(self.clock.get_fps()), 0, self.font_color)
         self.screen.blit(fps_text, (self.header_x_positions[3]-5, self.data_y_pos))
 
     def update(self, speed, acceleration):
