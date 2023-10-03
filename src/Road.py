@@ -26,6 +26,8 @@ class Road:
         self.distance = 0
         self.start_time = time.time()
 
+        self.speedup = False
+
     def scrolling(self):
         """Endless scroll method"""
         self.scroll += 4
@@ -54,8 +56,7 @@ class Road:
 
     def movement(self):
         """Adjust scrolling speed based on user input"""
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
+        if self.speedup:
             self.acc += 0.15
             self.increase = True
             self.decrease = False
@@ -65,7 +66,7 @@ class Road:
             # Gradually reduce acceleration when no UP key is pressed
             if self.acc > 0:
                 self.acc -= 0.1  # rate of decrease
-                self.speed -= 3
+                self.speed -= 2.5
                 self.increase = True
                 self.decrease = False
                 if self.scroll <= 0.02:
