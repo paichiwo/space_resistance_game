@@ -21,7 +21,7 @@ class Game:
         pygame.display.set_caption("Racing Game")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
-        self.start_time = pygame.time.get_ticks() # Game start time
+        self.start_time = pygame.time.get_ticks()  # Game start time
 
         # Create game objects
         self.road = Road(self.screen, self.window_height)
