@@ -27,7 +27,7 @@ class Game:
         self.road = Road(self.screen, self.window_height)
         self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width)
         self.player = Player()
-        self.obstacle = Obstacle()
+        self.obstacle = Obstacle(object_type="car")
 
         # Create sprites
         self.player_sprite = pygame.sprite.GroupSingle(self.player)
