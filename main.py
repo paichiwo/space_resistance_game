@@ -50,7 +50,7 @@ class Game:
                 self.obstacle.update(self.road.increase, self.road.acc)
                 self.dashboard.update(self.road.speed, self.road.acc)
 
-            pygame.display.update()
+            pygame.display.flip()
             self.clock.tick(self.fps)
 
     def run(self):
