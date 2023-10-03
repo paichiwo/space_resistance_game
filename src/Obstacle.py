@@ -28,7 +28,6 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = self.car_images[self.car_index]
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
         self.rect = self.image.get_rect(midbottom=(random.randint(180, 410), 0))
-        self.rect.midbottom = (random.randint(170, 410), 0)
 
     def movement(self, increase, acceleration):
         """Rules for obstacle movement"""
