@@ -3,6 +3,8 @@ import random
 
 
 class Obstacle(pygame.sprite.Sprite):
+    """Creates obstacle object"""
+
     def __init__(self):
         super().__init__()
 
@@ -11,6 +13,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(random.randint(170, 410), 0))
 
     def movement(self, increase, acceleration):
+        """Rules for obstacle movement"""
         self.rect.y += 6
         if self.rect.y >= 800:
             self.rect.midbottom = (random.randint(170, 410), 0)

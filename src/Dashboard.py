@@ -4,14 +4,13 @@ import pygame
 class DashBoard:
     """Creates a dashboard object containing game statistics"""
 
-    def __init__(self, screen, clock, start_time, screen_width, screen_height):
+    def __init__(self, screen, clock, start_time, screen_width):
         super().__init__()
 
         self.screen = screen
         self.clock = clock
         self.start_time = start_time
         self.screen_width = screen_width
-        self.screen_height = screen_height
 
         self.font_color = "White"
         self.font = pygame.font.Font("font/pixela_regular.ttf", 14)
@@ -29,7 +28,7 @@ class DashBoard:
 
         text_list = [self.font_bold.render(header, 0, self.font_color) for header in self.headers]
         for i, text in enumerate(text_list):
-            self.screen.blit(text, (self.header_x_positions[i], self.header_y_pos))
+            self.screen.blit(text, (self.header_x_positions[i], 740))
 
     def show_time(self):
         """Display elapsed time information"""
