@@ -1,5 +1,5 @@
 import pygame
-import time
+
 
 class DashBoard:
     """Creates a dashboard object containing game statistics"""
@@ -11,7 +11,7 @@ class DashBoard:
         self.clock = clock
         self.game_start_time = game_start_time
         self.screen_width = screen_width
-        self.start_time = time.time()
+        self.start_time = pygame.time.get_ticks()
 
         self.font_color = "White"
         self.font = pygame.font.Font("font/pixela_regular.ttf", 14)
@@ -50,8 +50,8 @@ class DashBoard:
 
     def show_distance(self, speed, acceleration):
         """Display distance information"""
-        current_time = time.time()
-        delta_time_seconds = (current_time - self.start_time) * 0.000278
+        current_time = pygame.time.get_ticks()
+        delta_time_seconds = (current_time - self.start_time) * 0.000000278
         delta_distance = speed * delta_time_seconds + (acceleration * delta_time_seconds ** 2) / 2
         self.distance += delta_distance
         self.start_time = current_time
