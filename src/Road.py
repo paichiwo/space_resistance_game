@@ -15,8 +15,6 @@ class Road:
         self.image_height = self.image.get_height()
 
         self.scroll = 0
-        self.panels = math.ceil(self.window_height / self.image_height + 2)
-
         self.acc = 0
         self.speed = 70
         self.min_speed = 70
@@ -29,11 +27,12 @@ class Road:
     def scrolling(self):
         """Endless scroll method"""
         self.scroll += 4
-        for i in range(self.panels):
-            y_pos = int((i * self.image_height) + self.scroll - self.image_height)
-            self.screen.blit(self.image, (0, y_pos))
-            if abs(self.scroll) >= self.image_height:
-                self.scroll = 0
+        if self.scroll >= self.image_height:
+            self.scroll = 0
+
+        blit_offset = self.scroll % self.image_height
+        self.screen.blit(self.image, (0, blit_offset))
+        self.screen.blit(self.image, (0, blit_offset - self.image_height))
 
     def update_speed(self):
         """Adjust road speed based on player input"""
