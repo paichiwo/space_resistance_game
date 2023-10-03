@@ -11,22 +11,27 @@ class Game:
     def __init__(self):
         super().__init__()
 
+        # Game constants
         self.window_width = 600
         self.window_height = 800
         self.fps = 60
 
+        # Game setup
         pygame.init()
         pygame.display.set_caption("Racing Game")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
-
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = pygame.time.get_ticks() # Game start time
 
         # Create game objects
         self.road = Road(self.screen, self.window_height)
         self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width)
-        self.player = pygame.sprite.GroupSingle(Player())
-        self.obstacle = pygame.sprite.GroupSingle(Obstacle())
+        self.player = Player()
+        self.obstacle = Obstacle()
+
+        # Create sprites
+        self.player_sprite = pygame.sprite.GroupSingle(self.player)
+        self.obstacle_group = pygame.sprite.Group(self.obstacle)
 
         self.running = True
 
@@ -39,9 +44,9 @@ class Game:
 
             if self.running:
                 self.road.update()
-                self.player.draw(self.screen)
+                self.player_sprite.draw(self.screen)
                 self.player.update()
-                self.obstacle.draw(self.screen)
+                self.obstacle_group.draw(self.screen)
                 self.obstacle.update(self.road.increase, self.road.acc)
                 self.dashboard.update(self.road.speed, self.road.distance)
 
