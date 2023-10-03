@@ -4,12 +4,12 @@ import pygame
 class DashBoard:
     """Creates a dashboard object containing game statistics"""
 
-    def __init__(self, screen, clock, start_time, screen_width):
+    def __init__(self, screen, clock, game_start_time, screen_width):
         super().__init__()
 
         self.screen = screen
         self.clock = clock
-        self.start_time = start_time
+        self.game_start_time = game_start_time
         self.screen_width = screen_width
 
         self.font_color = "White"
@@ -23,7 +23,7 @@ class DashBoard:
 
     def draw_background_and_headers(self):
         """Draw a dashboard background and headers"""
-        pygame.draw.rect(self.screen, "#BBBBBB", pygame.Rect(0, 728, 600, 2))
+        pygame.draw.rect(self.screen, "white", pygame.Rect(0, 728, 600, 2))
         pygame.draw.rect(self.screen, "black", pygame.Rect(0, 730, 600, 70))
 
         text_list = [self.font_bold.render(header, 0, self.font_color) for header in self.headers]
@@ -33,7 +33,7 @@ class DashBoard:
     def show_time(self):
         """Display elapsed time information"""
         current_time = pygame.time.get_ticks()
-        elapsed_time = (current_time - self.start_time) // 1000
+        elapsed_time = (current_time - self.game_start_time) // 1000
         minutes = elapsed_time // 60
         seconds = elapsed_time % 60
         timer_text = "{:02}:{:02}".format(minutes, seconds)
