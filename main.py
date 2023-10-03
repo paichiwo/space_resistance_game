@@ -48,7 +48,7 @@ class Game:
                 self.player.update()
                 self.obstacle_group.draw(self.screen)
                 self.obstacle.update(self.road.increase, self.road.acc)
-                self.dashboard.update(self.road.speed, self.road.distance)
+                self.dashboard.update(self.road.speed, self.road.acc)
 
             pygame.display.update()
             self.clock.tick(self.fps)
