@@ -24,9 +24,12 @@ class Game:
 
         # Create game objects
         self.road = Road(self.screen, self.window_height)
-        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width)
-        self.player = pygame.sprite.GroupSingle(Player())
-        self.obstacle = pygame.sprite.GroupSingle(Obstacle())
+        self.dashboard = DashBoard(self.screen, self.clock, self.start_time, self.window_width, self.window_height)
+        self.player = Player()
+        self.obstacle = Obstacle()
+
+        self.player_sprite = pygame.sprite.GroupSingle(self.player)
+        self.obstacle_sprite = pygame.sprite.GroupSingle(self.obstacle)
 
         self.running = True
 
@@ -37,11 +40,28 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.player.move_left = True
+                    if event.key == pygame.K_RIGHT:
+                        self.player.move_right = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        self.player.move_left = False
+                    if event.key == pygame.K_RIGHT:
+                        self.player.move_right = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        self.road.speedup = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_UP:
+                        self.road.speedup = False
+
             if self.running:
                 self.road.update()
-                self.player.draw(self.screen)
+                self.player_sprite.draw(self.screen)
                 self.player.update()
-                self.obstacle.draw(self.screen)
+                self.obstacle_sprite.draw(self.screen)
                 self.obstacle.update(self.road.increase, self.road.acc)
                 self.dashboard.update(self.road.speed, self.road.distance)
 
