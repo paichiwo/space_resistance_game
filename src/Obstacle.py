@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import random
 
@@ -35,10 +37,9 @@ class Obstacle(pygame.sprite.Sprite):
         if increase:
             self.rect.y += 3 + acceleration
 
-    def when_off_screen(self):
+    def destroy(self):
         if self.rect.y >= 800:
-            self.render_obstacle()
+            self.kill()
 
     def update(self, increase, acceleration):
         self.movement(increase, acceleration)
-        self.when_off_screen()
