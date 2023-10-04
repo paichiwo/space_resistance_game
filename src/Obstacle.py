@@ -43,3 +43,4 @@ class Obstacle(pygame.sprite.Sprite):
 
     def update(self, increase, acceleration):
         self.movement(increase, acceleration)
+        self.destroy()
