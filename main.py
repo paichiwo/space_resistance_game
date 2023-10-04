@@ -39,8 +39,30 @@ class Game:
 
         self.running = True
 
+    def reset_game_values(self):
+        self.obstacle_group.empty()
+        self.dashboard.game_start_time = pygame.time.get_ticks()
+        self.road.increase = False
+        self.road.acc = 0
+        self.road.speed = 0
+        self.dashboard.update(70, 0)
+        self.dashboard.reset()
+
+    def game_over(self):
+        """Game over condition"""
+        if pygame.sprite.spritecollide(self.player_sprite.sprite, self.obstacle_group, False):
+            return False
+        else:
+            return True
+
+    def game_over_screen(self):
+        self.screen.fill("blue")
+        text = self.dashboard.font.render("GAME OVER", 0, "yellow")
+        rect = text.get_rect(center=(self.window_width / 2, self.window_height / 2))
+        self.screen.blit(text, rect)
+
     def game_loop(self):
-        while self.running:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -49,10 +71,16 @@ class Game:
                 if self.running:
                     if event.type == self.obstacle_timer:
                         if self.road.increase:
-                            pygame.time.set_timer(self.obstacle_timer, random.randint(300, 1000))
+                            timer_value = int(3000 // self.road.acc) if self.road.acc != 0 else 1500
+                            pygame.time.set_timer(self.obstacle_timer, timer_value)
                         else:
                             pygame.time.set_timer(self.obstacle_timer, random.randint(1000, 2000))
                         self.obstacle_group.add(Obstacle("car"))
+
+                else:
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                        self.running = True
+                        self.reset_game_values()
 
             if self.running:
                 self.road.update()
@@ -61,8 +89,11 @@ class Game:
                 self.obstacle_group.draw(self.screen)
                 self.obstacle_group.update(self.road.increase, self.road.acc)
                 self.dashboard.update(self.road.speed, self.road.acc)
+
+                self.running = self.game_over()
+
             else:
-                print("game over")
+                self.game_over_screen()
 
             pygame.display.flip()
             self.clock.tick(self.fps)
