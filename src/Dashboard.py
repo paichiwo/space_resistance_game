@@ -39,8 +39,8 @@ class DashBoard:
         elapsed_time = (current_time - self.game_start_time) // 1000
         minutes = elapsed_time // 60
         seconds = elapsed_time % 60
-        timer_text = "{:02}:{:02}".format(minutes, seconds)
-        time_text = self.font.render(timer_text, 0, self.font_color)
+        elapsed_time_text = "{:02}:{:02}".format(minutes, seconds)
+        time_text = self.font.render(elapsed_time_text, 0, self.font_color)
         self.screen.blit(time_text, (self.header_x_positions[0], self.data_y_pos))
 
     def show_speed(self, speed):
@@ -62,6 +62,9 @@ class DashBoard:
         """Display the current FPS rate"""
         fps_text = self.font.render("{:.2f}".format(self.clock.get_fps()), 0, self.font_color)
         self.screen.blit(fps_text, (self.header_x_positions[3]-5, self.data_y_pos))
+
+    def reset(self):
+        self.distance = 0
 
     def update(self, speed, acceleration):
         self.draw_background_and_headers()
