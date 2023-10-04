@@ -1,7 +1,5 @@
 import pygame
-import math
 import time
-from src.utils import load_level_data
 
 
 class Road:
