@@ -1,0 +1,38 @@
+{"levels_constants":
+    {"level1": {
+        "scroll": 1,
+        "speed": 70
+    },
+    "level2": {
+        "scroll": 2,
+        "speed": 80
+    },
+    "level3": {
+        "scroll": 3,
+        "speed": 90
+    },
+    "level4": {
+        "scroll": 4,
+        "speed": 100
+    },
+    "level5": {
+        "scroll": 5,
+        "speed": 110
+    },
+    "level6": {
+        "scroll": 6,
+        "speed": 120
+    },
+    "level7": {
+        "scroll": 7,
+        "speed": 130
+    },
+    "level8": {
+        "scroll": 8,
+        "speed": 140
+    },
+    "level9": {
+        "scroll": 9,
+        "speed": 150
+    }
+}}
