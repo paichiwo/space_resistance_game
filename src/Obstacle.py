@@ -35,7 +35,7 @@ class Obstacle(pygame.sprite.Sprite):
         """Rules for obstacle movement"""
         self.rect.y += 6
         if increase:
-            self.rect.y += 3 + acceleration
+            self.rect.y += 2 + acceleration
 
     def destroy(self):
         if self.rect.y >= 800:
