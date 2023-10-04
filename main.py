@@ -45,7 +45,7 @@ class Game:
         self.road.increase = False
         self.road.acc = 0
         self.road.speed = 0
-        self.dashboard.update(70, 0)
+        self.dashboard.update(70, 0, 0)
         self.dashboard.reset()
 
     def game_over(self):
@@ -88,7 +88,10 @@ class Game:
                 self.player.update()
                 self.obstacle_group.draw(self.screen)
                 self.obstacle_group.update(self.road.increase, self.road.acc)
-                self.dashboard.update(self.road.speed, self.road.acc)
+                if len(self.obstacle_group) > 0:
+                    self.dashboard.update(self.road.speed, self.road.acc, self.obstacle_group.sprites()[0].rect.midbottom[1])
+                else:
+                    self.dashboard.update(self.road.speed, self.road.acc, 0)
 
                 self.running = self.game_over()
 
