@@ -17,11 +17,12 @@ class DashBoard:
         self.font = pygame.font.Font("font/pixela_regular.ttf", 14)
         self.font_bold = pygame.font.Font("font/pixela_bold.ttf", 14)
 
-        self.headers = ["TIME", "SPEED", "DIST", "FPS"]
-        self.header_x_positions = [20, 120, 440, 540]
+        self.headers = ["TIME", "SPEED", "SCORE", "DIST", "FPS"]
+        self.header_x_positions = [20, 110, 220, 440, 540]
         self.header_y_pos = 740
         self.data_y_pos = 770
 
+        self.score = 0
         self.distance = 0
 
     def draw_background_and_headers(self):
@@ -48,6 +49,13 @@ class DashBoard:
         speed_text = self.font.render(f"{speed} km/h", 0, self.font_color)
         self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
 
+    def show_score(self, obstacle_y_pos):
+        """Count and display score information"""
+        if obstacle_y_pos >= 702:
+            self.score += 1
+        score_text = self.font.render("{}".format("{:06}".format(self.score)), 0, self.font_color)
+        self.screen.blit(score_text, (self.header_x_positions[2], self.data_y_pos))
+
     def show_distance(self, speed, acceleration):
         """Display distance information"""
         current_time = pygame.time.get_ticks()
@@ -56,19 +64,21 @@ class DashBoard:
         self.distance += delta_distance
         self.start_time = current_time
         distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
-        self.screen.blit(distance_text, (self.header_x_positions[2]-10, self.data_y_pos))
+        self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
 
     def show_fps(self):
         """Display the current FPS rate"""
         fps_text = self.font.render("{:.2f}".format(self.clock.get_fps()), 0, self.font_color)
-        self.screen.blit(fps_text, (self.header_x_positions[3]-5, self.data_y_pos))
+        self.screen.blit(fps_text, (self.header_x_positions[4]-5, self.data_y_pos))
 
     def reset(self):
+        self.score = 0
         self.distance = 0
 
-    def update(self, speed, acceleration):
+    def update(self, speed, acceleration, obstacle_y_pos):
         self.draw_background_and_headers()
         self.show_time()
         self.show_speed(speed)
+        self.show_score(obstacle_y_pos)
         self.show_distance(speed, acceleration)
         self.show_fps()
