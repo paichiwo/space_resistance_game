@@ -21,7 +21,6 @@ class Road:
         self.max_speed = 160
         self.increase = False
         self.decrease = False
-        self.distance = 0
         self.start_time = time.time()
 
     def scrolling(self):
@@ -41,15 +40,6 @@ class Road:
         elif self.decrease:
             self.speed -= 1
         self.speed = int(max(self.min_speed, min(self.max_speed, self.speed)))
-
-    # def update_distance(self):
-    #     """Count distance based on time and speed"""
-    #     current_time = time.time()
-    #     delta_time = current_time - self.start_time
-    #     delta_time_seconds = delta_time * 0.000278
-    #     delta_distance = self.speed * delta_time_seconds + (self.acc * delta_time_seconds ** 2) / 2
-    #     self.distance += delta_distance
-    #     self.start_time = current_time
 
     def movement(self):
         """Adjust scrolling speed based on user input"""
@@ -79,4 +69,3 @@ class Road:
         self.scrolling()
         self.movement()
         self.update_speed()
-        # self.update_distance()
