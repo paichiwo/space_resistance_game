@@ -45,8 +45,8 @@ class Game:
         self.road.increase = False
         self.road.acc = 0
         self.road.speed = 0
-        self.dashboard.update(70, 0, 0)
         self.dashboard.reset()
+        self.dashboard.update(70, 0, 0)
 
     def game_over(self):
         """Game over condition"""
@@ -70,8 +70,8 @@ class Game:
 
                 if self.running:
                     if event.type == self.obstacle_timer:
-                        if self.road.increase:
-                            timer_value = int(3000 // self.road.acc) if self.road.acc != 0 else 1500
+                        if self.road.increase or self.road.decrease:
+                            timer_value = int(4000 // self.road.acc) if self.road.acc > 0 else 1500
                             pygame.time.set_timer(self.obstacle_timer, timer_value)
                         else:
                             pygame.time.set_timer(self.obstacle_timer, random.randint(1000, 2000))
@@ -89,7 +89,7 @@ class Game:
                 self.obstacle_group.draw(self.screen)
                 self.obstacle_group.update(self.road.increase, self.road.acc)
                 if len(self.obstacle_group) > 0:
-                    self.dashboard.update(self.road.speed, self.road.acc, self.obstacle_group.sprites()[0].rect.midbottom[1])
+                    self.dashboard.update(self.road.speed, self.road.acc, self.obstacle_group.sprites()[0].rect.bottom)
                 else:
                     self.dashboard.update(self.road.speed, self.road.acc, 0)
 
