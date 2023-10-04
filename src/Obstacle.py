@@ -31,16 +31,14 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
         self.rect = self.image.get_rect(midbottom=(random.randint(180, 410), 0))
 
-    def movement(self, increase, acceleration):
+    def movement(self, levels):
         """Rules for obstacle movement"""
-        self.rect.y += 6
-        if increase:
-            self.rect.y += 2 + acceleration
+        self.rect.y += 7
 
     def destroy(self):
         if self.rect.y >= 800:
             self.kill()
 
-    def update(self, increase, acceleration):
-        self.movement(increase, acceleration)
+    def update(self, levels):
+        self.movement(levels)
         self.destroy()

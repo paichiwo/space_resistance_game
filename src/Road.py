@@ -1,6 +1,7 @@
 import pygame
 import math
 import time
+from src.utils import load_level_data
 
 
 class Road:
@@ -15,12 +16,7 @@ class Road:
         self.image_height = self.image.get_height()
 
         self.scroll = 0
-        self.acc = 0
         self.speed = 70
-        self.min_speed = 70
-        self.max_speed = 160
-        self.increase = False
-        self.decrease = False
         self.start_time = time.time()
 
     def scrolling(self):
@@ -33,39 +29,13 @@ class Road:
         self.screen.blit(self.image, (0, blit_offset))
         self.screen.blit(self.image, (0, blit_offset - self.image_height))
 
-    def update_speed(self):
-        """Adjust road speed based on player input"""
-        if self.increase:
-            self.speed += 1.5
-        elif self.decrease:
-            self.speed -= 1
-        self.speed = int(max(self.min_speed, min(self.max_speed, self.speed)))
-
-    def movement(self):
+    def movement(self, level, levels_data):
         """Adjust scrolling speed based on user input"""
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.acc += 0.15
-            self.increase = True
-            self.decrease = False
-            # don't speed forever
-            self.acc = min(self.acc, 9)
-        else:
-            # Gradually reduce acceleration when no UP key is pressed
-            if self.acc > 0:
-                self.acc -= 0.1  # rate of decrease
-                self.speed -= 3
-                self.increase = True
-                self.decrease = False
-                if self.scroll <= 0.02:
-                    self.scroll = 0
-            elif self.acc < 0:
-                self.decrease = True
-                self.increase = False
+        if levels_data and f"level{level}" in levels_data:
+            level_info = levels_data[f"level{level}"]
+            self.scroll += level_info["scroll"]
+            self.speed = level_info["speed"]
 
-        self.scroll += self.acc
-
-    def update(self):
+    def update(self, level, levels_data):
         self.scrolling()
-        self.movement()
-        self.update_speed()
+        self.movement(level, levels_data)

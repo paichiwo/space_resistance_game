@@ -62,15 +62,15 @@ class DashBoard:
         score_text = self.font.render("{}".format("{:06}".format(self.score)), 0, self.font_color)
         self.screen.blit(score_text, (self.header_x_positions[2], self.data_y_pos))
 
-    def show_distance(self, speed, acceleration):
-        """Display distance information"""
-        current_time = pygame.time.get_ticks()
-        delta_time_seconds = (current_time - self.start_time) * 0.000000278
-        delta_distance = speed * delta_time_seconds + (acceleration * delta_time_seconds ** 2) / 2
-        self.distance += delta_distance
-        self.start_time = current_time
-        distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
-        self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
+    # def show_distance(self, speed):
+    #     """Display distance information"""
+    #     current_time = pygame.time.get_ticks()
+    #     delta_time_seconds = (current_time - self.start_time) * 0.000000278
+    #     delta_distance = speed * delta_time_seconds
+    #     self.distance += delta_distance
+    #     self.start_time = current_time
+    #     distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
+    #     self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
 
     def show_fps(self):
         """Display the current FPS rate"""
@@ -81,11 +81,11 @@ class DashBoard:
         self.score = 0
         self.distance = 0
 
-    def update(self, speed, acceleration, obstacle_y_pos):
+    def update(self, speed, obstacle_y_pos):
         self.draw_background_and_headers()
         self.show_time()
         self.show_speed(speed)
-        self.show_score(obstacle_y_pos)
-        self.show_distance(speed, acceleration)
-        self.show_fps()
         self.show_level()
+        self.show_score(obstacle_y_pos)
+        # self.show_distance(speed)
+        self.show_fps()

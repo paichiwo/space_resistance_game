@@ -5,6 +5,7 @@ from src.Road import Road
 from src.Dashboard import DashBoard
 from src.Player import Player
 from src.Obstacle import Obstacle
+from src.utils import load_level_data
 
 
 class Game:
@@ -23,6 +24,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.start_time = pygame.time.get_ticks()  # Game start time
+        self.level_data = load_level_data()
 
         # Create game objects
         self.road = Road(self.screen, self.window_height)
@@ -42,11 +44,9 @@ class Game:
     def reset_game_values(self):
         self.obstacle_group.empty()
         self.dashboard.game_start_time = pygame.time.get_ticks()
-        self.road.increase = False
-        self.road.acc = 0
         self.road.speed = 0
         self.dashboard.reset()
-        self.dashboard.update(70, 0, 0)
+        self.dashboard.update(70, 0)
 
     def game_over(self):
         """Game over condition"""
@@ -70,11 +70,7 @@ class Game:
 
                 if self.running:
                     if event.type == self.obstacle_timer:
-                        if self.road.increase or self.road.decrease:
-                            timer_value = int(4000 // self.road.acc) if self.road.acc > 0 else 1500
-                            pygame.time.set_timer(self.obstacle_timer, timer_value)
-                        else:
-                            pygame.time.set_timer(self.obstacle_timer, random.randint(1000, 2000))
+                        pygame.time.set_timer(self.obstacle_timer, random.randint(1000, 2000))
                         self.obstacle_group.add(Obstacle("car"))
 
                 else:
@@ -83,15 +79,15 @@ class Game:
                         self.reset_game_values()
 
             if self.running:
-                self.road.update()
+                self.road.update(self.dashboard.level, self.level_data)
                 self.player_sprite.draw(self.screen)
                 self.player.update()
                 self.obstacle_group.draw(self.screen)
-                self.obstacle_group.update(self.road.increase, self.road.acc)
+                self.obstacle_group.update(self.level_data)
                 if len(self.obstacle_group) > 0:
-                    self.dashboard.update(self.road.speed, self.road.acc, self.obstacle_group.sprites()[0].rect.bottom)
+                    self.dashboard.update(self.road.speed, self.obstacle_group.sprites()[0].rect.bottom)
                 else:
-                    self.dashboard.update(self.road.speed, self.road.acc, 0)
+                    self.dashboard.update(self.road.speed, 0)
 
                 self.running = self.game_over()
 
