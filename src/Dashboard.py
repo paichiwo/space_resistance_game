@@ -23,6 +23,7 @@ class DashBoard:
         self.data_y_pos = 770
 
         self.score = 0
+        self.level = 0
         self.distance = 0
 
     def draw_background_and_headers(self):
@@ -46,8 +47,13 @@ class DashBoard:
 
     def show_speed(self, speed):
         """Display speed information"""
-        speed_text = self.font.render(f"{speed} km/h", 0, self.font_color)
+        speed_text = self.font.render("{} km/h".format(speed), 0, self.font_color)
         self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
+
+    def show_level(self):
+        self.level = int(self.distance) + 1
+        level_text = self.font.render("Level: {}".format(self.level), 0, self.font_color)
+        self.screen.blit(level_text, (330, 750))
 
     def show_score(self, obstacle_y_pos):
         """Count and display score information"""
@@ -82,3 +88,4 @@ class DashBoard:
         self.show_score(obstacle_y_pos)
         self.show_distance(speed, acceleration)
         self.show_fps()
+        self.show_level()
