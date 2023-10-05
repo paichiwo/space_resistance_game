@@ -26,6 +26,7 @@ class Obstacle(pygame.sprite.Sprite):
             self.render_obstacle()
 
     def render_obstacle(self):
+        """Render random obstacle"""
         self.car_index = random.choice([n for n in range(len(self.car_images))])
         self.image = self.car_images[self.car_index]
         self.image = pygame.transform.rotozoom(self.image, 0, 2)
@@ -39,6 +40,7 @@ class Obstacle(pygame.sprite.Sprite):
             self.rect.y += level_info["scroll"]
 
     def destroy(self):
+        """Destroy off-screen obstacle"""
         if self.rect.y >= 800:
             self.kill()
 
