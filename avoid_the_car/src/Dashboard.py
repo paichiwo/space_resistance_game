@@ -9,7 +9,6 @@ class DashBoard:
 
         self.screen = screen
         self.clock = clock
-        self.game_start_time = game_start_time
         self.screen_width = screen_width
         self.start_time = pygame.time.get_ticks()
 
@@ -35,28 +34,15 @@ class DashBoard:
         for i, text in enumerate(text_list):
             self.screen.blit(text, (self.header_x_positions[i], 740))
 
-    def show_time(self):
-        """Display elapsed time information"""
-        current_time = pygame.time.get_ticks()
-        elapsed_time = (current_time - self.game_start_time) // 1000
-        minutes = elapsed_time // 60
-        seconds = elapsed_time % 60
-        elapsed_time_text = "{:02}:{:02}".format(minutes, seconds)
-        time_text = self.font.render(elapsed_time_text, 0, self.font_color)
-        self.screen.blit(time_text, (self.header_x_positions[0], self.data_y_pos))
-
     def show_speed(self, speed):
         """Display speed information"""
         speed_text = self.font.render("{} km/h".format(speed), 0, self.font_color)
         self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
 
     def show_level(self):
-        current = pygame.time.get_ticks()
-        elapsed = (current - self.start_time) // 1000
-        level_duration = 30
-        if elapsed >= level_duration:
-            self.level += 1
-            self.start_time = current
+        """Count and display level information"""
+        self.level = int(self.distance)+1
+        print(self.distance)
         level_text = self.font.render("Level: {}".format(self.level), 0, self.font_color)
         self.screen.blit(level_text, (330, 750))
 
@@ -67,15 +53,15 @@ class DashBoard:
         score_text = self.font.render("{}".format("{:06}".format(self.score)), 0, self.font_color)
         self.screen.blit(score_text, (self.header_x_positions[2], self.data_y_pos))
 
-    # def show_distance(self, speed):
-    #     """Display distance information"""
-    #     current_time = pygame.time.get_ticks()
-    #     delta_time_seconds = (current_time - self.start_time) * 0.000000278
-    #     delta_distance = speed * delta_time_seconds
-    #     self.distance += delta_distance
-    #     self.start_time = current_time
-    #     distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
-    #     self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
+    def show_distance(self, speed):
+        """Display distance information"""
+        current_time = pygame.time.get_ticks()
+        delta_time_seconds = (current_time - self.start_time) * 0.000000278
+        delta_distance = speed * delta_time_seconds
+        self.distance += delta_distance
+        self.start_time = current_time
+        distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
+        self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
 
     def show_fps(self):
         """Display the current FPS rate"""
@@ -84,14 +70,14 @@ class DashBoard:
 
     def reset(self):
         self.score = 0
+        self.start_time = pygame.time.get_ticks()
         self.level = 1
         self.distance = 0
 
     def update(self, speed, obstacle_y_pos):
         self.draw_background_and_headers()
-        self.show_time()
         self.show_speed(speed)
         self.show_level()
         self.show_score(obstacle_y_pos)
-        # self.show_distance(speed)
+        self.show_distance(speed)
         self.show_fps()
