@@ -23,7 +23,7 @@ class DashBoard:
         self.data_y_pos = 770
 
         self.score = 0
-        self.level = 0
+        self.level = 1
         self.distance = 0
 
     def draw_background_and_headers(self):
@@ -51,7 +51,12 @@ class DashBoard:
         self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
 
     def show_level(self):
-        self.level = int(self.distance) + 1
+        current = pygame.time.get_ticks()
+        elapsed = (current - self.start_time) // 1000
+        level_duration = 30
+        if elapsed >= level_duration:
+            self.level += 1
+            self.start_time = current
         level_text = self.font.render("Level: {}".format(self.level), 0, self.font_color)
         self.screen.blit(level_text, (330, 750))
 
@@ -79,6 +84,7 @@ class DashBoard:
 
     def reset(self):
         self.score = 0
+        self.level = 1
         self.distance = 0
 
     def update(self, speed, obstacle_y_pos):
