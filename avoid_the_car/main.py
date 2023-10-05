@@ -83,7 +83,7 @@ class Game:
                 self.player_sprite.draw(self.screen)
                 self.player.update()
                 self.obstacle_group.draw(self.screen)
-                self.obstacle_group.update(self.level_data)
+                self.obstacle_group.update(self.dashboard.level, self.level_data)
                 if len(self.obstacle_group) > 0:
                     self.dashboard.update(self.road.speed, self.obstacle_group.sprites()[0].rect.bottom)
                 else:
