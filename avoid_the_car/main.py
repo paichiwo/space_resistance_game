@@ -58,13 +58,13 @@ class Game:
         """Update all game objects"""
         self.road.update(self.dashboard.level, self.level_data)
         self.player_sprite.draw(self.screen)
-        self.player.update()
+        self.player.update(self.dashboard.level, self.level_data)
         self.obstacle_group.draw(self.screen)
         self.obstacle_group.update(self.dashboard.level, self.level_data)
         if len(self.obstacle_group) > 0:
-            self.dashboard.update(self.road.speed, self.obstacle_group.sprites()[0].rect.bottom)
+            self.dashboard.update(self.player.speed, self.obstacle_group.sprites()[0].rect.bottom)
         else:
-            self.dashboard.update(self.road.speed, 0)
+            self.dashboard.update(self.player.speed, 0)
 
     def reset_game_values(self):
         """Reset all values"""
