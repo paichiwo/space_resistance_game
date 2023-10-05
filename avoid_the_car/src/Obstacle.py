@@ -1,5 +1,3 @@
-import time
-
 import pygame
 import random
 
@@ -40,7 +38,7 @@ class Obstacle(pygame.sprite.Sprite):
             self.rect.y += level_info["scroll"]
 
     def destroy(self):
-        """Destroy off-screen obstacle"""
+        """Destroy an off-screen obstacle"""
         if self.rect.y >= 800:
             self.kill()
 
