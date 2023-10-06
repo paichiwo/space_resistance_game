@@ -62,20 +62,22 @@ class Game:
         self.obstacle_group.draw(self.screen)
         self.obstacle_group.update(self.dashboard.level, self.level_data)
         if len(self.obstacle_group) > 0:
-            self.dashboard.update(self.player.speed, self.obstacle_group.sprites()[0].rect.bottom)
+            self.dashboard.update(self.player.speed, self.player.current_health, self.obstacle_group.sprites()[0].rect.bottom)
         else:
-            self.dashboard.update(self.player.speed, 0)
+            self.dashboard.update(self.player.speed, self.player.current_health, 0)
 
     def reset_game_values(self):
         """Reset all values"""
         self.obstacle_group.empty()
-        self.road.speed = 0
+        self.player.reset()
         self.dashboard.reset()
-        self.dashboard.update(70, 0)
+        self.dashboard.update(70, 1000, 0)
 
     def game_over(self):
         """Game over condition"""
         if pygame.sprite.spritecollide(self.player_sprite.sprite, self.obstacle_group, False):
+            self.player.get_damage()
+        if self.player.current_health <= 0:
             return False
         else:
             return True
