@@ -1,7 +1,11 @@
+# **AVOID THE CAR**
+
+Work in progress
+
+![](img/screenshot/1.png)
+
 ## TODO:
 
-- add player's **health bar**
-- fix **dashboard**
 - add a **welcome screen** with **start button** and **high score**
 - implement a **high-score** system
 - add **high score** and **instructions** to the **game over** screen
