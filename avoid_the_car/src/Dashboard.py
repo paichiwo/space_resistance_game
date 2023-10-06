@@ -22,9 +22,9 @@ class DashBoard:
         self.header_y_pos = 740
         self.data_y_pos = 770
 
-        self.score = 0
-        self.level = 1
         self.distance = 0
+        self.level = 1
+        self.score = 0
 
     def draw_background_and_headers(self):
         """Draw a dashboard background and headers"""
@@ -50,9 +50,13 @@ class DashBoard:
         text = self.font.render("{}".format(speed), 0, self.font_color)
         self.screen.blit(text, (self.header_x_positions[1]+20, self.data_y_pos))
 
-    def show_health(self, health):
-        text = self.font.render("{}".format(health), 0, self.font_color)
-        self.screen.blit(text, (self.level_x_pos, self.header_y_pos))
+    def show_health(self, health, max_health):
+        """Display health bar"""
+        health_bar_length = 100
+        health_ratio = max_health / health_bar_length
+        bar_width = health / health_ratio
+        pygame.draw.rect(self.screen, "red", pygame.Rect(250, self.header_y_pos, bar_width, 15))
+        pygame.draw.rect(self.screen, "white", pygame.Rect(250, self.header_y_pos, health_bar_length, 15), 2)
 
     def show_level(self):
         """Count and display level information"""
@@ -75,15 +79,15 @@ class DashBoard:
     def reset(self):
         """Reset dashboard values"""
         self.start_time = pygame.time.get_ticks()
-        self.score = 0
         self.distance = 0
         self.level = 1
+        self.score = 0
 
-    def update(self, speed, health, obstacle_y_pos):
+    def update(self, speed, health, max_health, obstacle_y_pos):
         self.draw_background_and_headers()
         self.show_distance(speed)
         self.show_speed(speed)
-        self.show_health(health)
+        self.show_health(health, max_health)
         self.show_level()
         self.show_score(obstacle_y_pos)
         self.show_fps()
