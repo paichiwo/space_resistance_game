@@ -62,16 +62,22 @@ class Game:
         self.obstacle_group.draw(self.screen)
         self.obstacle_group.update(self.dashboard.level, self.level_data)
         if len(self.obstacle_group) > 0:
-            self.dashboard.update(self.player.speed, self.player.current_health, self.obstacle_group.sprites()[0].rect.bottom)
+            self.dashboard.update(self.player.speed,
+                                  self.player.current_health,
+                                  self.player.maximum_health,
+                                  self.obstacle_group.sprites()[0].rect.bottom)
         else:
-            self.dashboard.update(self.player.speed, self.player.current_health, 0)
+            self.dashboard.update(self.player.speed,
+                                  self.player.current_health,
+                                  self.player.maximum_health,
+                                  0)
 
     def reset_game_values(self):
         """Reset all values"""
         self.obstacle_group.empty()
         self.player.reset()
         self.dashboard.reset()
-        self.dashboard.update(70, 1000, 0)
+        self.dashboard.update(70, 1000, 100, 0)
 
     def game_over(self):
         """Game over condition"""
@@ -91,6 +97,7 @@ class Game:
 
     def game_loop(self):
         while True:
+
             for event in pygame.event.get():
                 self.handle_events(event)
             if self.running:
