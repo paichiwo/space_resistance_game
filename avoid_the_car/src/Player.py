@@ -13,6 +13,17 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(300, 700))
 
         self.speed = 70
+        self.current_health = 100
+        self.maximum_health = 100
+        self.health_bar_length = 100
+        self.health_ratio = self.maximum_health / self.health_bar_length
+
+    def get_damage(self):
+        """Get damage when collide with obstacles"""
+        if self.current_health > 0:
+            self.current_health -= 1
+        if self.current_health <= 0:
+            self.current_health = 0
 
     def movement(self):
         """Move the player's car left or right based on user input."""
@@ -33,6 +44,11 @@ class Player(pygame.sprite.Sprite):
         """Update player's speed"""
         level_info = get_level_info(level, levels_data)
         self.speed = level_info["speed"]
+
+    def reset(self):
+        """Reset player's values"""
+        self.speed = 70
+        self.current_health = 1000
 
     def update(self, level, levels_data):
         self.movement()
