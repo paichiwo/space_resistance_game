@@ -15,8 +15,6 @@ class Player(pygame.sprite.Sprite):
         self.speed = 70
         self.current_health = 100
         self.maximum_health = 100
-        self.health_bar_length = 100
-        self.health_ratio = self.maximum_health / self.health_bar_length
 
     def get_damage(self):
         """Get damage when collide with obstacles"""
