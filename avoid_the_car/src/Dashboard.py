@@ -16,8 +16,9 @@ class DashBoard:
         self.font = pygame.font.Font("font/pixela_regular.ttf", 14)
         self.font_bold = pygame.font.Font("font/pixela_bold.ttf", 14)
 
-        self.headers = ["TIME", "SPEED", "SCORE", "DIST", "FPS"]
-        self.header_x_positions = [20, 110, 220, 440, 540]
+        self.headers = ["DIST", "SPEED", "SCORE", "FPS"]
+        self.header_x_positions = [90, 170, 365, 470]
+        self.level_x_pos = 270
         self.header_y_pos = 740
         self.data_y_pos = 770
 
@@ -34,24 +35,6 @@ class DashBoard:
         for i, text in enumerate(text_list):
             self.screen.blit(text, (self.header_x_positions[i], self.header_y_pos))
 
-    def show_speed(self, speed):
-        """Display speed information"""
-        speed_text = self.font.render("{} km/h".format(speed), 0, self.font_color)
-        self.screen.blit(speed_text, (self.header_x_positions[1]-2, self.data_y_pos))
-
-    def show_score(self, obstacle_y_pos):
-        """Count and display score information"""
-        if obstacle_y_pos >= 702:
-            self.score += 1
-        score_text = self.font.render("{}".format("{:06}".format(self.score)), 0, self.font_color)
-        self.screen.blit(score_text, (self.header_x_positions[2], self.data_y_pos))
-
-    def show_level(self):
-        """Count and display level information"""
-        self.level = int(self.distance)+1
-        level_text = self.font.render("Level: {}".format(self.level), 0, self.font_color)
-        self.screen.blit(level_text, (330, 750))
-
     def show_distance(self, speed):
         """Display distance information"""
         current_time = pygame.time.get_ticks()
@@ -59,13 +42,35 @@ class DashBoard:
         distance = speed * time
         self.distance += distance
         self.start_time = current_time
-        distance_text = self.font.render("{:.2f} km".format(self.distance), 0, self.font_color)
-        self.screen.blit(distance_text, (self.header_x_positions[3]-10, self.data_y_pos))
+        text = self.font.render("{:.2f}".format(self.distance), 0, self.font_color)
+        self.screen.blit(text, (self.header_x_positions[0]+5, self.data_y_pos))
+
+    def show_speed(self, speed):
+        """Display speed information"""
+        text = self.font.render("{}".format(speed), 0, self.font_color)
+        self.screen.blit(text, (self.header_x_positions[1]+20, self.data_y_pos))
+
+    def show_health(self, health):
+        text = self.font.render("{}".format(health), 0, self.font_color)
+        self.screen.blit(text, (self.level_x_pos, self.header_y_pos))
+
+    def show_level(self):
+        """Count and display level information"""
+        self.level = int(self.distance)+1
+        text = self.font.render("Level: {}".format(self.level), 0, self.font_color)
+        self.screen.blit(text, (self.level_x_pos, self.data_y_pos))
+
+    def show_score(self, obstacle_y_pos):
+        """Count and display score information"""
+        if obstacle_y_pos >= 702:
+            self.score += 1
+        text = self.font.render("{}".format("{:06}".format(self.score)), 0, self.font_color)
+        self.screen.blit(text, (self.header_x_positions[2]+4, self.data_y_pos))
 
     def show_fps(self):
         """Display the current FPS rate"""
-        fps_text = self.font.render("{:.2f}".format(self.clock.get_fps()), 0, self.font_color)
-        self.screen.blit(fps_text, (self.header_x_positions[4]-5, self.data_y_pos))
+        text = self.font.render("{:.2f}".format(self.clock.get_fps()), 0, self.font_color)
+        self.screen.blit(text, (self.header_x_positions[3]-3, self.data_y_pos))
 
     def reset(self):
         """Reset dashboard values"""
@@ -74,10 +79,11 @@ class DashBoard:
         self.distance = 0
         self.level = 1
 
-    def update(self, speed, obstacle_y_pos):
+    def update(self, speed, health, obstacle_y_pos):
         self.draw_background_and_headers()
-        self.show_speed(speed)
-        self.show_score(obstacle_y_pos)
-        self.show_level()
         self.show_distance(speed)
+        self.show_speed(speed)
+        self.show_health(health)
+        self.show_level()
+        self.show_score(obstacle_y_pos)
         self.show_fps()
