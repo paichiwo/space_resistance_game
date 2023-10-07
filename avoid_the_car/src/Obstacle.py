@@ -37,6 +37,17 @@ class Obstacle(pygame.sprite.Sprite):
             level_info = levels_data[f"level{level}"]
             self.rect.y += level_info["scroll"]
 
+    def stay_on_road(self):
+        """Keep the player's car within road boundaries."""
+        if self.rect.x >= 390:
+            self.rect.x -= 10
+        if self.rect.x <= 160:
+            self.rect.x += 10
+
+    def bump(self):
+        self.rect.x -= 10
+        self.rect.midbottom = (self.rect.x, self.rect.y - 2)
+
     def destroy(self):
         """Destroy an off-screen obstacle"""
         if self.rect.y >= 800:
@@ -44,4 +55,5 @@ class Obstacle(pygame.sprite.Sprite):
 
     def update(self, level, levels_data):
         self.movement(level, levels_data)
+        self.stay_on_road()
         self.destroy()

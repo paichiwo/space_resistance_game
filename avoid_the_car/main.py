@@ -83,6 +83,7 @@ class Game:
         """Game over condition"""
         if pygame.sprite.spritecollide(self.player_sprite.sprite, self.obstacle_group, False):
             self.player.get_damage()
+            self.obstacle_group.sprites()[0].bump()
         if self.player.current_health <= 0:
             return False
         else:
