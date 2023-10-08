@@ -1,5 +1,7 @@
 import sys
 import pygame
+
+from src.player import Player
 from src.background import Background
 
 
@@ -22,6 +24,8 @@ class Game:
 
         # Create game objects
         self.bg = Background(self.screen, self.window_height)
+        self.player = Player(self.bg.bg_1.get_width(), self.window_height)
+        self.player_sprite = pygame.sprite.GroupSingle(self.player)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -36,6 +40,8 @@ class Game:
         """Update all game objects"""
         self.screen.fill("black")
         self.bg.update()
+        self.player_sprite.draw(self.screen)
+        self.player.update()
 
     def game_loop(self):
         while True:
