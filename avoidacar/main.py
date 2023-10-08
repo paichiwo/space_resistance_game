@@ -20,7 +20,7 @@ class Game:
 
         # Game setup
         pygame.init()
-        pygame.display.set_caption("Racing Game")
+        pygame.display.set_caption("Avoidacar v0.1")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.start_time = pygame.time.get_ticks()  # Game start time

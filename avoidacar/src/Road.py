@@ -1,5 +1,5 @@
 import pygame
-from avoid_the_car.src.utils import get_level_info
+from avoidacar.src.utils import get_level_info
 
 
 class Road:
