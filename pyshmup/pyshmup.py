@@ -12,6 +12,7 @@ class Game:
         self.window_width = 320
         self.window_height = 180
         self.fps = 60
+        self.running = True
 
         # Game setup
         pygame.init()
@@ -19,9 +20,8 @@ class Game:
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
 
+        # Create game objects
         self.bg = Background(self.screen, self.window_height)
-
-        self.running = True
 
     def handle_events(self, event):
         """Handle game events"""
