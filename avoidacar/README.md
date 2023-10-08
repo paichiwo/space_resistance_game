@@ -1,4 +1,4 @@
-# 1.AVOIDACAR
+# 1. AVOIDACAR
 
 # Story:
 This is the first game I have developed myself using pygame framework. 
