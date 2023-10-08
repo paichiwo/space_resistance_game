@@ -1,5 +1,6 @@
 import sys
 import pygame
+from src.background import Background
 
 
 class Game:
@@ -15,8 +16,10 @@ class Game:
         # Game setup
         pygame.init()
         pygame.display.set_caption("pyshump")
-        self.screen = pygame.display.set_mode((self.window_width, self.window_height))
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
+
+        self.bg = Background(self.screen, self.window_height)
 
         self.running = True
 
@@ -31,7 +34,8 @@ class Game:
 
     def update_game(self):
         """Update all game objects"""
-        pass
+        self.screen.fill("black")
+        self.bg.update()
 
     def game_loop(self):
         while True:
