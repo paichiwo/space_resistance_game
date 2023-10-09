@@ -1,6 +1,6 @@
 import sys
 import pygame
-
+import pygame._sdl2 as pg_sdl2
 from src.player import Player
 from src.background import Background
 
@@ -13,14 +13,23 @@ class Game:
         # Game constants
         self.window_width = 320
         self.window_height = 180
+        self.scale = 4
         self.fps = 60
         self.running = True
 
         # Game setup
         pygame.init()
         pygame.display.set_caption("pyshump")
-        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.SCALED, vsync=1)
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height),
+                                              flags=pygame.RESIZABLE | pygame.HIDDEN | pygame.SCALED,
+                                              vsync=1)
         self.clock = pygame.time.Clock()
+
+        # Scaled window setup
+        self.window = pg_sdl2.Window.from_display_module()
+        self.window.size = (self.window_width * self.scale, self.window_height * self.scale)
+        self.window.position = pg_sdl2.WINDOWPOS_CENTERED
+        self.window.show()
 
         # Create game objects
         self.bg = Background(self.screen, self.window_height)
