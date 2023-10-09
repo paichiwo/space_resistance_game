@@ -30,7 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.frames_left_2 = [self.ship_left_2_a, self.ship_left_2_b]
         self.frames_left_2_anim_index = 0
 
-        self.frames_right_1 = [self.ship_right_1_a, self.ship_right_1_b]
+        self.frames_right_1 = [self.ship_right_1_a, self.ship_right_1_b, self.ship_right_2_a]
         self.frames_right_1_anim_index = 0
         self.frames_right_2 = [self.ship_right_2_a, self.ship_right_2_b]
         self.frames_right_2_anim_index = 0
@@ -78,6 +78,8 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             self.rect.x -= 2
             self.animate_left()
+            # measure key pressed
+            # animate most left (left 2)
 
         if keys[pygame.K_RIGHT]:
             self.rect.x += 2
