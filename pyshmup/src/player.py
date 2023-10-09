@@ -2,6 +2,7 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
+
     def __init__(self, bg_img_width, window_height, *args):
         super().__init__(*args)
 
@@ -10,26 +11,27 @@ class Player(pygame.sprite.Sprite):
 
         self.ship_mid_a = pygame.image.load("assets/img/ship/ship_middle_a.png").convert_alpha()
         self.ship_mid_b = pygame.image.load("assets/img/ship/ship_middle_b.png").convert_alpha()
-
         self.frames = [self.ship_mid_a, self.ship_mid_b]
         self.anim_index = 0
-
         self.image = None
         self.rect = None
 
         self.render()
 
     def render(self):
+        """Render player image"""
         self.image = self.frames[self.anim_index]
         self.rect = self.image.get_rect(midbottom=(self.bg_img_width / 2, self.window_height - 10))
 
     def animate(self):
+        """Rules for animating the player"""
         self.anim_index += 0.8
         if self.anim_index >= len(self.frames):
             self.anim_index = 0
         self.image = self.frames[int(self.anim_index)]
 
     def movement(self):
+        """Rules for moving the player"""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.rect.y -= 2
