@@ -25,6 +25,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = None
 
         self.shots = pygame.sprite.Group()
+        self.shot_cooldown = 0
+        self.shot_speed = 5  # in frames
 
         self.render()
 
@@ -61,6 +63,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += 2
             self.animate_right()
 
+    def action(self):
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot()
 
@@ -76,13 +80,21 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = self.window_height
 
     def shoot(self):
-        new_shot = Shot(self.rect)
-        self.shots.add(new_shot)
+        if self.shot_cooldown == 0:
+            new_shot = Shot(self.rect)
+            self.shots.add(new_shot)
+            self.shot_cooldown = self.shot_speed
+
+    def handle_shot_cooldown(self):
+        if self.shot_cooldown > 0:
+            self.shot_cooldown -= 1
 
     def update(self):
         self.movement()
+        self.action()
         self.stay_within_boundaries()
         self.shots.update()
+        self.handle_shot_cooldown()
 
 
 class Fumes(pygame.sprite.Sprite):
@@ -124,7 +136,13 @@ class Shot(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/img/shot/laser_a.png")
         self.rect = self.image.get_rect(midbottom=player_rect.midtop)
 
-    def update(self):
+    def movement(self):
         self.rect.y -= 5
+
+    def kill_off_screen(self):
         if self.rect.bottom < 0:
             self.kill()
+
+    def update(self):
+        self.movement()
+        self.kill_off_screen()
