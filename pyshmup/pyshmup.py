@@ -3,6 +3,7 @@ import pygame
 import pygame._sdl2 as pg_sdl2
 from src.player import Player, Fumes
 from src.background import Background
+from src.enemy import Enemy
 
 
 class Game:
@@ -36,6 +37,8 @@ class Game:
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
+        self.enemy = Enemy(self.bg.bg_1.get_width(), self.window_height)
+        self.enemy_sprite = pygame.sprite.Group(self.enemy)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -54,6 +57,8 @@ class Game:
         self.player.shots.draw(self.screen)
         self.player.update()
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
+        self.enemy_sprite.draw(self.screen)
+        self.enemy_sprite.update()
 
     def game_loop(self):
         while True:
