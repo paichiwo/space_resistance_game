@@ -34,8 +34,8 @@ class Game:
         # Create game objects
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
-        self.fume = Fumes()
-        self.player_sprite = pygame.sprite.Group(self.fume, self.player)
+        self.fumes = Fumes()
+        self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -52,7 +52,7 @@ class Game:
         self.bg.update()
         self.player_sprite.draw(self.screen)
         self.player.update()
-        self.fume.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
+        self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
 
     def game_loop(self):
         while True:
