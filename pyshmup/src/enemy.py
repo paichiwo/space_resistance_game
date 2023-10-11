@@ -1,0 +1,44 @@
+import math
+
+import pygame
+
+
+class Enemy(pygame.sprite.Sprite):
+
+    def __init__(self, bg_img_width, window_height):
+        super().__init__()
+
+        self.bg_img_width = bg_img_width
+        self.window_height = window_height
+
+        self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png")
+        self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_b.png")
+        self.enemy_sm_frames = [self.enemy_sm_1, self.enemy_sm_2]
+        self.enemy_sm_index = 0
+
+        self.image = self.enemy_sm_frames[self.enemy_sm_index]
+        self.rect = self.image.get_rect(midbottom=(20, 100))
+
+        self.speed = 1.2
+        self.amplitude = 50  # Adjust the amplitude as needed
+        self.frequency = 0.02  # Adjust the frequency as needed
+        self.initial_x = self.rect.x  # Store the initial x-position for the wave
+
+    def animate(self):
+        self.enemy_sm_index += 0.5
+        if self.enemy_sm_index >= len(self.enemy_sm_frames):
+            self.enemy_sm_index = 0
+        self.image = self.enemy_sm_frames[int(self.enemy_sm_index)]
+
+    def movement(self):
+        self.rect.x += self.speed
+
+    def kill_off_screen(self):
+        if self.rect.left > self.bg_img_width or self.rect.right < 0:
+            self.kill()
+
+    def update(self):
+        self.animate()
+        self.movement()
+        self.kill_off_screen()
+    
