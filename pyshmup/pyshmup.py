@@ -51,6 +51,7 @@ class Game:
         self.screen.fill("black")
         self.bg.update()
         self.player_sprite.draw(self.screen)
+        self.player.shots.draw(self.screen)
         self.player.update()
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
 
