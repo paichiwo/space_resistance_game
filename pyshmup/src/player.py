@@ -1,5 +1,3 @@
-import time
-
 import pygame
 
 
@@ -25,6 +23,8 @@ class Player(pygame.sprite.Sprite):
 
         self.image = None
         self.rect = None
+
+        self.shots = pygame.sprite.Group()
 
         self.render()
 
@@ -52,17 +52,17 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.rect.y -= 2
-
         if keys[pygame.K_DOWN]:
             self.rect.y += 2
-
         if keys[pygame.K_LEFT]:
             self.rect.x -= 2
             self.animate_left()
-
         if keys[pygame.K_RIGHT]:
             self.rect.x += 2
             self.animate_right()
+
+        if keys[pygame.K_SPACE]:
+            self.shoot()
 
     def stay_within_boundaries(self):
         """Rules to stay on the screen"""
@@ -75,9 +75,14 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom > self.window_height:
             self.rect.bottom = self.window_height
 
+    def shoot(self):
+        new_shot = Shot(self.rect)
+        self.shots.add(new_shot)
+
     def update(self):
         self.movement()
         self.stay_within_boundaries()
+        self.shots.update()
 
 
 class Fumes(pygame.sprite.Sprite):
@@ -109,3 +114,17 @@ class Fumes(pygame.sprite.Sprite):
 
     def update(self, player_pos):
         self.animate_fumes(player_pos)
+
+
+class Shot(pygame.sprite.Sprite):
+
+    def __init__(self, player_rect):
+        super().__init__()
+
+        self.image = pygame.image.load("assets/img/shot/laser_a.png")
+        self.rect = self.image.get_rect(midbottom=player_rect.midtop)
+
+    def update(self):
+        self.rect.y -= 5
+        if self.rect.bottom < 0:
+            self.kill()
