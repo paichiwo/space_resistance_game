@@ -64,8 +64,20 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += 2
             self.animate_right()
 
+    def stay_within_boundaries(self):
+        """Rules to stay on the screen"""
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > self.bg_img_width:
+            self.rect.right = self.bg_img_width
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > self.window_height:
+            self.rect.bottom = self.window_height
+
     def update(self):
         self.movement()
+        self.stay_within_boundaries()
 
 
 class Fumes(pygame.sprite.Sprite):
@@ -89,7 +101,7 @@ class Fumes(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def animate_fumes(self, player_pos):
-        self.fumes_index += 0.8
+        self.fumes_index += 0.5
         if self.fumes_index >= len(self.fumes_frames):
             self.fumes_index = 0
         self.image = self.fumes_frames[int(self.fumes_index)]
