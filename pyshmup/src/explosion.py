@@ -5,12 +5,12 @@ class Explosion(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        explosion_1 = pygame.image.load("assets/img/explosion/explosion_a.png")
-        explosion_2 = pygame.image.load("assets/img/explosion/explosion_b.png")
-        explosion_3 = pygame.image.load("assets/img/explosion/explosion_c.png")
-        explosion_4 = pygame.image.load("assets/img/explosion/explosion_d.png")
-        explosion_5 = pygame.image.load("assets/img/explosion/explosion_e.png")
-        explosion_6 = pygame.image.load("assets/img/explosion/explosion_f.png")
+        explosion_1 = pygame.image.load("assets/img/explosion/explosion_a.png").convert_alpha()
+        explosion_2 = pygame.image.load("assets/img/explosion/explosion_b.png").convert_alpha()
+        explosion_3 = pygame.image.load("assets/img/explosion/explosion_c.png").convert_alpha()
+        explosion_4 = pygame.image.load("assets/img/explosion/explosion_d.png").convert_alpha()
+        explosion_5 = pygame.image.load("assets/img/explosion/explosion_e.png").convert_alpha()
+        explosion_6 = pygame.image.load("assets/img/explosion/explosion_f.png").convert_alpha()
 
         self.explosion_frames = [explosion_1, explosion_2, explosion_3, explosion_4, explosion_5, explosion_6]
         self.explosion_index = 0
