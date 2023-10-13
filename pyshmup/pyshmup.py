@@ -4,6 +4,7 @@ import pygame._sdl2 as pg_sdl2
 from src.player import Player, Fumes
 from src.background import Background
 from src.enemy import Enemy
+from src.explosion import Explosion
 
 
 class Game:
@@ -39,6 +40,7 @@ class Game:
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy = Enemy(self.bg.bg_1.get_width(), self.window_height)
         self.enemy_sprite = pygame.sprite.Group(self.enemy)
+        self.explosions = pygame.sprite.Group()
 
     def handle_events(self, event):
         """Handle game events"""
@@ -61,18 +63,26 @@ class Game:
         self.enemy_sprite.update()
         self.shot_collide()
 
-    def hit_the_enemy(self, hits):
-        for hit_enemy in hits:
-            hit_enemy.energy -= self.player.shot_power
+        self.explosions.draw(self.screen)
+        self.explosions.update()
 
     def shot_collide(self):
+
         for shot in self.player.shots:
             hits = pygame.sprite.spritecollide(shot, self.enemy_sprite, False)
             if hits:
                 shot.kill()
-                self.hit_the_enemy(hits)
+
+                for hit_enemy in hits:
+                    explosion = Explosion()
+                    explosion.rect.center = hit_enemy.rect.center
+                    hit_enemy.energy -= self.player.shot_power
+                    self.explosions.add(explosion)
+
                 for enemy in self.enemy_sprite:
-                    enemy.destroy()
+                    if enemy.energy <= 0:
+                        enemy.destroy()
+                        self.explosions.add(explosion)
 
     def game_loop(self):
         while True:
