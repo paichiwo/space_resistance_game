@@ -42,6 +42,7 @@ class Game:
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy = Enemy(self.bg.bg_1.get_width(), self.window_height)
         self.enemy_sprite = pygame.sprite.Group(self.enemy)
+        self.explosion = Explosion()
         self.explosions = pygame.sprite.Group()
 
     def handle_events(self, event):
@@ -81,15 +82,15 @@ class Game:
                 shot.kill()
 
                 for hit_enemy in hits:
-                    explosion = Explosion()
-                    explosion.rect.center = hit_enemy.rect.center
+
+                    self.explosion.rect.center = hit_enemy.rect.center
                     hit_enemy.energy -= self.player.shot_power
-                    self.explosions.add(explosion)
+                    self.explosions.add(self.explosion)
 
                 for enemy in self.enemy_sprite:
                     if enemy.energy <= 0:
                         enemy.destroy()
-                        self.explosions.add(explosion)
+                        self.explosions.add(self.explosion)
 
     def game_loop(self):
         while True:
