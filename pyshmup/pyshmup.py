@@ -59,6 +59,20 @@ class Game:
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
         self.enemy_sprite.draw(self.screen)
         self.enemy_sprite.update()
+        self.shot_collide()
+
+    def hit_the_enemy(self, hits):
+        for hit_enemy in hits:
+            hit_enemy.energy -= self.player.shot_power
+
+    def shot_collide(self):
+        for shot in self.player.shots:
+            hits = pygame.sprite.spritecollide(shot, self.enemy_sprite, False)
+            if hits:
+                shot.kill()
+                self.hit_the_enemy(hits)
+                for enemy in self.enemy_sprite:
+                    enemy.destroy()
 
     def game_loop(self):
         while True:
