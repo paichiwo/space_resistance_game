@@ -20,9 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(20, 100))
 
         self.speed = 1.2
-        self.amplitude = 50  # Adjust the amplitude as needed
-        self.frequency = 0.02  # Adjust the frequency as needed
-        self.initial_x = self.rect.x  # Store the initial x-position for the wave
+        self.energy = 20
 
     def animate(self):
         self.enemy_sm_index += 0.5
@@ -32,6 +30,10 @@ class Enemy(pygame.sprite.Sprite):
 
     def movement(self):
         self.rect.x += self.speed
+
+    def destroy(self):
+        if self.energy <= 0:
+            self.kill()
 
     def kill_off_screen(self):
         if self.rect.left > self.bg_img_width or self.rect.right < 0:
