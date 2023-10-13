@@ -26,7 +26,8 @@ class Player(pygame.sprite.Sprite):
 
         self.shots = pygame.sprite.Group()
         self.shot_cooldown = 0
-        self.shot_speed = 5  # in frames
+        self.shot_speed = 10  # in frames
+        self.shot_power = 10
 
         self.render()
 
