@@ -1,5 +1,3 @@
-import math
-
 import pygame
 
 
@@ -11,8 +9,8 @@ class Enemy(pygame.sprite.Sprite):
         self.bg_img_width = bg_img_width
         self.window_height = window_height
 
-        self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png")
-        self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_b.png")
+        self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png").convert_alpha()
+        self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_b.png").convert_alpha()
         self.enemy_sm_frames = [self.enemy_sm_1, self.enemy_sm_2]
         self.enemy_sm_index = 0
 
