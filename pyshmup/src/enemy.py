@@ -32,8 +32,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x += self.speed
 
     def destroy(self):
-        if self.energy <= 0:
-            self.kill()
+        self.kill()
 
     def kill_off_screen(self):
         if self.rect.left > self.bg_img_width or self.rect.right < 0:
