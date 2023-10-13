@@ -5,6 +5,7 @@ from src.player import Player, Fumes
 from src.background import Background
 from src.enemy import Enemy
 from src.explosion import Explosion
+from src.dashboard import Dashboard
 
 
 class Game:
@@ -34,6 +35,7 @@ class Game:
         self.window.show()
 
         # Create game objects
+        self.dashboard = Dashboard(self.screen)
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
@@ -54,17 +56,22 @@ class Game:
     def update_game(self):
         """Update all game objects"""
         self.screen.fill("black")
+
         self.bg.update()
+
         self.player_sprite.draw(self.screen)
         self.player.shots.draw(self.screen)
         self.player.update()
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
+
         self.enemy_sprite.draw(self.screen)
         self.enemy_sprite.update()
-        self.shot_collide()
 
+        self.shot_collide()
         self.explosions.draw(self.screen)
         self.explosions.update()
+
+        self.dashboard.update()
 
     def shot_collide(self):
 
