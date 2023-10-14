@@ -55,7 +55,7 @@ class Game:
 
         if self.running:
             if event.type == self.enemy_timer_1:
-                pygame.time.set_timer(self.enemy_timer_1, 2000)
+                pygame.time.set_timer(self.enemy_timer_1, 500)
                 self.enemy_sprite_group.add(Enemy(self.screen, self.bg.bg_1.get_width(), self.window_height))
 
     def update_game(self):
