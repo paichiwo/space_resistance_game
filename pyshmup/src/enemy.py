@@ -5,71 +5,55 @@ import pygame
 
 class Enemy(pygame.sprite.Sprite):
 
-    def __init__(self, screen, bg_img_width, window_height):
+    def __init__(self,  bg_img_width, window_height, enemy_size):
         super().__init__()
 
-        self.screen = screen
         self.bg_img_width = bg_img_width
         self.window_height = window_height
+        self.enemy_size = enemy_size
 
-        self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png").convert_alpha()
-        self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_b.png").convert_alpha()
-        self.enemy_sm_frames = [self.enemy_sm_1, self.enemy_sm_2]
-        self.enemy_sm_index = 0
+        if enemy_size == "sm":
+            self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png").convert_alpha()
+            self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_b.png").convert_alpha()
+            self.enemy_frames = [self.enemy_sm_1, self.enemy_sm_2]
+            self.enemy_index = 0
+            self.speed = 2
+            self.energy = 20
+        elif enemy_size == "md":
+            self.enemy_md_1 = pygame.image.load("assets/img/enemy/enemy-medium_a.png").convert_alpha()
+            self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_b.png").convert_alpha()
+            self.enemy_frames = [self.enemy_md_1, self.enemy_md_2]
+            self.enemy_index = 0
+            self.speed = 1
+            self.energy = 40
+        elif enemy_size == "lg":
+            self.enemy_lg_1 = pygame.image.load("assets/img/enemy/enemy-big_a.png").convert_alpha()
+            self.enemy_lg_2 = pygame.image.load("assets/img/enemy/enemy-big_b.png").convert_alpha()
+            self.enemy_frames = [self.enemy_lg_1, self.enemy_lg_2]
+            self.enemy_index = 0
+            self.speed = 1
+            self.energy = 50
 
-        self.image = self.enemy_sm_frames[self.enemy_sm_index]
-
-        self.rect = self.image.get_rect(center=(random.randint(10, 250), -10))
-
-        self.speed = 2
-        self.energy = 20
+        self.image = self.enemy_frames[self.enemy_index]
+        self.rect = self.image.get_rect(center=(random.randint(10, 250), -5))
 
     def animate(self):
-        self.enemy_sm_index += 0.5
-        if self.enemy_sm_index >= len(self.enemy_sm_frames):
-            self.enemy_sm_index = 0
-        self.image = self.enemy_sm_frames[int(self.enemy_sm_index)]
+        self.enemy_index += 0.5
+        if self.enemy_index >= len(self.enemy_frames):
+            self.enemy_index = 0
+        self.image = self.enemy_frames[int(self.enemy_index)]
 
     def movement(self):
         self.rect.y += self.speed
-
-        # coordinates = self.paths.movement(self.paths.patterns["trapezoid_1"])
-        # self.rect.center = coordinates
-        # pygame.draw.lines(self.screen, "gray", True, self.paths.patterns["trapezoid_1"])
 
     def destroy(self):
         self.kill()
 
     def kill_off_screen(self):
-        if self.rect.left > self.bg_img_width:
+        if self.rect.top > self.window_height:
             self.kill()
 
     def update(self):
         self.animate()
         self.movement()
         self.kill_off_screen()
-
-
-# class Paths:
-#     def __init__(self):
-#         super().__init__()
-#
-#         self.patterns = {
-#             "trapezoid_1": [(-10, 50), (100, 50), (150, 100), (300, 150)]
-#         }
-#
-#         self.pattern_index = 0
-#         self.position = self.patterns["trapezoid_1"][self.pattern_index]
-#         self.speed = 1
-#
-#     def movement(self, pattern):
-#         direction = pygame.math.Vector2(pattern[0]) - self.position
-#         if direction.length() <= self.speed:
-#             self.position = pattern[0]
-#             pattern.append(pattern[0])
-#             pattern.pop(0)
-#         else:
-#             direction.scale_to_length(self.speed)
-#             new_position = pygame.math.Vector2(self.position) + direction
-#             self.position = (new_position.x, new_position.y)
-#         return self.position
