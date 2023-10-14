@@ -84,14 +84,14 @@ class Game:
                 shot.kill()
                 for hit_enemy in hits:
                     hit_enemy.energy -= self.player.shot_power
-                    self.dashboard.score += 10
+                    self.dashboard.score += hit_enemy.shot_score
                     self.explosions.add(Explosion(hit_enemy.rect.center))
 
                 for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
                         enemy.destroy()
                         self.explosions.add(Explosion(enemy.rect.center))
-                        self.dashboard.score += 50
+                        self.dashboard.score += enemy.kill_score
 
     def game_loop(self):
         while True:
