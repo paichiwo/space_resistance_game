@@ -8,6 +8,7 @@ class Dashboard:
         self.screen = screen
 
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
+
         self.logo_img = pygame.image.load("assets/img/ui/pyshmup_logo.png").convert_alpha()
         self.rect = self.logo_img.get_rect(midtop=(288, 12))
 
@@ -29,7 +30,13 @@ class Dashboard:
             rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[i]))
             self.screen.blit(text, rect)
 
+    def draw_score(self):
+        text = self.font.render("{:06}".format(self.score), False, "white")
+        rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[0] + 10))
+        self.screen.blit(text, rect)
+
     def update(self):
         self.draw_dashboard_bg()
         self.draw_logo()
         self.draw_headers()
+        self.draw_score()
