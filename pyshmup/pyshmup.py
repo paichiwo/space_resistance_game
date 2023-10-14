@@ -40,7 +40,7 @@ class Game:
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
-        self.enemy = Enemy(self.bg.bg_1.get_width(), self.window_height)
+        self.enemy = Enemy(self.screen, self.bg.bg_1.get_width(), self.window_height)
         self.enemy_sprite = pygame.sprite.Group(self.enemy)
         self.explosion = Explosion()
         self.explosions = pygame.sprite.Group()
