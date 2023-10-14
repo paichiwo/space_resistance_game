@@ -40,10 +40,12 @@ class Game:
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
-        self.enemy = Enemy(self.screen, self.bg.bg_1.get_width(), self.window_height)
-        self.enemy_sprite = pygame.sprite.Group(self.enemy)
-        self.explosion = Explosion()
+        self.enemy_sprite_group = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
+
+        # timer_1
+        self.enemy_timer_1 = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.enemy_timer_1, 1500)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -52,47 +54,46 @@ class Game:
             sys.exit()
 
         if self.running:
-            pass
+            if event.type == self.enemy_timer_1:
+                pygame.time.set_timer(self.enemy_timer_1, 2000)
+                self.enemy_sprite_group.add(Enemy(self.screen, self.bg.bg_1.get_width(), self.window_height))
 
     def update_game(self):
         """Update all game objects"""
         self.screen.fill("black")
 
         self.bg.update()
-
         self.player_sprite.draw(self.screen)
         self.player.shots.draw(self.screen)
         self.player.update()
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
-
-        self.enemy_sprite.draw(self.screen)
-        self.enemy_sprite.update()
-
+        self.enemy_sprite_group.draw(self.screen)
+        self.enemy_sprite_group.update()
         self.shot_collide()
         self.explosions.draw(self.screen)
         self.explosions.update()
-
         self.dashboard.update()
 
     def shot_collide(self):
 
         for shot in self.player.shots:
-            hits = pygame.sprite.spritecollide(shot, self.enemy_sprite, False)
+            hits = pygame.sprite.spritecollide(shot, self.enemy_sprite_group, False)
             if hits:
                 shot.kill()
-
                 for hit_enemy in hits:
-
-                    self.explosion.rect.center = hit_enemy.rect.center
+                    # explosion.rect.center = hit_enemy.rect.center
                     hit_enemy.energy -= self.player.shot_power
-                    self.explosions.add(self.explosion)
                     self.dashboard.score += 10
+                    self.explosions.add(Explosion(hit_enemy.rect.center))
 
-                for enemy in self.enemy_sprite:
+                for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
                         enemy.destroy()
-                        self.explosions.add(self.explosion)
+                        # explosion.rect.center = enemy.rect.center
+                        self.explosions.add(Explosion(enemy.rect.center))
                         self.dashboard.score += 50
+
+        # self.explosions.empty()
 
     def game_loop(self):
         while True:
