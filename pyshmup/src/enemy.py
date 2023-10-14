@@ -19,6 +19,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 2
             self.energy = 20
+            self.shot_score = 6
+            self.kill_score = 12
         elif enemy_size == "md":
             self.enemy_md_1 = pygame.image.load("assets/img/enemy/enemy-medium_a.png").convert_alpha()
             self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_b.png").convert_alpha()
@@ -26,6 +28,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 40
+            self.shot_score = 12
+            self.kill_score = 24
         elif enemy_size == "lg":
             self.enemy_lg_1 = pygame.image.load("assets/img/enemy/enemy-big_a.png").convert_alpha()
             self.enemy_lg_2 = pygame.image.load("assets/img/enemy/enemy-big_b.png").convert_alpha()
@@ -33,6 +37,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 50
+            self.shot_score = 24
+            self.kill_score = 48
 
         self.image = self.enemy_frames[self.enemy_index]
         self.rect = self.image.get_rect(center=(random.randint(10, 250), -5))
@@ -44,7 +50,7 @@ class Enemy(pygame.sprite.Sprite):
         self.image = self.enemy_frames[int(self.enemy_index)]
 
     def movement(self):
-        self.rect.y += self.speed
+        self.rect.bottom += self.speed
 
     def destroy(self):
         self.kill()
