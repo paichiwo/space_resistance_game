@@ -1,3 +1,4 @@
+import random
 import sys
 import pygame
 import pygame._sdl2 as pg_sdl2
@@ -17,7 +18,7 @@ class Game:
         self.window_width = 320
         self.window_height = 180
         self.scale = 4
-        self.fps = 60
+        self.fps = 120
         self.running = True
 
         # Game setup
@@ -55,8 +56,9 @@ class Game:
 
         if self.running:
             if event.type == self.enemy_timer_1:
-                pygame.time.set_timer(self.enemy_timer_1, 500)
-                self.enemy_sprite_group.add(Enemy(self.screen, self.bg.bg_1.get_width(), self.window_height))
+                pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
+                choice = random.choice(["sm", "sm", "sm", "sm", "sm", "md", "md", "lg"])
+                self.enemy_sprite_group.add(Enemy(self.bg.bg_1.get_width(), self.window_height, choice))
 
     def update_game(self):
         """Update all game objects"""
@@ -81,7 +83,6 @@ class Game:
             if hits:
                 shot.kill()
                 for hit_enemy in hits:
-                    # explosion.rect.center = hit_enemy.rect.center
                     hit_enemy.energy -= self.player.shot_power
                     self.dashboard.score += 10
                     self.explosions.add(Explosion(hit_enemy.rect.center))
@@ -89,11 +90,8 @@ class Game:
                 for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
                         enemy.destroy()
-                        # explosion.rect.center = enemy.rect.center
                         self.explosions.add(Explosion(enemy.rect.center))
                         self.dashboard.score += 50
-
-        # self.explosions.empty()
 
     def game_loop(self):
         while True:
