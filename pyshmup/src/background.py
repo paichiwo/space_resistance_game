@@ -13,8 +13,9 @@ class Background:
         self.bg_2 = pygame.image.load("assets/img/bg/river/river-background.png").convert_alpha()
         self.bg_3 = pygame.image.load("assets/img/bg/space/space-background.png").convert_alpha()
         self.img_height = self.bg_1.get_height()
-        self.panels = math.ceil(self.window_height / self.img_height + 2)
+        self.panels = math.ceil(self.window_height / self.img_height + 1)
         self.scroll = 0
+        self.speed = 0.5
 
     def scrolling(self):
         """Endless scroll method"""
@@ -23,7 +24,7 @@ class Background:
             self.screen.blit(self.bg_1, (0, y_pos))
             if abs(self.scroll) >= self.img_height:
                 self.scroll = 0
-        self.scroll += 1
+        self.scroll += self.speed
 
     def update(self):
         self.scrolling()
