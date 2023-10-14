@@ -18,7 +18,7 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy_sm_index = 0
 
         self.image = self.enemy_sm_frames[self.enemy_sm_index]
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(center=self.paths.patterns["trapezoid_1"][0])
 
         self.speed = 1.2
         self.energy = 20
