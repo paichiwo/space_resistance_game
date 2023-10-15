@@ -2,7 +2,7 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-
+    """Create the Player object"""
     def __init__(self, bg_img_width, window_height, *args):
         super().__init__(*args)
 
