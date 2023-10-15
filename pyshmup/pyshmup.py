@@ -77,7 +77,7 @@ class Game:
         self.dashboard.update()
 
     def shot_collide(self):
-
+        """When shot collides with the Enemy"""
         for shot in self.player.shots:
             hits = pygame.sprite.spritecollide(shot, self.enemy_sprite_group, False)
             if hits:
@@ -95,7 +95,6 @@ class Game:
 
     def game_loop(self):
         while True:
-
             for event in pygame.event.get():
                 self.handle_events(event)
             if self.running:
