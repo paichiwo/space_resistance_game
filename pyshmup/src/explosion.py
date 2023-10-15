@@ -2,6 +2,7 @@ import pygame
 
 
 class Explosion(pygame.sprite.Sprite):
+    """Create explosion object"""
     def __init__(self, enemy_pos):
         super().__init__()
 
