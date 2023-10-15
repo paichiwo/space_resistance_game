@@ -2,6 +2,7 @@ import pygame
 
 
 class Dashboard:
+    """All dashboard text and calculations"""
     def __init__(self, screen):
         super().__init__()
 
