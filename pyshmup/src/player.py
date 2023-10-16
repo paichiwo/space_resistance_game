@@ -24,6 +24,9 @@ class Player(pygame.sprite.Sprite):
         self.image = None
         self.rect = None
 
+        self.cur_energy = 100
+        self.max_energy = 100
+
         self.shots = pygame.sprite.Group()
         self.shot_cooldown = 0
         self.shot_speed = 10
@@ -89,6 +92,12 @@ class Player(pygame.sprite.Sprite):
     def handle_shot_cooldown(self):
         if self.shot_cooldown > 0:
             self.shot_cooldown -= 1
+
+    def get_damage(self):
+        if self.cur_energy > 0:
+            self.cur_energy -= 1
+        if self.cur_energy <= 0:
+            self.cur_energy = 0
 
     def update(self):
         self.movement()
