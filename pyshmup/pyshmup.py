@@ -7,12 +7,12 @@ from src.background import Background
 from src.enemy import Enemy
 from src.explosion import Explosion
 from src.dashboard import Dashboard
+from src.game_over_screen import GameOverScreen
 
 
 class Game:
 
     def __init__(self):
-        super().__init__()
 
         # Game constants
         self.window_width = 320
@@ -36,6 +36,7 @@ class Game:
         self.window.show()
 
         # Create game objects
+        self.game_over_screen = GameOverScreen(self.window_width, self.window_height, self.screen)
         self.dashboard = Dashboard(self.screen)
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
@@ -48,6 +49,8 @@ class Game:
         self.enemy_timer_1 = pygame.USEREVENT + 1
         pygame.time.set_timer(self.enemy_timer_1, 1500)
 
+        self.last_collision_time = 0
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -59,6 +62,9 @@ class Game:
                 pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
                 choice = random.choice(["sm", "sm", "sm", "sm", "sm", "md", "md", "lg"])
                 self.enemy_sprite_group.add(Enemy(self.bg.bg_1.get_width(), self.window_height, choice))
+        else:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.running = True
 
     def update_game(self):
         """Update all game objects"""
@@ -95,11 +101,23 @@ class Game:
                         self.dashboard.score += enemy.kill_score
 
     def player_enemy_collide(self):
-        for enemy in self.enemy_sprite_group:
-            if pygame.sprite.collide_mask(self.player, enemy):
-                self.player.get_damage(enemy.bump_power)
-                self.explosions.add(Explosion(self.player.rect.center))
+        collision_detected = False
+        cur_time = pygame.time.get_ticks()
 
+        for enemy in self.enemy_sprite_group:
+            if pygame.sprite.collide_mask(self.player, enemy) and not collision_detected:
+                if cur_time - self.last_collision_time >= 500:
+                    self.player.get_damage(enemy.bump_power)
+                    self.explosions.add(Explosion(self.player.rect.center))
+                    self.last_collision_time = pygame.time.get_ticks()
+
+    def game_over(self):
+        return not self.player.lives <= 0
+
+    def reset_game_values(self):
+        self.dashboard.score = 0
+        self.player.lives = 3
+        self.player.cur_energy = 100
 
     def game_loop(self):
         while True:
@@ -107,6 +125,11 @@ class Game:
                 self.handle_events(event)
             if self.running:
                 self.update_game()
+                self.running = self.game_over()
+            else:
+                self.game_over_screen.show()
+                self.reset_game_values()
+                self.enemy_sprite_group.empty()
 
             pygame.display.flip()
             self.clock.tick(self.fps)

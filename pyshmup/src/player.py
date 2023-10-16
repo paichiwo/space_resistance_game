@@ -98,7 +98,8 @@ class Player(pygame.sprite.Sprite):
         if self.cur_energy > 0:
             self.cur_energy -= damage_value
         if self.cur_energy <= 0:
-            self.cur_energy = 0
+            self.cur_energy = 100
+            self.deduct_life()
 
     def deduct_life(self):
         if self.lives > 0:
