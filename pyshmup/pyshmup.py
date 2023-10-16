@@ -72,9 +72,10 @@ class Game:
         self.enemy_sprite_group.draw(self.screen)
         self.enemy_sprite_group.update()
         self.shot_collide()
+        self.player_enemy_collide()
         self.explosions.draw(self.screen)
         self.explosions.update()
-        self.dashboard.update()
+        self.dashboard.update(self.player.cur_energy, self.player.max_energy)
 
     def shot_collide(self):
         """When shot collides with the Enemy"""
@@ -92,6 +93,16 @@ class Game:
                         enemy.destroy()
                         self.explosions.add(Explosion(enemy.rect.center))
                         self.dashboard.score += enemy.kill_score
+
+    def player_enemy_collide(self):
+        collision = False
+
+        for enemy in self.enemy_sprite_group:
+            if pygame.sprite.collide_rect(self.player, enemy):  # Check for collision
+                if not collision:  # Check if collision has already occurred
+                    self.player.get_damage()
+                    self.explosions.add(Explosion(self.player.rect.center))
+                    collision = True  # Set the collision flag
 
     def game_loop(self):
         while True:
