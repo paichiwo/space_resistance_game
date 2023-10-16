@@ -19,6 +19,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 2
             self.energy = 20
+            self.shot_power = 1
+            self.bump_power = 1
             self.shot_score = 6
             self.kill_score = 12
         elif enemy_size == "md":
@@ -28,6 +30,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 40
+            self.shot_power = 1
+            self.bump_power = 1
             self.shot_score = 12
             self.kill_score = 24
         elif enemy_size == "lg":
@@ -37,6 +41,8 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 50
+            self.shot_power = 1
+            self.bump_power = 1
             self.shot_score = 24
             self.kill_score = 48
 

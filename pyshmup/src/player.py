@@ -26,6 +26,7 @@ class Player(pygame.sprite.Sprite):
 
         self.cur_energy = 100
         self.max_energy = 100
+        self.lives = 3
 
         self.shots = pygame.sprite.Group()
         self.shot_cooldown = 0
@@ -93,11 +94,15 @@ class Player(pygame.sprite.Sprite):
         if self.shot_cooldown > 0:
             self.shot_cooldown -= 1
 
-    def get_damage(self):
+    def get_damage(self, damage_value):
         if self.cur_energy > 0:
-            self.cur_energy -= 1
+            self.cur_energy -= damage_value
         if self.cur_energy <= 0:
             self.cur_energy = 0
+
+    def deduct_life(self):
+        if self.lives > 0:
+            self.lives -= 1
 
     def update(self):
         self.movement()
@@ -145,6 +150,7 @@ class Shot(pygame.sprite.Sprite):
 
         self.image = pygame.image.load("assets/img/shot/laser_a.png")
         self.rect = self.image.get_rect(midbottom=player_rect.midtop)
+        self.rect.x -= 1
 
     def movement(self):
         self.rect.y -= 5

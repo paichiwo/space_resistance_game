@@ -37,8 +37,12 @@ class Dashboard:
         rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[0] + 10))
         self.screen.blit(text, rect)
 
-    def draw_lives(self):
-        pass
+    def draw_lives(self, lives):
+        life_x = self.headers_x_pos - 16
+        life_y = self.headers_y_pos[1] + 12
+        for _ in range(0, lives):
+            self.screen.blit(self.life_img, (life_x, life_y))
+            life_x += 12
 
     def draw_energy(self, current_energy, max_energy):
         energy_bar_length = 50
@@ -46,9 +50,10 @@ class Dashboard:
         bar_width = current_energy / ratio
         x = pygame.draw.rect(self.screen, "red", pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+14, bar_width, 8))
 
-    def update(self, energy, max_energy):
+    def update(self, lives, energy, max_energy):
         self.draw_dashboard_bg()
         self.draw_logo()
         self.draw_headers()
         self.draw_score()
+        self.draw_lives(lives)
         self.draw_energy(energy, max_energy)
