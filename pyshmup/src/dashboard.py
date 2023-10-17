@@ -40,7 +40,7 @@ class Dashboard:
     def draw_lives(self, lives):
         life_x = self.headers_x_pos - 16
         life_y = self.headers_y_pos[1] + 12
-        for _ in range(0, lives):
+        for _ in range(0, lives-1):
             self.screen.blit(self.life_img, (life_x, life_y))
             life_x += 12
 
