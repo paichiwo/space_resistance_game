@@ -85,10 +85,7 @@ class Game:
         self.explosions.draw(self.screen)
         self.explosions.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
-        if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
-            self.god_mode = False
-        if self.god_mode:
-            self.player.god_mode()
+        self.check_god_mode()
 
     def shot_collide(self):
         """When shot collides with the Enemy"""
@@ -100,7 +97,6 @@ class Game:
                     hit_enemy.energy -= self.player.shot_power
                     self.dashboard.score += hit_enemy.shot_score
                     self.explosions.add(Explosion(hit_enemy.rect.center))
-
                 for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
                         enemy.destroy()
@@ -129,8 +125,14 @@ class Game:
             if self.player.lives > 0:
                 self.player.lives -= 1
                 self.god_mode = True
-                self.god_timer = pygame.time.get_ticks() + 5000
+                self.god_timer = pygame.time.get_ticks() + 2000
                 self.enemy_sprite_group.empty()
+
+    def check_god_mode(self):
+        if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
+            self.god_mode = False
+        if self.god_mode:
+            self.player.god_mode()
 
     def game_over(self):
         return not self.player.lives <= 0
