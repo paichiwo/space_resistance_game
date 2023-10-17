@@ -51,6 +51,9 @@ class Game:
 
         self.last_collision_time = 0
 
+        self.god_mode = False
+        self.god_timer = None
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -63,7 +66,7 @@ class Game:
                 choice = random.choice(["sm", "sm", "sm", "sm", "sm", "md", "md", "lg"])
                 self.enemy_sprite_group.add(Enemy(self.bg.bg_1.get_width(), self.window_height, choice))
         else:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.running = True
 
     def update_game(self):
@@ -82,6 +85,10 @@ class Game:
         self.explosions.draw(self.screen)
         self.explosions.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
+        if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
+            self.god_mode = False
+        if self.god_mode:
+            self.player.god_mode()
 
     def shot_collide(self):
         """When shot collides with the Enemy"""
@@ -105,19 +112,34 @@ class Game:
         cur_time = pygame.time.get_ticks()
 
         for enemy in self.enemy_sprite_group:
-            if pygame.sprite.collide_mask(self.player, enemy) and not collision_detected:
+            if (
+                pygame.sprite.collide_mask(self.player, enemy)
+                and not collision_detected
+                and not self.god_mode
+            ):
                 if cur_time - self.last_collision_time >= 500:
                     self.player.get_damage(enemy.bump_power)
                     self.explosions.add(Explosion(self.player.rect.center))
                     self.last_collision_time = pygame.time.get_ticks()
+                    self.deduct_life()
+
+    def deduct_life(self):
+        if self.player.cur_energy <= 0:
+            self.player.cur_energy = 100
+            if self.player.lives > 0:
+                self.player.lives -= 1
+                self.god_mode = True
+                self.god_timer = pygame.time.get_ticks() + 5000
+                self.enemy_sprite_group.empty()
 
     def game_over(self):
         return not self.player.lives <= 0
 
     def reset_game_values(self):
         self.dashboard.score = 0
-        self.player.lives = 3
+        self.player.lives = 4
         self.player.cur_energy = 100
+        self.god_mode = False
 
     def game_loop(self):
         while True:
