@@ -21,12 +21,16 @@ class Player(pygame.sprite.Sprite):
         self.right_frames = [self.ship_right_1, self.ship_right_2]
         self.right_index = 0
 
+        self.empty = pygame.image.load("assets/img/ship/empty.png")
+        self.god_mode_frames = [self.ship_mid, self.empty, self.ship_mid]
+        self.god_mode_index = 0
+
         self.image = None
         self.rect = None
 
         self.cur_energy = 100
         self.max_energy = 100
-        self.lives = 3
+        self.lives = 4
 
         self.shots = pygame.sprite.Group()
         self.shot_cooldown = 0
@@ -97,13 +101,21 @@ class Player(pygame.sprite.Sprite):
     def get_damage(self, damage_value):
         if self.cur_energy > 0:
             self.cur_energy -= damage_value
-        if self.cur_energy <= 0:
-            self.cur_energy = 100
-            self.deduct_life()
 
-    def deduct_life(self):
-        if self.lives > 0:
-            self.lives -= 1
+    def god_mode(self):
+        self.god_mode_index += 0.5
+        if self.god_mode_index >= len(self.god_mode_frames):
+            self.god_mode_index = 1
+        self.image = self.god_mode_frames[int(self.god_mode_index)]
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            self.rect.y -= 2
+        if keys[pygame.K_DOWN]:
+            self.rect.y += 2
+        if keys[pygame.K_LEFT]:
+            self.rect.x += 0
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 0
 
     def update(self):
         self.movement()
