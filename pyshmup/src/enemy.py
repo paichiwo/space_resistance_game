@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -5,12 +6,14 @@ import pygame
 
 class Enemy(pygame.sprite.Sprite):
 
-    def __init__(self,  bg_img_width, window_height, enemy_size):
+    def __init__(self, screen, bg_img_width, window_height, enemy_size, player_rect):
         super().__init__()
 
+        self.screen = screen
         self.bg_img_width = bg_img_width
         self.window_height = window_height
         self.enemy_size = enemy_size
+        self.player_rect = player_rect
 
         if enemy_size == "sm":
             self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_a.png").convert_alpha()
@@ -46,6 +49,10 @@ class Enemy(pygame.sprite.Sprite):
             self.shot_score = 24
             self.kill_score = 48
 
+        self.shots = pygame.sprite.Group()
+        self.shot_delay = 2000
+        self.last_shot_time = pygame.time.get_ticks()
+
         self.image = self.enemy_frames[self.enemy_index]
         self.rect = self.image.get_rect(center=(random.randint(10, 250), -5))
 
@@ -58,6 +65,18 @@ class Enemy(pygame.sprite.Sprite):
     def movement(self):
         self.rect.bottom += self.speed
 
+    def shoot(self):
+        cur_time = pygame.time.get_ticks()
+        if cur_time - self.last_shot_time >= self.shot_delay:
+            dx = self.player_rect.centerx - self.rect.centerx
+            dy = self.player_rect.centery - self.rect.centery
+            angle = math.atan2(dy, dx)
+            direction = (math.cos(angle), math.sin(angle))
+
+            shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
+            self.shots.add(shot)
+            self.last_shot_time = cur_time
+
     def destroy(self):
         self.kill()
 
@@ -67,5 +86,35 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.animate()
+        self.movement()
+        self.kill_off_screen()
+        self.shoot()
+        self.shots.update()
+        self.shots.draw(self.screen)
+
+
+class EnemyShot(pygame.sprite.Sprite):
+    def __init__(self, enemy_rect, window_height, window_width, direction):
+        super().__init__()
+
+        self.window_height = window_height
+        self.window_width = window_width
+        self.direction = direction
+
+        self.image = pygame.image.load("assets/img/shot/shot_ball_b.png")
+        self.rect = self.image.get_rect(midbottom=enemy_rect.midbottom)
+        self.rect.x -= 1
+
+    def movement(self):
+        self.rect.x += self.direction[0] * 3
+        self.rect.y += self.direction[1] * 3
+
+    def kill_off_screen(self):
+        if self.rect.bottom > self.window_height or self.rect.bottom < 0:
+            self.kill()
+        if self.rect.left > self.window_width or self.rect.right < 0:
+            self.kill()
+
+    def update(self):
         self.movement()
         self.kill_off_screen()
