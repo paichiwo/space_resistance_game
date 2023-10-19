@@ -22,10 +22,11 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 2
             self.energy = 20
-            self.shot_power = 10
+            self.shot_power = 0
             self.bump_power = 20
             self.shot_score = 6
             self.kill_score = 12
+            self.can_shoot = False
         elif enemy_size == "md":
             self.enemy_md_1 = pygame.image.load("assets/img/enemy/enemy-medium_a.png").convert_alpha()
             self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_b.png").convert_alpha()
@@ -37,6 +38,7 @@ class Enemy(pygame.sprite.Sprite):
             self.bump_power = 40
             self.shot_score = 12
             self.kill_score = 24
+            self.can_shoot = True
         elif enemy_size == "lg":
             self.enemy_lg_1 = pygame.image.load("assets/img/enemy/enemy-big_a.png").convert_alpha()
             self.enemy_lg_2 = pygame.image.load("assets/img/enemy/enemy-big_b.png").convert_alpha()
@@ -48,9 +50,10 @@ class Enemy(pygame.sprite.Sprite):
             self.bump_power = 60
             self.shot_score = 24
             self.kill_score = 48
+            self.can_shoot = True
 
         self.shots = pygame.sprite.Group()
-        self.shot_delay = 2000
+        self.shot_delay = 1000
         self.last_shot_time = pygame.time.get_ticks()
 
         self.image = self.enemy_frames[self.enemy_index]
@@ -67,15 +70,16 @@ class Enemy(pygame.sprite.Sprite):
 
     def shoot(self):
         cur_time = pygame.time.get_ticks()
-        if cur_time - self.last_shot_time >= self.shot_delay:
-            dx = self.player_rect.centerx - self.rect.centerx
-            dy = self.player_rect.centery - self.rect.centery
-            angle = math.atan2(dy, dx)
-            direction = (math.cos(angle), math.sin(angle))
+        if self.can_shoot:
+            if cur_time - self.last_shot_time >= self.shot_delay:
+                dx = self.player_rect.centerx - self.rect.centerx
+                dy = self.player_rect.centery - self.rect.centery
+                angle = math.atan2(dy, dx)
+                direction = (math.cos(angle), math.sin(angle))
 
-            shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
-            self.shots.add(shot)
-            self.last_shot_time = cur_time
+                shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
+                self.shots.add(shot)
+                self.last_shot_time = cur_time
 
     def destroy(self):
         self.kill()
