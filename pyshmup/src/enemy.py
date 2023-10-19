@@ -94,11 +94,11 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class EnemyShot(pygame.sprite.Sprite):
-    def __init__(self, enemy_rect, window_height, window_width, direction):
+    def __init__(self, enemy_rect, window_width, window_height, direction):
         super().__init__()
 
-        self.window_height = window_height
         self.window_width = window_width
+        self.window_height = window_height
         self.direction = direction
 
         self.image = pygame.image.load("assets/img/shot/shot_ball_b.png")
