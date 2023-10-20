@@ -22,7 +22,6 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 2
             self.energy = 20
-            self.shot_power = 0
             self.bump_power = 20
             self.shot_score = 6
             self.kill_score = 12
@@ -34,7 +33,6 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 40
-            self.shot_power = 20
             self.bump_power = 40
             self.shot_score = 12
             self.kill_score = 24
@@ -46,11 +44,12 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_index = 0
             self.speed = 1
             self.energy = 50
-            self.shot_power = 40
             self.bump_power = 60
             self.shot_score = 24
             self.kill_score = 48
             self.can_shoot = True
+
+        self.shot_power = 20
 
         self.shots = pygame.sprite.Group()
         self.shot_delay = 1000
@@ -72,6 +71,7 @@ class Enemy(pygame.sprite.Sprite):
         cur_time = pygame.time.get_ticks()
         if self.can_shoot:
             if cur_time - self.last_shot_time >= self.shot_delay:
+
                 dx = self.player_rect.centerx - self.rect.centerx
                 dy = self.player_rect.centery - self.rect.centery
                 distance = math.sqrt(dx * dx + dy * dy)
@@ -85,7 +85,7 @@ class Enemy(pygame.sprite.Sprite):
         self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > self.window_height+100:
+        if self.rect.top > self.window_height * 2:
             self.kill()
 
     def update(self):
@@ -114,9 +114,7 @@ class EnemyShot(pygame.sprite.Sprite):
         self.rect.y += self.direction[1] * 3
 
     def kill_off_screen(self):
-        if self.rect.bottom > self.window_height or self.rect.bottom < 0:
-            self.kill()
-        if self.rect.left > self.window_width or self.rect.right < 0:
+        if self.rect.top > self.window_height or self.rect.bottom < 0 or self.rect.left > self.window_width or self.rect.right < 0:
             self.kill()
 
     def update(self):
