@@ -74,8 +74,8 @@ class Enemy(pygame.sprite.Sprite):
             if cur_time - self.last_shot_time >= self.shot_delay:
                 dx = self.player_rect.centerx - self.rect.centerx
                 dy = self.player_rect.centery - self.rect.centery
-                angle = math.atan2(dy, dx)
-                direction = (math.cos(angle), math.sin(angle))
+                distance = math.sqrt(dx * dx + dy * dy)
+                direction = (dx / distance, dy / distance)
 
                 shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
                 self.shots.add(shot)
@@ -85,7 +85,7 @@ class Enemy(pygame.sprite.Sprite):
         self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > self.window_height:
+        if self.rect.top > self.window_height+100:
             self.kill()
 
     def update(self):
