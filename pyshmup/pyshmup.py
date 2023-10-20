@@ -141,6 +141,7 @@ class Game:
                 self.god_mode = True
                 self.god_timer = pygame.time.get_ticks() + 2000
                 self.enemy_sprite_group.empty()
+                pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def check_god_mode(self):
         if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
