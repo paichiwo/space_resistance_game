@@ -53,7 +53,7 @@ class Dashboard:
         bar_width = current_energy / ratio
 
         energy_bar = pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+14, bar_width, 8)
-        energy_bar_outline = pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+13, energy_bar_length, 10)
+        energy_bar_outline = pygame.Rect(self.headers_x_pos-26, self.headers_y_pos[2]+13, energy_bar_length+2, 10)
 
         pygame.draw.rect(self.screen, self.color["RED"], energy_bar)
         pygame.draw.rect(self.screen, self.color["YELLOW"], energy_bar_outline, 1)
