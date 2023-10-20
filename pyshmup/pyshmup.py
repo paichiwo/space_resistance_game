@@ -2,6 +2,7 @@ import random
 import sys
 import pygame
 import pygame._sdl2 as pg_sdl2
+from src.utils import Config
 from src.player import Player, Fumes
 from src.background import Background
 from src.enemy import Enemy
@@ -13,6 +14,9 @@ from src.game_over_screen import GameOverScreen
 class Game:
 
     def __init__(self):
+
+        self.config = Config()
+        self.config_colors = self.config.color()
 
         # Game constants
         self.window_width = 320
@@ -37,7 +41,7 @@ class Game:
 
         # Create game objects
         self.game_over_screen = GameOverScreen(self.window_width, self.window_height, self.screen)
-        self.dashboard = Dashboard(self.screen)
+        self.dashboard = Dashboard(self.screen, self.config_colors)
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
