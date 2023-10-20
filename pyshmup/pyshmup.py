@@ -44,6 +44,8 @@ class Game:
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
         self.fumes = Fumes()
+
+        # Create game sprites
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy_sprite_group = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
@@ -52,10 +54,17 @@ class Game:
         self.enemy_timer_1 = pygame.USEREVENT + 1
         pygame.time.set_timer(self.enemy_timer_1, 1500)
 
+        # God mode when life lost
         self.last_collision_time = 0
-
         self.god_mode = False
         self.god_timer = None
+
+        # Life lost message
+        self.font = pygame.font.Font("assets/font/visitor1.ttf", 20)
+        self.font1 = pygame.font.Font("assets/font/visitor1.ttf", 22)
+        self.life_lost_text = None
+        self.life_lost_outline = None
+        self.life_lost_timer = 0
 
     def handle_events(self, event):
         """Handle game events"""
@@ -92,6 +101,7 @@ class Game:
         self.explosions.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
         self.check_god_mode()
+        self.show_lost_life_msg()
 
     def shot_collide(self):
         """When shot collides with the Enemy"""
@@ -141,16 +151,30 @@ class Game:
             self.player.cur_energy = 100
             if self.player.lives > 0:
                 self.player.lives -= 1
+
+                # set invincibility
                 self.god_mode = True
                 self.god_timer = pygame.time.get_ticks() + 2000
+
+                # stop spawning enemies for 2s
                 self.enemy_sprite_group.empty()
                 pygame.time.set_timer(self.enemy_timer_1, 2000)
+
+                # set data for a life-lost message
+                self.life_lost_outline = self.font.render("LIFE LOST", False, self.config_colors["BLACK"])
+                self.life_lost_text = self.font.render("LIFE LOST", False, self.config_colors["WHITE"])
+                self.life_lost_timer = self.god_timer - 500  # message display time
 
     def check_god_mode(self):
         if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
             self.god_mode = False
         if self.god_mode:
             self.player.god_mode()
+
+    def show_lost_life_msg(self):
+        if self.life_lost_text and pygame.time.get_ticks() <= self.life_lost_timer:
+            self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2-54, self.window_height // 2-19))
+            self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2-55, self.window_height // 2-20))
 
     def game_over(self):
         return not self.player.lives <= 0
