@@ -3,10 +3,11 @@ import pygame
 
 class Dashboard:
     """All dashboard text and calculations"""
-    def __init__(self, screen):
+    def __init__(self, screen, config_colors):
         super().__init__()
 
         self.screen = screen
+        self.color = config_colors
 
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
         self.logo_img = pygame.image.load("assets/img/ui/pyshmup_logo.png").convert_alpha()
@@ -27,14 +28,14 @@ class Dashboard:
         self.screen.blit(self.logo_img, self.rect)
 
     def draw_headers(self):
-        text_list = [self.font.render(header, False, "white") for header in self.headers]
+        text_list = [self.font.render(header, False, self.color["WHITE"]) for header in self.headers]
 
         for i, text in enumerate(text_list):
             rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[i]))
             self.screen.blit(text, rect)
 
     def draw_score(self):
-        text = self.font.render("{:06}".format(self.score), False, "white")
+        text = self.font.render("{:06}".format(self.score), False, self.color["WHITE"])
         rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[0] + 10))
         self.screen.blit(text, rect)
 
@@ -54,8 +55,8 @@ class Dashboard:
         energy_bar = pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+14, bar_width, 8)
         energy_bar_outline = pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+14, energy_bar_length, 8)
 
-        pygame.draw.rect(self.screen, "red", energy_bar)
-        pygame.draw.rect(self.screen, "yellow", energy_bar_outline, 1)
+        pygame.draw.rect(self.screen, self.color["RED"], energy_bar)
+        pygame.draw.rect(self.screen, self.color["YELLOW"], energy_bar_outline, 1)
 
     def update(self, lives, energy, max_energy):
         self.draw_dashboard_bg()
