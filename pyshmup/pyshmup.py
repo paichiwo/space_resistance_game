@@ -15,8 +15,7 @@ class Game:
 
     def __init__(self):
 
-        self.config = Config()
-        self.config_colors = self.config.color()
+        self.config_colors = Config().color()
 
         # Game constants
         self.window_width = 320
