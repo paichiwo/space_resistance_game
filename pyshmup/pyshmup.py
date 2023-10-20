@@ -84,6 +84,7 @@ class Game:
         self.enemy_sprite_group.update()
         self.shot_collide()
         self.player_enemy_collide()
+        self.enemy_shot_collide()
         self.explosions.draw(self.screen)
         self.explosions.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
@@ -119,6 +120,17 @@ class Game:
                     self.player.get_damage(enemy.bump_power)
                     self.explosions.add(Explosion(self.player.rect.center))
                     self.last_collision_time = pygame.time.get_ticks()
+                    self.deduct_life()
+
+    def enemy_shot_collide(self):
+        """When shot collides with the Enemy"""
+        for sprite in self.enemy_sprite_group.sprites():
+            for shot in sprite.shots:
+                hits = pygame.sprite.collide_mask(shot, self.player)
+                if hits:
+                    shot.kill()
+                    self.player.cur_energy -= sprite.shot_power
+                    self.explosions.add(Explosion(shot.rect.center))
                     self.deduct_life()
 
     def deduct_life(self):
