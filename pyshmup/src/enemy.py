@@ -52,7 +52,6 @@ class Enemy(pygame.sprite.Sprite):
         self.shot_power = 20
 
         self.shots = pygame.sprite.Group()
-        self.shot_delay = 1000
         self.last_shot_time = pygame.time.get_ticks()
 
         self.image = self.enemy_frames[self.enemy_index]
@@ -69,8 +68,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def shoot(self):
         cur_time = pygame.time.get_ticks()
+        shot_timing = random.randint(800, 1800)
         if self.can_shoot:
-            if cur_time - self.last_shot_time >= self.shot_delay:
+            if cur_time - self.last_shot_time >= shot_timing:
 
                 dx = self.player_rect.centerx - self.rect.centerx
                 dy = self.player_rect.centery - self.rect.centery
