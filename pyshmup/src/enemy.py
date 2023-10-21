@@ -105,9 +105,20 @@ class EnemyShot(pygame.sprite.Sprite):
         self.window_height = window_height
         self.direction = direction
 
-        self.image = pygame.image.load("assets/img/shot/shot_ball_b.png")
+        self.shot_ball_1 = self.image = pygame.image.load("assets/img/shot/shot_ball_a.png")
+        self.shot_ball_2 = self.image = pygame.image.load("assets/img/shot/shot_ball_b.png")
+        self.shot_ball_frames = [self.shot_ball_1, self.shot_ball_2]
+        self.shot_ball_index = 0
+
+        self.image = self.shot_ball_frames[self.shot_ball_index]
         self.rect = self.image.get_rect(midbottom=enemy_rect.midbottom)
         self.rect.x -= 1
+
+    def animate(self):
+        self.shot_ball_index += 0.5
+        if self.shot_ball_index >= len(self.shot_ball_frames):
+            self.shot_ball_index = 0
+        self.image = self.shot_ball_frames[int(self.shot_ball_index)]
 
     def movement(self):
         self.rect.x += self.direction[0] * 3
@@ -118,5 +129,6 @@ class EnemyShot(pygame.sprite.Sprite):
             self.kill()
 
     def update(self):
+        self.animate()
         self.movement()
         self.kill_off_screen()
