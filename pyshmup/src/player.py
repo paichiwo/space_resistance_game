@@ -130,8 +130,8 @@ class Fumes(pygame.sprite.Sprite):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.fumes_1 = pygame.image.load("assets/img/ship/fumes_1.png")
-        self.fumes_2 = pygame.image.load("assets/img/ship/fumes_2.png")
+        self.fumes_1 = pygame.image.load("assets/img/ship/fumes_1.png").convert_alpha()
+        self.fumes_2 = pygame.image.load("assets/img/ship/fumes_2.png").convert_alpha()
         self.fumes_frames = [self.fumes_1, self.fumes_2]
         self.fumes_index = 0
 
@@ -161,9 +161,20 @@ class Shot(pygame.sprite.Sprite):
     def __init__(self, player_rect):
         super().__init__()
 
-        self.image = pygame.image.load("assets/img/shot/laser_a.png")
+        self.laser_1 = pygame.image.load("assets/img/shot/laser_a.png").convert_alpha()
+        self.laser_2 = pygame.image.load("assets/img/shot/laser_b.png").convert_alpha()
+        self.laser_frames = [self.laser_1, self.laser_2]
+        self.laser_index = 0
+
+        self.image = self.laser_frames[0]
         self.rect = self.image.get_rect(midbottom=player_rect.midtop)
         self.rect.x -= 1
+
+    def animate(self):
+        self.laser_index += 0.5
+        if self.laser_index >= len(self.laser_frames):
+            self.laser_index = 0
+        self.image = self.laser_frames[int(self.laser_index)]
 
     def movement(self):
         self.rect.y -= 5
@@ -173,5 +184,6 @@ class Shot(pygame.sprite.Sprite):
             self.kill()
 
     def update(self):
+        self.animate()
         self.movement()
         self.kill_off_screen()
