@@ -77,7 +77,7 @@ class Game:
                 pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
                 width = self.bg.bg_1.get_width()
                 height = self.window_height
-                choice = random.choice(["sm", "sm", "sm", "sm", "sm", "md", "md", "lg"])
+                choice = random.choice(["sm", "sm2", "sm", "sm2", "sm", "md", "md", "lg"])
                 self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
