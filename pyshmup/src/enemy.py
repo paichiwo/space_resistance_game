@@ -114,7 +114,7 @@ class EnemyShot(pygame.sprite.Sprite):
         self.rect.y += self.direction[1] * 3
 
     def kill_off_screen(self):
-        if self.rect.top > self.window_height or self.rect.bottom < 0 or self.rect.left > self.window_width or self.rect.right < 0:
+        if self.rect.top > self.window_height or self.rect.bottom < 0 or self.rect.right < 0 or self.rect.left > self.window_width:
             self.kill()
 
     def update(self):
