@@ -166,7 +166,7 @@ class Shot(pygame.sprite.Sprite):
         self.laser_frames = [self.laser_1, self.laser_2]
         self.laser_index = 0
 
-        self.image = self.laser_frames[0]
+        self.image = self.laser_frames[self.laser_index]
         self.rect = self.image.get_rect(midbottom=player_rect.midtop)
         self.rect.x -= 1
 
