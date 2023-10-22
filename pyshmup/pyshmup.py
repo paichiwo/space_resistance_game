@@ -9,6 +9,7 @@ from src.enemy import Enemy
 from src.explosion import Explosion
 from src.dashboard import Dashboard
 from src.game_over_screen import GameOverScreen
+from src.powerup import PowerUp
 
 
 class Game:
@@ -49,10 +50,15 @@ class Game:
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy_sprite_group = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
+        self.powerups = pygame.sprite.Group()
 
         # timer_1
         self.enemy_timer_1 = pygame.USEREVENT + 1
         pygame.time.set_timer(self.enemy_timer_1, 1500)
+
+        # timer_2
+        self.energy_powerup_timer = pygame.USEREVENT + 2
+        pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
         # God mode when life lost
         self.last_collision_time = 0
@@ -79,6 +85,8 @@ class Game:
                 height = self.window_height
                 choice = random.choice(["sm", "sm2", "sm", "sm2", "sm", "md", "md", "lg"])
                 self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
+            if event.type == self.energy_powerup_timer:
+                self.powerups.add(PowerUp("energy"))
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.running = True
@@ -97,8 +105,11 @@ class Game:
         self.shot_collide()
         self.player_enemy_collide()
         self.enemy_shot_collide()
+        self.powerup_collision()
         self.explosions.draw(self.screen)
         self.explosions.update()
+        self.powerups.draw(self.screen)
+        self.powerups.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
         self.check_god_mode()
         self.show_lost_life_msg()
@@ -175,6 +186,12 @@ class Game:
         if self.life_lost_text and pygame.time.get_ticks() <= self.life_lost_timer:
             self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2-54, self.window_height // 2-19))
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2-55, self.window_height // 2-20))
+
+    def powerup_collision(self):
+        for powerup in self.powerups:
+            if pygame.sprite.collide_mask(powerup, self.player):
+                self.player.cur_energy = powerup.action(self.player.cur_energy, self.player.max_energy)
+                powerup.kill()
 
     def game_over(self):
         return not self.player.lives <= 0
