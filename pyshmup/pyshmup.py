@@ -109,7 +109,7 @@ class Game:
         self.enemy_sprite_group.update()
         self.explosions.update()
         self.powerups.update()
-        self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy)
+        self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
 
         # Check collisions
         self.player_shot_collision()
@@ -120,12 +120,13 @@ class Game:
 
         # Show messages
         self.show_lost_life_msg()
+
+        # Change levels
         self.change_level()
 
     def change_level(self):
         if self.bg.scroll_count == 2:
             self.level += 1
-            print(self.level)
             self.bg.change_bg(self.level)
             self.show_level_message()
             self.reset_level_values()
@@ -192,7 +193,7 @@ class Game:
 
     def deduct_life(self):
         if self.player.cur_energy <= 0:
-            self.player.cur_energy = 100
+            self.player.cur_energy = self.player.max_energy
             if self.player.lives > 0:
                 self.player.lives -= 1
 
@@ -231,6 +232,7 @@ class Game:
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     def reset_game_values(self):
+        self.level = 1
         self.dashboard.score = 0
         self.player.lives = 4
         self.player.cur_energy = 100
