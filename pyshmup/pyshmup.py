@@ -24,6 +24,7 @@ class Game:
         self.scale = 4
         self.fps = 120
         self.running = True
+        self.level = 1
 
         # Game setup
         pygame.init()
@@ -119,6 +120,14 @@ class Game:
 
         # Show messages
         self.show_lost_life_msg()
+
+        self.test()
+
+    def test(self):
+        if self.bg.scroll_count == 2:
+            self.level += 1
+            print(self.level)
+            self.bg.change_bg(self.level)
 
     def player_shot_collision(self):
         """When shot collides with the Enemy"""
