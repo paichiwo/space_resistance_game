@@ -16,7 +16,7 @@ class Dashboard:
 
         self.headers = ["SCORE", "LIVES", "ENERGY"]
         self.headers_x_pos = 288
-        self.headers_y_pos = [50, 85, 120]
+        self.headers_y_pos = [50, 80, 115, 160]
 
         self.score = 0
         self.lives = 3
@@ -58,10 +58,16 @@ class Dashboard:
         pygame.draw.rect(self.screen, self.color["RED"], energy_bar)
         pygame.draw.rect(self.screen, self.color["YELLOW"], energy_bar_outline, 1)
 
-    def update(self, lives, energy, max_energy):
+    def draw_levels(self, level):
+        text = self.font.render("LEVEL {}".format(level), False, self.color["WHITE"])
+        rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[3]))
+        self.screen.blit(text, rect)
+
+    def update(self, lives, energy, max_energy, level):
         self.draw_dashboard_bg()
         self.draw_logo()
         self.draw_headers()
         self.draw_score()
         self.draw_lives(lives)
         self.draw_energy(energy, max_energy)
+        self.draw_levels(level)
