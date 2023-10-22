@@ -92,8 +92,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.shots.add(shot)
                 self.last_shot_time = cur_time
 
-    def destroy(self):
-        self.kill()
+    def deduct_energy(self, player_shot_power):
+        self.energy -= player_shot_power
 
     def kill_off_screen(self):
         if self.rect.top > self.window_height * 2:
