@@ -104,7 +104,7 @@ class Game:
         self.powerups.draw(self.screen)
 
         # Update game elements
-        self.player.update()
+        self.player.update(self.god_mode)
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
         self.enemy_sprite_group.update()
         self.explosions.update()
@@ -213,8 +213,6 @@ class Game:
     def check_god_mode(self):
         if self.god_mode and pygame.time.get_ticks() >= self.god_timer:
             self.god_mode = False
-        if self.god_mode:
-            self.player.god_mode()
 
     def show_lost_life_msg(self):
         if self.life_lost_text and pygame.time.get_ticks() <= self.life_lost_timer:

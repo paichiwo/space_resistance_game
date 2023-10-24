@@ -22,8 +22,15 @@ class Player(pygame.sprite.Sprite):
         self.right_index = 0
 
         self.empty = pygame.image.load("assets/img/ship/empty.png")
-        self.god_mode_frames = [self.ship_mid, self.empty, self.ship_mid]
-        self.god_mode_index = 0
+
+        self.god_mode_mid_frames = [self.ship_mid, self.empty, self.ship_mid]
+        self.god_mode_mid_index = 0
+
+        self.god_mode_left_frames = [self.ship_left_1, self.empty, self.ship_left_2]
+        self.god_mode_left_index = 0
+
+        self.god_mode_right_frames = [self.ship_right_1, self.empty, self.ship_right_2]
+        self.god_mode_right_index = 0
 
         self.image = None
         self.rect = None
@@ -56,21 +63,51 @@ class Player(pygame.sprite.Sprite):
             self.right_index = 1
         self.image = self.right_frames[int(self.right_index)]
 
-    def movement(self):
-        """Rules for moving the player"""
-        self.image = self.ship_mid
+    def animate_god_mode_mid(self):
+        self.god_mode_mid_index += 0.5
+        if self.god_mode_mid_index >= len(self.god_mode_mid_frames):
+            self.god_mode_mid_index = 0
+        self.image = self.god_mode_mid_frames[int(self.god_mode_mid_index)]
 
+    def animate_god_mode_left(self):
+        self.god_mode_left_index += 0.5
+        if self.god_mode_left_index >= len(self.god_mode_left_frames):
+            self.god_mode_left_index = 0
+        self.image = self.god_mode_left_frames[int(self.god_mode_left_index)]
+
+    def animate_god_mode_right(self):
+        self.god_mode_right_index += 0.5
+        if self.god_mode_right_index >= len(self.god_mode_right_frames):
+            self.god_mode_right_index = 0
+        self.image = self.god_mode_right_frames[int(self.god_mode_right_index)]
+
+    def movement(self, god_mode):
+        """Rules for moving the player"""
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.rect.y -= 2
-        if keys[pygame.K_DOWN]:
-            self.rect.y += 2
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= 2
-            self.animate_left()
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += 2
-            self.animate_right()
+        if not god_mode:
+            self.image = self.ship_mid
+            if keys[pygame.K_UP]:
+                self.rect.y -= 2
+            if keys[pygame.K_DOWN]:
+                self.rect.y += 2
+            if keys[pygame.K_LEFT]:
+                self.rect.x -= 2
+                self.animate_left()
+            if keys[pygame.K_RIGHT]:
+                self.rect.x += 2
+                self.animate_right()
+        else:
+            self.animate_god_mode_mid()
+            if keys[pygame.K_UP]:
+                self.rect.y -= 2
+            if keys[pygame.K_DOWN]:
+                self.rect.y += 2
+            if keys[pygame.K_LEFT]:
+                self.rect.x -= 2
+                self.animate_god_mode_left()
+            if keys[pygame.K_RIGHT]:
+                self.rect.x += 2
+                self.animate_god_mode_right()
 
     def action(self):
         keys = pygame.key.get_pressed()
@@ -102,23 +139,8 @@ class Player(pygame.sprite.Sprite):
         if self.cur_energy > 0:
             self.cur_energy -= damage_value
 
-    def god_mode(self):
-        self.god_mode_index += 0.5
-        if self.god_mode_index >= len(self.god_mode_frames):
-            self.god_mode_index = 1
-        self.image = self.god_mode_frames[int(self.god_mode_index)]
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.rect.y -= 2
-        if keys[pygame.K_DOWN]:
-            self.rect.y += 2
-        if keys[pygame.K_LEFT]:
-            self.rect.x += 0
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += 0
-
-    def update(self):
-        self.movement()
+    def update(self, god_mode):
+        self.movement(god_mode)
         self.action()
         self.stay_within_boundaries()
         self.shots.update()
