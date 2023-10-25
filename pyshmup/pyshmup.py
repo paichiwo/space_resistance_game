@@ -105,7 +105,7 @@ class Game:
 
         # Update game elements
         self.player.update(self.god_mode)
-        self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1]+8))
+        self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
         self.enemy_sprite_group.update()
         self.explosions.update()
         self.powerups.update()
@@ -163,16 +163,14 @@ class Game:
         cur_time = pygame.time.get_ticks()
 
         for enemy in self.enemy_sprite_group:
-            if (
-                pygame.sprite.collide_mask(self.player, enemy)
-                and not collision_detected
-                and not self.god_mode
-            ):
-                if cur_time - self.last_collision_time >= 500:
-                    self.player.get_damage(enemy.bump_power)
-                    self.explosions.add(Explosion(self.player.rect.center))
-                    self.last_collision_time = pygame.time.get_ticks()
-                    self.deduct_life()
+            if (cur_time - self.last_collision_time >= 500
+                    and pygame.sprite.collide_mask(self.player, enemy)
+                    and not collision_detected
+                    and not self.god_mode):
+                self.player.get_damage(enemy.bump_power)
+                self.explosions.add(Explosion(self.player.rect.center))
+                self.last_collision_time = pygame.time.get_ticks()
+                self.deduct_life()
 
     def enemy_shot_collision(self):
         """When shot collides with the Enemy"""
@@ -216,8 +214,8 @@ class Game:
 
     def show_lost_life_msg(self):
         if self.life_lost_text and pygame.time.get_ticks() <= self.life_lost_timer:
-            self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2-54, self.window_height // 2-19))
-            self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2-55, self.window_height // 2-20))
+            self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2 - 54, self.window_height // 2 - 19))
+            self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
     def game_over(self):
         return not self.player.lives <= 0
