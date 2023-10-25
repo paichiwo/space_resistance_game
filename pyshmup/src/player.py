@@ -66,19 +66,19 @@ class Player(pygame.sprite.Sprite):
     def animate_god_mode_mid(self):
         self.god_mode_mid_index += 0.5
         if self.god_mode_mid_index >= len(self.god_mode_mid_frames):
-            self.god_mode_mid_index = 0
+            self.god_mode_mid_index = 1
         self.image = self.god_mode_mid_frames[int(self.god_mode_mid_index)]
 
     def animate_god_mode_left(self):
         self.god_mode_left_index += 0.5
         if self.god_mode_left_index >= len(self.god_mode_left_frames):
-            self.god_mode_left_index = 0
+            self.god_mode_left_index = 1
         self.image = self.god_mode_left_frames[int(self.god_mode_left_index)]
 
     def animate_god_mode_right(self):
         self.god_mode_right_index += 0.5
         if self.god_mode_right_index >= len(self.god_mode_right_frames):
-            self.god_mode_right_index = 0
+            self.god_mode_right_index = 1
         self.image = self.god_mode_right_frames[int(self.god_mode_right_index)]
 
     def movement(self, god_mode):
