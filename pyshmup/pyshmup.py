@@ -231,6 +231,7 @@ class Game:
 
     def reset_game_values(self):
         self.level = 1
+        self.bg.bg = self.bg.level_images[0]
         self.dashboard.score = 0
         self.player.lives = 4
         self.player.cur_energy = 100
