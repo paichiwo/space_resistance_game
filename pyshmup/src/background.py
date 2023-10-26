@@ -44,9 +44,5 @@ class Background:
             self.panels = self.get_panels()
             self.scroll_count = 0
 
-        # if level == 2:
-        #     self.panels = self.get_panels()
-        #     self.bg_1 = self.bg_2
-
     def update(self):
         self.scrolling()
