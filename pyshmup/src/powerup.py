@@ -2,6 +2,7 @@ import pygame
 
 
 class PowerUp(pygame.sprite.Sprite):
+    """Creates power-up objects"""
     def __init__(self, powerup_type):
         super().__init__()
 
