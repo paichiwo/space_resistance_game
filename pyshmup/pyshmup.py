@@ -16,9 +16,11 @@ class Game:
 
     def __init__(self):
 
+        # Load config
         self.config_colors = Config().color()
         self.enemy_choice_for_level = Config().enemy_choices()
         self.enemy_speeds = Config().enemy_speed()
+        self.enemy_spawning_intervals = Config().enemy_spawning_times()
 
         # Game constants
         self.window_width = 320
@@ -81,7 +83,7 @@ class Game:
 
         if self.running:
             if event.type == self.enemy_timer_1:
-                pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
+                self.set_timers_for_level()
                 self.set_enemies_for_level()
             if event.type == self.energy_powerup_timer:
                 self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
@@ -124,6 +126,11 @@ class Game:
         # Change levels
         self.change_level()
 
+    def set_timers_for_level(self):
+        if self.level in self.enemy_spawning_intervals:
+            min_interval, max_interval = self.enemy_spawning_intervals[self.level]
+            pygame.time.set_timer(self.enemy_timer_1, random.randint(max_interval, max_interval))
+
     def set_enemies_for_level(self):
         level = str(self.level)
         if level in self.enemy_choice_for_level:
@@ -142,7 +149,7 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 2:
+        if self.bg.scroll_count == 5:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
