@@ -9,18 +9,40 @@
     "enemy_choices": {
         "1": [
             {"choice": "sm1", "probability": 2},
-            {"choice": "sm2", "probability": 1}
+            {"choice": "sm2", "probability": 2},
+            {"choice": "md", "probability": 1}
+
         ],
         "2": [
-            {"choice":  "sm1", "probability": 3},
+            {"choice":  "sm1", "probability": 2},
             {"choice":  "sm2", "probability": 2},
-            {"choice":  "md", "probability": 1}
+            {"choice":  "md", "probability": 1},
+            {"choice":  "lg", "probability": 1}
         ],
         "3": [
-            {"choice": "sm1", "probability": 4},
-            {"choice": "sm2", "probability": 3},
+            {"choice": "sm1", "probability": 1},
+            {"choice": "sm2", "probability": 1},
             {"choice": "md", "probability": 2},
-            {"choice": "lg", "probability": 1}
+            {"choice": "lg", "probability": 2}
         ]
+    },
+    "enemy_speed": {
+        "1": {
+            "sm1": 1,
+            "sm2": 2,
+            "md": 1
+        },
+        "2": {
+            "sm1": 2,
+            "sm2": 1,
+            "md":  1,
+            "lg": 1
+        },
+        "3": {
+            "sm1": 2,
+            "sm2": 2,
+            "md": 1,
+            "lg": 1
+        }
     }
 }
