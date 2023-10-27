@@ -22,7 +22,7 @@ class PowerUp(pygame.sprite.Sprite):
             self.powerup_index = 0
         
         self.image = self.powerup_frames[self.powerup_index]
-        x_pos = random.randint(0, bg_img_width)
+        x_pos = random.randint(20, bg_img_width-20)
         self.rect = self.image.get_rect(center=(x_pos, -20))
         
     def animate(self):
