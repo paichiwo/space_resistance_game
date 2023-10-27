@@ -1,7 +1,7 @@
-import random
-import sys
 import pygame
 import pygame._sdl2 as pg_sdl2
+import random
+import sys
 from src.utils import Config
 from src.player import Player, Fumes
 from src.background import Background
@@ -83,7 +83,7 @@ class Game:
                 pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
                 self.set_enemies_for_level()
             if event.type == self.energy_powerup_timer:
-                self.powerups.add(PowerUp("energy"))
+                self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
                 pygame.time.set_timer(self.energy_powerup_timer, 15000)
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
@@ -233,7 +233,7 @@ class Game:
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
-        pygame.time.set_timer(self.enemy_timer_1, 4000)
+        pygame.time.set_timer(self.enemy_timer_1, 7000)
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     def reset_game_values(self):
