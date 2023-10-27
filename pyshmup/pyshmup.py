@@ -71,6 +71,23 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
+    def set_rules_for_levels(self):
+        if self.level == 1:
+            width = self.bg.bg.get_width()
+            height = self.window_height
+            choice = random.choice(["sm1", "sm1", "sm2"])
+            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
+        elif self.level == 2:
+            width = self.bg.bg.get_width()
+            height = self.window_height
+            choice = random.choice(["sm1", "sm1", "sm1", "sm2", "sm2", "md"])
+            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
+        elif self.level == 3:
+            width = self.bg.bg.get_width()
+            height = self.window_height
+            choice = random.choice(["sm1", "sm2", "sm1", "sm2", "sm1", "md", "md", "lg"])
+            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -80,12 +97,10 @@ class Game:
         if self.running:
             if event.type == self.enemy_timer_1:
                 pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
-                width = self.bg.bg_1.get_width()
-                height = self.window_height
-                choice = random.choice(["sm", "sm2", "sm", "sm2", "sm", "md", "md", "lg"])
-                self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
+                self.set_rules_for_levels()
             if event.type == self.energy_powerup_timer:
                 self.powerups.add(PowerUp("energy"))
+                pygame.time.set_timer(self.energy_powerup_timer, 15000)
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.running = True

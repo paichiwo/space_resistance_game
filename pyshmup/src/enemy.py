@@ -15,10 +15,10 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy_size = enemy_size
         self.player_rect = player_rect
 
-        if enemy_size == "sm":
-            self.enemy_sm_1 = pygame.image.load("assets/img/enemy/enemy-small_A1.png").convert_alpha()
-            self.enemy_sm_2 = pygame.image.load("assets/img/enemy/enemy-small_A2.png").convert_alpha()
-            self.enemy_frames = [self.enemy_sm_1, self.enemy_sm_2]
+        if enemy_size == "sm1":
+            self.enemy_sm1_1 = pygame.image.load("assets/img/enemy/enemy-small_A1.png").convert_alpha()
+            self.enemy_sm1_2 = pygame.image.load("assets/img/enemy/enemy-small_A2.png").convert_alpha()
+            self.enemy_frames = [self.enemy_sm1_1, self.enemy_sm1_2]
             self.enemy_index = 0
             self.speed = 2
             self.energy = 20
@@ -26,7 +26,7 @@ class Enemy(pygame.sprite.Sprite):
             self.shot_score = 6
             self.kill_score = 12
             self.can_shoot = False
-        if enemy_size == "sm2":
+        elif enemy_size == "sm2":
             self.enemy_sm2_1 = pygame.image.load("assets/img/enemy/enemy-small_B1.png").convert_alpha()
             self.enemy_sm2_2 = pygame.image.load("assets/img/enemy/enemy-small_B2.png").convert_alpha()
             self.enemy_frames = [self.enemy_sm2_1, self.enemy_sm2_2]
@@ -36,7 +36,7 @@ class Enemy(pygame.sprite.Sprite):
             self.bump_power = 20
             self.shot_score = 6
             self.kill_score = 12
-            self.can_shoot = False
+            self.can_shoot = True
         elif enemy_size == "md":
             self.enemy_md_1 = pygame.image.load("assets/img/enemy/enemy-medium_A1.png").convert_alpha()
             self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_A2.png").convert_alpha()
