@@ -18,6 +18,7 @@ class Game:
 
         self.config_colors = Config().color()
         self.enemy_choice_for_level = Config().enemy_choices()
+        self.enemy_speeds = Config().enemy_speed()
 
         # Game constants
         self.window_width = 320
@@ -131,7 +132,14 @@ class Game:
             choices = [entry["choice"] for entry in self.enemy_choice_for_level[level]]
             probabilities = [entry["probability"] for entry in self.enemy_choice_for_level[level]]
             enemy_choice = random.choices(choices, probabilities)[0]
-            self.enemy_sprite_group.add(Enemy(self.screen, width, height, enemy_choice, self.player.rect))
+            enemy_speeds = self.set_enemy_speeds()
+            self.enemy_sprite_group.add(Enemy(self.screen, width, height, enemy_choice, self.player.rect, enemy_speeds))
+
+    def set_enemy_speeds(self):
+        level = str(self.level)
+        if level in self.enemy_speeds:
+            speeds = self.enemy_speeds[level]
+            return speeds
 
     def change_level(self):
         if self.bg.scroll_count == 2:
