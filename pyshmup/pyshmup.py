@@ -17,6 +17,7 @@ class Game:
     def __init__(self):
 
         self.config_colors = Config().color()
+        self.enemy_choice_for_level = Config().enemy_choices()
 
         # Game constants
         self.window_width = 320
@@ -71,23 +72,6 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
-    def set_rules_for_levels(self):
-        if self.level == 1:
-            width = self.bg.bg.get_width()
-            height = self.window_height
-            choice = random.choice(["sm1", "sm1", "sm2"])
-            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
-        elif self.level == 2:
-            width = self.bg.bg.get_width()
-            height = self.window_height
-            choice = random.choice(["sm1", "sm1", "sm1", "sm2", "sm2", "md"])
-            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
-        elif self.level == 3:
-            width = self.bg.bg.get_width()
-            height = self.window_height
-            choice = random.choice(["sm1", "sm2", "sm1", "sm2", "sm1", "md", "md", "lg"])
-            self.enemy_sprite_group.add(Enemy(self.screen, width, height, choice, self.player.rect))
-
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -97,7 +81,7 @@ class Game:
         if self.running:
             if event.type == self.enemy_timer_1:
                 pygame.time.set_timer(self.enemy_timer_1, random.randint(500, 1500))
-                self.set_rules_for_levels()
+                self.set_enemies_for_level()
             if event.type == self.energy_powerup_timer:
                 self.powerups.add(PowerUp("energy"))
                 pygame.time.set_timer(self.energy_powerup_timer, 15000)
@@ -138,6 +122,16 @@ class Game:
 
         # Change levels
         self.change_level()
+
+    def set_enemies_for_level(self):
+        level = str(self.level)
+        if level in self.enemy_choice_for_level:
+            width = self.bg.bg.get_width()
+            height = self.window_height
+            choices = [entry["choice"] for entry in self.enemy_choice_for_level[level]]
+            probabilities = [entry["probability"] for entry in self.enemy_choice_for_level[level]]
+            enemy_choice = random.choices(choices, probabilities)[0]
+            self.enemy_sprite_group.add(Enemy(self.screen, width, height, enemy_choice, self.player.rect))
 
     def change_level(self):
         if self.bg.scroll_count == 2:
