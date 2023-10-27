@@ -16,3 +16,6 @@ class Config:
 
     def enemy_speed(self):
         return self.data["enemy_speed"]
+
+    def enemy_spawning_times(self):
+        return self.data["spawning_intervals"]
