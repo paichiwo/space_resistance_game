@@ -22,7 +22,7 @@ class Dashboard:
         self.lives = 3
 
     def draw_dashboard_bg(self):
-        pygame.draw.rect(self.screen, "grey2", pygame.Rect(256, 0, 64, 180))
+        pygame.draw.rect(self.screen, self.color["GREY"], pygame.Rect(256, 0, 64, 180))
 
     def draw_logo(self):
         self.screen.blit(self.logo_img, self.rect)
