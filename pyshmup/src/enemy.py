@@ -6,7 +6,7 @@ import pygame
 
 class Enemy(pygame.sprite.Sprite):
 
-    def __init__(self, screen, bg_img_width, window_height, enemy_size, player_rect):
+    def __init__(self, screen, bg_img_width, window_height, enemy_size, player_rect, enemy_speeds):
         super().__init__()
 
         self.screen = screen
@@ -14,13 +14,13 @@ class Enemy(pygame.sprite.Sprite):
         self.window_height = window_height
         self.enemy_size = enemy_size
         self.player_rect = player_rect
+        self.enemy_speeds = enemy_speeds
 
         if enemy_size == "sm1":
             self.enemy_sm1_1 = pygame.image.load("assets/img/enemy/enemy-small_A1.png").convert_alpha()
             self.enemy_sm1_2 = pygame.image.load("assets/img/enemy/enemy-small_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_sm1_1, self.enemy_sm1_2]
             self.enemy_index = 0
-            self.speed = 2
             self.energy = 20
             self.bump_power = 20
             self.shot_score = 6
@@ -31,7 +31,6 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_sm2_2 = pygame.image.load("assets/img/enemy/enemy-small_B2.png").convert_alpha()
             self.enemy_frames = [self.enemy_sm2_1, self.enemy_sm2_2]
             self.enemy_index = 0
-            self.speed = 2
             self.energy = 20
             self.bump_power = 20
             self.shot_score = 6
@@ -42,7 +41,6 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_md_1, self.enemy_md_2]
             self.enemy_index = 0
-            self.speed = 1
             self.energy = 40
             self.bump_power = 40
             self.shot_score = 12
@@ -53,13 +51,13 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_lg_2 = pygame.image.load("assets/img/enemy/enemy-big_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_lg_1, self.enemy_lg_2]
             self.enemy_index = 0
-            self.speed = 1
             self.energy = 50
             self.bump_power = 60
             self.shot_score = 24
             self.kill_score = 48
             self.can_shoot = True
 
+        self.speed = self.enemy_speeds[self.enemy_size]
         self.shot_power = 20
 
         self.shots = pygame.sprite.Group()
