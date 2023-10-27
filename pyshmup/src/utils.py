@@ -13,3 +13,6 @@ class Config:
 
     def enemy_choices(self):
         return self.data["enemy_choices"]
+
+    def enemy_speed(self):
+        return self.data["enemy_speed"]
