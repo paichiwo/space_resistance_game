@@ -78,7 +78,7 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
-        # Start game
+        # Start game with welcome screen
         self.welcome_screen_active = True
 
     def handle_events(self, event):
