@@ -81,33 +81,39 @@ class Player(pygame.sprite.Sprite):
             self.god_mode_right_index = 1
         self.image = self.god_mode_right_frames[int(self.god_mode_right_index)]
 
+    def movement_animation_normal_mode(self, keys):
+        self.image = self.ship_mid
+        if keys[pygame.K_UP]:
+            self.rect.y -= 2
+        if keys[pygame.K_DOWN]:
+            self.rect.y += 2
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= 2
+            self.animate_left()
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 2
+            self.animate_right()
+
+    def movement_animation_god_mode(self, keys):
+        self.animate_god_mode_mid()
+        if keys[pygame.K_UP]:
+            self.rect.y -= 2
+        if keys[pygame.K_DOWN]:
+            self.rect.y += 2
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= 2
+            self.animate_god_mode_left()
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 2
+            self.animate_god_mode_right()
+
     def movement(self, god_mode):
         """Rules for moving the player"""
         keys = pygame.key.get_pressed()
         if not god_mode:
-            self.image = self.ship_mid
-            if keys[pygame.K_UP]:
-                self.rect.y -= 2
-            if keys[pygame.K_DOWN]:
-                self.rect.y += 2
-            if keys[pygame.K_LEFT]:
-                self.rect.x -= 2
-                self.animate_left()
-            if keys[pygame.K_RIGHT]:
-                self.rect.x += 2
-                self.animate_right()
+            self.movement_animation_normal_mode(keys)
         else:
-            self.animate_god_mode_mid()
-            if keys[pygame.K_UP]:
-                self.rect.y -= 2
-            if keys[pygame.K_DOWN]:
-                self.rect.y += 2
-            if keys[pygame.K_LEFT]:
-                self.rect.x -= 2
-                self.animate_god_mode_left()
-            if keys[pygame.K_RIGHT]:
-                self.rect.x += 2
-                self.animate_god_mode_right()
+            self.movement_animation_god_mode(keys)
 
     def action(self):
         keys = pygame.key.get_pressed()
