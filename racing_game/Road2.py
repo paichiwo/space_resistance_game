@@ -43,7 +43,6 @@ class Road:
 
     def movement(self, level):
         """Adjust scrolling speed based on user input"""
-        keys = pygame.key.get_pressed()
         if level == 1:
             self.acc += 0.15
             self.increase = True
