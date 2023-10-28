@@ -2,10 +2,10 @@ import pygame
 
 
 class GameOverScreen:
-    def __init__(self, screen_width, screen_height, screen):
+    def __init__(self, screen, screen_width, screen_height):
+        self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.screen = screen
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
 
     def show(self):
