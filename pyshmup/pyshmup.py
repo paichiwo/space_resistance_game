@@ -164,7 +164,7 @@ class Game:
         pygame.display.flip()
         start = pygame.time.get_ticks()
         while pygame.time.get_ticks() - start < 1000:
-            pass
+            continue
 
     def player_shot_collision(self):
         """When shot collides with the Enemy"""
@@ -242,7 +242,7 @@ class Game:
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
     def game_over(self):
-        return not self.player.lives <= 0
+        return self.player.lives > 0
 
     def reset_level_values(self):
         self.god_mode = False
