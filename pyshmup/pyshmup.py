@@ -8,6 +8,7 @@ from src.background import Background
 from src.enemy import Enemy
 from src.explosion import Explosion
 from src.dashboard import Dashboard
+from src.welcome_screen import WelcomeScreen
 from src.game_over_screen import GameOverScreen
 from src.powerup import PowerUp
 
@@ -17,10 +18,11 @@ class Game:
     def __init__(self):
 
         # Load config
-        self.config_colors = Config().color()
-        self.enemy_choice_for_level = Config().enemy_choices()
-        self.enemy_speeds = Config().enemy_speed()
-        self.enemy_spawning_intervals = Config().enemy_spawning_times()
+        self.c = Config()
+        self.config_colors = self.c.color()
+        self.enemy_choice_for_level = self.c.enemy_choices()
+        self.enemy_speeds = self.c.enemy_speed()
+        self.enemy_spawning_intervals = self.c.enemy_spawning_times()
 
         # Game constants
         self.window_width = 320
@@ -45,7 +47,8 @@ class Game:
         self.window.show()
 
         # Create game objects
-        self.game_over_screen = GameOverScreen(self.window_width, self.window_height, self.screen)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height)
+        self.game_over_screen = GameOverScreen(self.screen, self.window_width, self.window_height)
         self.dashboard = Dashboard(self.screen, self.config_colors)
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg_1.get_width(), self.window_height)
@@ -75,22 +78,29 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
+        # Start game
+        self.welcome_screen_active = True
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        if self.running:
-            if event.type == self.enemy_timer_1:
-                self.set_timers_for_level()
-                self.set_enemies_for_level()
-            if event.type == self.energy_powerup_timer:
-                self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
-                pygame.time.set_timer(self.energy_powerup_timer, 15000)
-        else:
+        if self.welcome_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-                self.running = True
+                self.welcome_screen_active = False
+        else:
+            if self.running:
+                if event.type == self.enemy_timer_1:
+                    self.set_timers_for_level()
+                    self.set_enemies_for_level()
+                if event.type == self.energy_powerup_timer:
+                    self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
+                    pygame.time.set_timer(self.energy_powerup_timer, 15000)
+            else:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                    self.running = True
 
     def update_game(self):
         """Update all game objects"""
@@ -265,12 +275,15 @@ class Game:
         while True:
             for event in pygame.event.get():
                 self.handle_events(event)
-            if self.running:
-                self.update_game()
-                self.running = self.game_over()
+            if self.welcome_screen_active:
+                self.welcome_screen.show()
             else:
-                self.game_over_screen.show()
-                self.reset_game_values()
+                if self.running:
+                    self.update_game()
+                    self.running = self.game_over()
+                else:
+                    self.game_over_screen.show()
+                    self.reset_game_values()
 
             pygame.display.update()
             self.clock.tick(self.fps)
