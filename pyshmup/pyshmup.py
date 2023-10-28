@@ -129,7 +129,7 @@ class Game:
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
             min_interval, max_interval = self.enemy_spawning_intervals[self.level]
-            pygame.time.set_timer(self.enemy_timer_1, random.randint(max_interval, max_interval))
+            pygame.time.set_timer(self.enemy_timer_1, random.randint(min_interval, max_interval))
 
     def set_enemies_for_level(self):
         level = str(self.level)
@@ -248,7 +248,6 @@ class Game:
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
-        pygame.time.set_timer(self.enemy_timer_1, 7000)
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     def reset_game_values(self):
