@@ -78,17 +78,16 @@ class Enemy(pygame.sprite.Sprite):
     def shoot(self):
         cur_time = pygame.time.get_ticks()
         shot_timing = random.randint(800, 1800)
-        if self.can_shoot:
-            if cur_time - self.last_shot_time >= shot_timing:
 
-                dx = self.player_rect.centerx - self.rect.centerx
-                dy = self.player_rect.centery - self.rect.centery
-                distance = math.sqrt(dx * dx + dy * dy)
-                direction = (dx / distance, dy / distance)
+        if cur_time - self.last_shot_time >= shot_timing and self.can_shoot:
+            dx = self.player_rect.centerx - self.rect.centerx
+            dy = self.player_rect.centery - self.rect.centery
+            distance = math.sqrt(dx * dx + dy * dy)
+            direction = (dx / distance, dy / distance)
 
-                shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
-                self.shots.add(shot)
-                self.last_shot_time = cur_time
+            shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
+            self.shots.add(shot)
+            self.last_shot_time = cur_time
 
     def deduct_energy(self, player_shot_power):
         self.energy -= player_shot_power
