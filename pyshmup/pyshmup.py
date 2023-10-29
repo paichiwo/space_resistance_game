@@ -47,7 +47,7 @@ class Game:
         self.window.show()
 
         # Create game objects
-        self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors)
         self.game_over_screen = GameOverScreen(self.screen, self.window_width, self.window_height)
         self.dashboard = Dashboard(self.screen, self.config_colors)
         self.bg = Background(self.screen, self.window_height)
