@@ -80,6 +80,7 @@ class Game:
 
         # Start game with welcome screen
         self.welcome_screen_active = True
+        self.first_level_message = False
 
     def handle_events(self, event):
         """Handle game events"""
@@ -159,22 +160,31 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 5:
+        if self.bg.scroll_count == 1:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
             self.reset_level_values()
 
     def show_level_message(self):
+        start = pygame.time.get_ticks()
         text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
         rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
-
-        self.screen.fill(self.config_colors["BLACK"])
-        self.screen.blit(text, rect)
-        pygame.display.flip()
-        start = pygame.time.get_ticks()
         while pygame.time.get_ticks() - start < 1000:
-            continue
+            self.screen.fill(self.config_colors["BLACK"])
+            self.screen.blit(text, rect)
+            pygame.display.flip()
+
+    def show_first_level_message(self):
+        if not self.first_level_message:
+            start_time = pygame.time.get_ticks()
+            text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
+            rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
+            while pygame.time.get_ticks() - start_time < 2000:
+                self.screen.fill(self.config_colors["BLACK"])
+                self.screen.blit(text, rect)
+                pygame.display.flip()
+            self.first_level_message = True
 
     def player_shot_collision(self):
         """When shot collides with the Enemy"""
@@ -279,6 +289,7 @@ class Game:
                 self.welcome_screen.show()
             else:
                 if self.running:
+                    self.show_first_level_message()
                     self.update_game()
                     self.running = self.game_over()
                 else:
