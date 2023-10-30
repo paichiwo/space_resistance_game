@@ -33,9 +33,9 @@ class WelcomeScreen:
         self.planet_glow = pygame.image.load("assets/img/ui/rotating_planet/glow/glow.png")
         self.logo = pygame.image.load("assets/img/ui/space_resistance_logo.png").convert_alpha()
 
-        self.anim_delay1 = 100
-        self.anim_delay2 = 100
-        self.last_anim_update = pygame.time.get_ticks()
+        self.anim_delay = 100
+        self.bg_last_anim_update = pygame.time.get_ticks()
+        self.planet_last_anim_update = pygame.time.get_ticks()
 
     def show(self):
 
@@ -43,18 +43,18 @@ class WelcomeScreen:
 
         # Background animation
         cur = pygame.time.get_ticks()
-        if cur - self.last_anim_update >= self.anim_delay1:
+        if cur - self.bg_last_anim_update >= self.anim_delay:
             self.bg_index = (self.bg_index + 1) % len(self.bg_frames)
-            self.last_anim_update = cur
+            self.bg_last_anim_update = cur
 
         bg_frame = self.bg_frames[self.bg_index]
         self.screen.blit(bg_frame, (0, 0))
 
         # Planet animation
         cur = pygame.time.get_ticks()
-        if cur - self.last_anim_update >= self.anim_delay2:
+        if cur - self.planet_last_anim_update >= self.anim_delay:
             self.planet_index = (self.planet_index + 1) % len(self.planet_frames)
-            self.last_anim_update = cur
+            self.planet_last_anim_update = cur
 
         glow_rect = self.planet_glow.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
         self.screen.blit(self.planet_glow, glow_rect)
@@ -62,7 +62,6 @@ class WelcomeScreen:
         planet_frame = self.planet_frames[self.planet_index]
         planet_rect = planet_frame.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
         self.screen.blit(planet_frame, planet_rect)
-
 
         # Logo display
         logo_rect = self.logo.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
