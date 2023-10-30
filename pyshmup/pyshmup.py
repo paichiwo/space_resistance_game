@@ -166,7 +166,6 @@ class Game:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
-            self.reset_level_values()
 
     def show_level_message(self):
         start = pygame.time.get_ticks()
@@ -175,21 +174,25 @@ class Game:
         kills_text = self.font10.render(f"Enemy Kills: {self.enemy_kills}", False, self.config_colors["WHITE"])
         kills_rect = kills_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2 + 30))
 
-        while pygame.time.get_ticks() - start < 2000:
+        while pygame.time.get_ticks() - start < 3000:
             self.screen.fill(self.config_colors["BLACK"])
             self.screen.blit(level_text, level_rect)
             self.screen.blit(kills_text, kills_rect)
             pygame.display.flip()
+            self.reset_level_values()
+
 
     def show_first_level_message(self):
         if not self.first_level_message:
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
-            while pygame.time.get_ticks() - start_time < 2000:
+
+            while pygame.time.get_ticks() - start_time < 3000:
                 self.screen.fill(self.config_colors["BLACK"])
                 self.screen.blit(text, rect)
                 pygame.display.flip()
+                self.reset_game_values()
             self.screen.fill(self.config_colors["BLACK"])
             pygame.display.flip()
             self.first_level_message = True
@@ -278,7 +281,8 @@ class Game:
         self.enemy_sprite_group.empty()
         self.powerups.empty()
         self.enemy_kills = 0
-        pygame.time.set_timer(self.energy_powerup_timer, 5000)
+        self.god_mode = False
+        pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
         self.level = 1
