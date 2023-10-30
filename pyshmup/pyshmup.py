@@ -31,6 +31,7 @@ class Game:
         self.fps = 120
         self.running = True
         self.level = 1
+        self.enemy_kills = 0
 
         # Game setup
         pygame.init()
@@ -73,6 +74,7 @@ class Game:
         self.god_timer = None
 
         # Life lost message
+        self.font10 = pygame.font.Font("assets/font/visitor1.ttf", 10)
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 20)
         self.life_lost_text = None
         self.life_lost_outline = None
@@ -168,11 +170,15 @@ class Game:
 
     def show_level_message(self):
         start = pygame.time.get_ticks()
-        text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
-        rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
-        while pygame.time.get_ticks() - start < 1000:
+        level_text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
+        level_rect = level_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
+        kills_text = self.font10.render(f"Enemy Kills: {self.enemy_kills}", False, self.config_colors["WHITE"])
+        kills_rect = kills_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2 + 30))
+
+        while pygame.time.get_ticks() - start < 2000:
             self.screen.fill(self.config_colors["BLACK"])
-            self.screen.blit(text, rect)
+            self.screen.blit(level_text, level_rect)
+            self.screen.blit(kills_text, kills_rect)
             pygame.display.flip()
 
     def show_first_level_message(self):
@@ -184,6 +190,8 @@ class Game:
                 self.screen.fill(self.config_colors["BLACK"])
                 self.screen.blit(text, rect)
                 pygame.display.flip()
+            self.screen.fill(self.config_colors["BLACK"])
+            pygame.display.flip()
             self.first_level_message = True
 
     def player_shot_collision(self):
@@ -201,6 +209,7 @@ class Game:
                         enemy.kill()
                         self.explosions.add(Explosion(enemy.rect.center))
                         self.dashboard.score += enemy.kill_score
+                        self.enemy_kills += 1
 
     def player_enemy_collision(self):
         collision_detected = False
@@ -268,6 +277,7 @@ class Game:
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
+        self.enemy_kills = 0
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     def reset_game_values(self):
@@ -279,6 +289,7 @@ class Game:
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
+        self.enemy_kills = 0
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def game_loop(self):
@@ -288,8 +299,8 @@ class Game:
             if self.welcome_screen_active:
                 self.welcome_screen.show()
             else:
+                self.show_first_level_message()
                 if self.running:
-                    self.show_first_level_message()
                     self.update_game()
                     self.running = self.game_over()
                 else:
