@@ -181,14 +181,13 @@ class Game:
             pygame.display.flip()
             self.reset_level_values()
 
-
     def show_first_level_message(self):
         if not self.first_level_message:
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
 
-            while pygame.time.get_ticks() - start_time < 3000:
+            while pygame.time.get_ticks() - start_time < 2000:
                 self.screen.fill(self.config_colors["BLACK"])
                 self.screen.blit(text, rect)
                 pygame.display.flip()
