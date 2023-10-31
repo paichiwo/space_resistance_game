@@ -1,5 +1,4 @@
 import os
-
 import pygame
 
 
@@ -12,7 +11,7 @@ class WelcomeScreen:
         self.mid_screen = (self.screen_width // 2, self.screen_height // 2)
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
 
-        self.bg_dir = "assets/img/ui/welcome_screen"
+        self.bg_dir = "assets/img/ui/welcome_screen_bg"
         self.bg_frames = []
         self.bg_index = 0
         for bg_image in os.listdir(self.bg_dir):
