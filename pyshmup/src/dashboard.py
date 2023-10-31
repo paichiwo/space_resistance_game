@@ -1,3 +1,4 @@
+import os
 import pygame
 
 
@@ -9,10 +10,17 @@ class Dashboard:
         self.screen = screen
         self.color = config_colors
 
+        self.planet_dir = "assets/img/ui/rotating_planet_small"
+        self.planet_frames = []
+        self.planet_index = 0
+        for planet_image in os.listdir(self.planet_dir):
+            if planet_image.endswith(".png"):
+                planet_filename = os.path.join(self.planet_dir, planet_image)
+                planet_frame = pygame.image.load(planet_filename).convert_alpha()
+                self.planet_frames.append(planet_frame)
+
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
-        self.logo_img = pygame.image.load("assets/img/ui/pyshmup_logo.png").convert_alpha()
         self.life_img = pygame.image.load("assets/img/ui/ship_8x8.png").convert_alpha()
-        self.rect = self.logo_img.get_rect(midtop=(288, 12))
 
         self.headers = ["SCORE", "LIVES", "ENERGY"]
         self.headers_x_pos = 288
@@ -25,7 +33,12 @@ class Dashboard:
         pygame.draw.rect(self.screen, self.color["GREY"], pygame.Rect(256, 0, 64, 180))
 
     def draw_logo(self):
-        self.screen.blit(self.logo_img, self.rect)
+        self.planet_index += 0.1
+        if self.planet_index >= len(self.planet_frames):
+            self.planet_index = 0
+        image = self.planet_frames[int(self.planet_index)]
+        rect = image.get_rect(midtop=(self.headers_x_pos, 6))
+        self.screen.blit(image, rect)
 
     def draw_headers(self):
         text_list = [self.font.render(header, False, self.color["WHITE"]) for header in self.headers]
