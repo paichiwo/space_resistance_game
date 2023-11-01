@@ -6,10 +6,12 @@ from src.utils import Config
 from src.player import Player, Fumes
 from src.background import Background
 from src.enemy import Enemy
+from src.boss import Boss
 from src.explosion import Explosion
 from src.dashboard import Dashboard
 from src.welcome_screen import WelcomeScreen
 from src.game_over_screen import GameOverScreen
+from src.congrats_screen import CongratsScreen
 from src.powerup import PowerUp
 
 
@@ -50,14 +52,17 @@ class Game:
         # Create game objects
         self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors)
         self.game_over_screen = GameOverScreen(self.screen, self.window_width, self.window_height)
+        self.congrats_screen = CongratsScreen(self.screen, self.window_width, self.window_height)
         self.dashboard = Dashboard(self.screen, self.config_colors)
         self.bg = Background(self.screen, self.window_height)
-        self.player = Player(self.bg.bg_1.get_width(), self.window_height)
+        self.player = Player(self.bg.bg.get_width(), self.window_height)
         self.fumes = Fumes()
+        self.boss = Boss(self.bg.bg.get_width(), self.window_height)
 
         # Create game sprites
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy_sprite_group = pygame.sprite.Group()
+        self.boss_sprite = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         self.powerups = pygame.sprite.Group()
 
@@ -95,6 +100,7 @@ class Game:
                 self.welcome_screen_active = False
         else:
             if self.running:
+                self.set_last_level()
                 if event.type == self.enemy_timer_1:
                     self.set_timers_for_level()
                     self.set_enemies_for_level()
@@ -115,6 +121,7 @@ class Game:
         self.player_sprite.draw(self.screen)
         self.player.shots.draw(self.screen)
         self.enemy_sprite_group.draw(self.screen)
+        self.boss_sprite.draw(self.screen)
         self.explosions.draw(self.screen)
         self.powerups.draw(self.screen)
 
@@ -122,6 +129,7 @@ class Game:
         self.player.update(self.god_mode)
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
         self.enemy_sprite_group.update()
+        self.boss_sprite.update()
         self.explosions.update()
         self.powerups.update()
         self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
@@ -139,6 +147,12 @@ class Game:
         # Change levels
         self.change_level()
 
+        if self.level == 4:
+            if self.is_boss_killed():
+                self.congrats_screen.show()
+                self.running = False
+                self.reset_game_values()
+
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
             min_interval, max_interval = self.enemy_spawning_intervals[self.level]
@@ -154,6 +168,10 @@ class Game:
             enemy_choice = random.choices(choices, probabilities)[0]
             enemy_speeds = self.set_enemy_speeds()
             self.enemy_sprite_group.add(Enemy(self.screen, width, height, enemy_choice, self.player.rect, enemy_speeds))
+
+    def set_last_level(self):
+        if self.level == 4:
+            self.boss_sprite.add(self.boss)
 
     def set_enemy_speeds(self):
         level = str(self.level)
@@ -271,6 +289,9 @@ class Game:
         if self.life_lost_text and pygame.time.get_ticks() <= self.life_lost_timer:
             self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2 - 54, self.window_height // 2 - 19))
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
+
+    def is_boss_killed(self):
+        return self.level == 4 and not self.boss_sprite
 
     def game_over(self):
         return self.player.lives > 0
