@@ -24,8 +24,13 @@
             {"choice": "sm2", "probability": 1},
             {"choice": "md", "probability": 2},
             {"choice": "lg", "probability": 2}
+        ],
+        "4": [
+            {"choice": "sm1", "probability":  1},
+            {"choice": "sm2", "probability":  2}
         ]
     },
+
     "enemy_speed": {
         "1": {
             "sm1": 1,
@@ -43,12 +48,18 @@
             "sm2": 2,
             "md": 1,
             "lg": 1
+        },
+        "4": {
+            "sm1": 1,
+            "sm2": 2
         }
     },
+
     "spawning_intervals": {
         "1": [500, 1000],
         "2": [300, 1000],
-        "3": [300, 1000]
+        "3": [300, 1000],
+        "4": [300, 1000]
 
     }
 }
