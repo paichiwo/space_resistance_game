@@ -12,7 +12,7 @@ class Background:
         self.bg_1 = pygame.image.load("assets/img/bg/space/space-background.png").convert_alpha()
         self.bg_2 = pygame.image.load("assets/img/bg/desert/desert-background.png").convert_alpha()
         self.bg_3 = pygame.image.load("assets/img/bg/river/river-background.png").convert_alpha()
-        self.level_images = [self.bg_1, self.bg_2, self.bg_3]
+        self.level_images = [self.bg_1, self.bg_2, self.bg_3, self.bg_3]
         self.level_index = 0
         self.bg = self.level_images[self.level_index]
         self.panels = self.get_panels()
