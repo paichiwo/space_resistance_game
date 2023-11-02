@@ -75,3 +75,51 @@ class WelcomeScreen:
         start_text = self.font.render("PRESS 'S' TO START", True, self.colors["WHITE"])
         start_rect = start_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 70))
         self.screen.blit(start_text, start_rect)
+
+
+class GameOverScreen:
+    def __init__(self, screen, screen_width, screen_height):
+        self.screen = screen
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
+
+    def show(self):
+
+        self.screen.fill("black")
+
+        game_over_text = self.font.render("Game Over", True, "red")
+        restart_text = self.font.render("Press 'S' to START", True, "white")
+
+        game_over_rect = game_over_text.get_rect()
+        restart_rect = restart_text.get_rect()
+
+        game_over_rect.center = (self.screen_width // 2, self.screen_height // 2)
+        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 10)
+
+        self.screen.blit(game_over_text, game_over_rect)
+        self.screen.blit(restart_text, restart_rect)
+
+
+class CongratsScreen:
+    def __init__(self, screen, screen_width, screen_height):
+        self.screen = screen
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
+
+    def show(self):
+
+        self.screen.fill("black")
+
+        game_over_text = self.font.render("Game Won", True, "red")
+        restart_text = self.font.render("Play again ?", True, "white")
+
+        game_over_rect = game_over_text.get_rect()
+        restart_rect = restart_text.get_rect()
+
+        game_over_rect.center = (self.screen_width // 2, self.screen_height // 2)
+        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 10)
+
+        self.screen.blit(game_over_text, game_over_rect)
+        self.screen.blit(restart_text, restart_rect)
