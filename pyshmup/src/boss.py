@@ -14,7 +14,7 @@ class Boss(pygame.sprite.Sprite):
         self.boss_frames = [self.boss_img_1, self.boss_img_2]
         self.boss_index = 0
 
-        self.energy = 50
+        self.energy = 300
         self.bump_power = 60
         self.shot_score = 24
         self.kill_score = 48
@@ -46,6 +46,14 @@ class Boss(pygame.sprite.Sprite):
 
         self.rect.y += self.direction * self.vert_speed
 
+    def deduct_energy(self, player_shot_power):
+        self.energy -= player_shot_power
+
+    def dead(self):
+        if self.energy <= 0:
+            self.kill()
+
     def update(self):
         self.animate()
         self.movement()
+        self.dead()
