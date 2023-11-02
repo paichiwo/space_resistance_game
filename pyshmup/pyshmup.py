@@ -5,14 +5,11 @@ import sys
 from src.utils import Config
 from src.player import Player, Fumes
 from src.background import Background
-from src.enemy import Enemy
-from src.boss import Boss
+from src.enemy import Enemy, Boss
 from src.explosion import Explosion
 from src.dashboard import Dashboard
-from src.welcome_screen import WelcomeScreen
-from src.game_over_screen import GameOverScreen
-from src.congrats_screen import CongratsScreen
 from src.powerup import PowerUp
+from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
 
 class Game:
