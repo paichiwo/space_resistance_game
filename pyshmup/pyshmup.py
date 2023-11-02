@@ -32,7 +32,7 @@ class Game:
         self.scale = 4
         self.fps = 120
         self.running = True
-        self.level = 1
+        self.level = 4
         self.enemy_kills = 0
 
         # Game setup
@@ -62,7 +62,7 @@ class Game:
         # Create game sprites
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
         self.enemy_sprite_group = pygame.sprite.Group()
-        self.boss_sprite = pygame.sprite.Group()
+        self.boss_sprite = pygame.sprite.GroupSingle()
         self.explosions = pygame.sprite.Group()
         self.powerups = pygame.sprite.Group()
 
@@ -89,6 +89,9 @@ class Game:
         self.welcome_screen_active = True
         self.first_level_message = False
 
+        # Game_won
+        self.congrats_screen_active = False
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -98,6 +101,10 @@ class Game:
         if self.welcome_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.welcome_screen_active = False
+        if self.congrats_screen_active:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                self.welcome_screen_active = True
+
         else:
             if self.running:
                 self.set_last_level()
@@ -114,6 +121,9 @@ class Game:
     def update_game(self):
         """Update all game objects"""
         self.screen.fill("black")
+
+        # Change levels
+        self.change_level()
 
         self.bg.update()
 
@@ -144,14 +154,8 @@ class Game:
         # Show messages
         self.show_lost_life_msg()
 
-        # Change levels
-        self.change_level()
-
-        if self.level == 4:
-            if self.is_boss_killed():
-                self.congrats_screen.show()
-                self.running = False
-                self.reset_game_values()
+        # Check if boss is killed
+        self.is_boss_killed()
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -180,7 +184,7 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 1:
+        if self.bg.scroll_count == 1 and not self.level == 4:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
@@ -226,9 +230,21 @@ class Game:
                     self.explosions.add(Explosion(hit_enemy.rect.center))
                 for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
-                        enemy.kill()
                         self.explosions.add(Explosion(enemy.rect.center))
                         self.dashboard.score += enemy.kill_score
+                        self.enemy_kills += 1
+            boss_hits = pygame.sprite.spritecollide(shot, self.boss_sprite, False)
+            if boss_hits:
+                shot.kill()
+                for hit_boss in boss_hits:
+                    hit_boss.deduct_energy(self.player.shot_power)
+                    print(self.boss.energy)
+                    self.dashboard.score += hit_boss.shot_score
+                    self.explosions.add(Explosion(hit_boss.rect.center))
+                for boss in self.boss_sprite:
+                    if boss.energy <= 0:
+                        self.explosions.add(Explosion(boss.rect.center))
+                        self.dashboard.score += boss.kill_score
                         self.enemy_kills += 1
 
     def player_enemy_collision(self):
@@ -255,6 +271,22 @@ class Game:
                     self.player.cur_energy -= sprite.shot_power
                     self.explosions.add(Explosion(shot.rect.center))
                     self.deduct_life()
+
+    def player_boss_collision(self):
+        collision_detected = False
+        cur_time = pygame.time.get_ticks()
+        for boss in self.boss_sprite:
+            if (cur_time - self.last_collision_time >= 500
+                    and pygame.sprite.collide_mask(self.player, boss)
+                    and not collision_detected
+                    and not self.god_mode):
+                self.player.get_damage(boss.bump_power)
+                self.explosions.add(Explosion(self.player.rect.center))
+                self.last_collision_time = pygame.time.get_ticks()
+                self.deduct_life()
+
+    def boss_shot_collision(self):
+        pass
 
     def powerup_collision(self):
         for powerup in self.powerups:
@@ -291,7 +323,14 @@ class Game:
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
     def is_boss_killed(self):
-        return self.level == 4 and not self.boss_sprite
+        if self.level == 4 and not self.boss_sprite:
+            self.running = False
+            self.congrats_screen_active = True
+            self.show_congrats_screen()
+
+    def show_congrats_screen(self):
+        if self.congrats_screen_active:
+            self.congrats_screen.show()
 
     def game_over(self):
         return self.player.lives > 0
@@ -305,7 +344,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 1
+        # self.level = 1
         self.bg.bg = self.bg.level_images[0]
         self.dashboard.score = 0
         self.player.lives = 4
