@@ -96,6 +96,10 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.top > self.window_height * 2:
             self.kill()
 
+    def dead(self):
+        if self.energy <= 0:
+            self.kill()
+
     def update(self):
         self.animate()
         self.movement()
