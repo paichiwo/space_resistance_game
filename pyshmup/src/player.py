@@ -32,8 +32,8 @@ class Player(pygame.sprite.Sprite):
         self.god_mode_right_frames = [self.ship_right_1, self.empty, self.ship_right_2]
         self.god_mode_right_index = 0
 
-        self.image = None
-        self.rect = None
+        self.image = self.ship_mid
+        self.rect = self.image.get_rect(midbottom=(self.bg_img_width // 2, self.window_height - 10))
 
         self.cur_energy = 100
         self.max_energy = 100
@@ -43,13 +43,6 @@ class Player(pygame.sprite.Sprite):
         self.shot_cooldown = 0
         self.shot_speed = 10
         self.shot_power = 10
-
-        self.render()
-
-    def render(self):
-        """Render player image"""
-        self.image = self.ship_mid
-        self.rect = self.image.get_rect(midbottom=(self.bg_img_width / 2, self.window_height - 10))
 
     def animate_left(self):
         self.left_index += 0.5
