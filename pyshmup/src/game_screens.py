@@ -112,14 +112,18 @@ class CongratsScreen:
 
         self.screen.fill("black")
 
-        game_over_text = self.font.render("Game Won", True, "red")
-        restart_text = self.font.render("Play again ?", True, "white")
+        text1 = self.font.render("congratulations, space resistance saved the planet", True, "white")
+        text2 = self.font.render("alien attack has stopped and people live happy lives", True, "white")
+        restart_text = self.font.render("press 'r' to restart game", True, "white")
 
-        game_over_rect = game_over_text.get_rect()
+        text1_rect = text1.get_rect()
+        text2_rect = text2.get_rect()
         restart_rect = restart_text.get_rect()
 
-        game_over_rect.center = (self.screen_width // 2, self.screen_height // 2)
-        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 10)
+        text1_rect.center = (self.screen_width // 2, self.screen_height // 2 - 10)
+        text2_rect.center = (self.screen_width // 2, self.screen_height // 2)
+        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 20)
 
-        self.screen.blit(game_over_text, game_over_rect)
+        self.screen.blit(text1, text1_rect)
+        self.screen.blit(text2, text2_rect)
         self.screen.blit(restart_text, restart_rect)
