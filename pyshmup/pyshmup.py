@@ -54,7 +54,7 @@ class Game:
         self.bg = Background(self.screen, self.window_height)
         self.player = Player(self.bg.bg.get_width(), self.window_height)
         self.fumes = Fumes()
-        self.boss = Boss(self.bg.bg.get_width(), self.window_height)
+        self.boss = Boss(self.screen, self.bg.bg.get_width(), self.window_height, self.player.rect)
 
         # Create game sprites
         self.player_sprite = pygame.sprite.Group(self.fumes, self.player)
@@ -99,7 +99,7 @@ class Game:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.welcome_screen_active = False
         if self.congrats_screen_active:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.welcome_screen_active = True
 
         else:
@@ -144,7 +144,9 @@ class Game:
         # Check collisions
         self.player_shot_collision()
         self.player_enemy_collision()
+        self.player_boss_collision()
         self.enemy_shot_collision()
+        self.boss_shot_collision()
         self.powerup_collision()
         self.check_god_mode()
 
@@ -181,7 +183,7 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 1 and not self.level == 4:
+        if self.bg.scroll_count == 5 and not self.level == 4:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
@@ -283,7 +285,14 @@ class Game:
                 self.deduct_life()
 
     def boss_shot_collision(self):
-        pass
+        for sprite in self.boss_sprite.sprites():
+            for shot in sprite.shots:
+                hits = pygame.sprite.collide_mask(shot, self.player)
+                if hits:
+                    shot.kill()
+                    self.player.cur_energy -= sprite.shot_power
+                    self.explosions.add(Explosion(shot.rect.center))
+                    self.deduct_life()
 
     def powerup_collision(self):
         for powerup in self.powerups:
