@@ -29,7 +29,7 @@ class Game:
         self.scale = 4
         self.fps = 120
         self.running = True
-        self.level = 4
+        self.level = 1
         self.enemy_kills = 0
 
         # Game setup
@@ -98,13 +98,12 @@ class Game:
         if self.welcome_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.welcome_screen_active = False
-        if self.congrats_screen_active:
+        elif self.congrats_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.welcome_screen_active = True
 
         else:
             if self.running:
-                self.set_last_level()
                 if event.type == self.enemy_timer_1:
                     self.set_timers_for_level()
                     self.set_enemies_for_level()
@@ -121,8 +120,9 @@ class Game:
 
         # Change levels
         self.change_level()
-
         self.bg.update()
+
+        self.set_last_level()
 
         # Draw game elements
         self.player_sprite.draw(self.screen)
@@ -183,7 +183,7 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 5 and not self.level == 4:
+        if self.bg.scroll_count == 1 and not self.level == 4:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
@@ -329,10 +329,10 @@ class Game:
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
     def is_boss_killed(self):
-        if self.level == 4 and not self.boss_sprite:
-            self.running = False
-            self.congrats_screen_active = True
-            self.show_congrats_screen()
+        if self.level == 4:
+            if not self.boss_sprite:  # Check if the boss sprite is empty
+                self.congrats_screen_active = True
+                self.show_congrats_screen()
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:

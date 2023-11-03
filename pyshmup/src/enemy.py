@@ -21,7 +21,7 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_sm1_2 = pygame.image.load("assets/img/enemy/enemy-small_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_sm1_1, self.enemy_sm1_2]
             self.enemy_index = 0
-            self.energy = 20
+            self.energy = 10
             self.bump_power = 20
             self.shot_score = 6
             self.kill_score = 12
@@ -31,7 +31,7 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_sm2_2 = pygame.image.load("assets/img/enemy/enemy-small_B2.png").convert_alpha()
             self.enemy_frames = [self.enemy_sm2_1, self.enemy_sm2_2]
             self.enemy_index = 0
-            self.energy = 20
+            self.energy = 10
             self.bump_power = 20
             self.shot_score = 6
             self.kill_score = 12
@@ -41,7 +41,7 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_md_2 = pygame.image.load("assets/img/enemy/enemy-medium_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_md_1, self.enemy_md_2]
             self.enemy_index = 0
-            self.energy = 40
+            self.energy = 20
             self.bump_power = 40
             self.shot_score = 12
             self.kill_score = 24
@@ -51,7 +51,7 @@ class Enemy(pygame.sprite.Sprite):
             self.enemy_lg_2 = pygame.image.load("assets/img/enemy/enemy-big_A2.png").convert_alpha()
             self.enemy_frames = [self.enemy_lg_1, self.enemy_lg_2]
             self.enemy_index = 0
-            self.energy = 50
+            self.energy = 30
             self.bump_power = 60
             self.shot_score = 24
             self.kill_score = 48
@@ -107,6 +107,7 @@ class Enemy(pygame.sprite.Sprite):
         self.shoot()
         self.shots.update()
         self.shots.draw(self.screen)
+        self.dead()
 
 
 class Boss(pygame.sprite.Sprite):
