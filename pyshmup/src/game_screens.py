@@ -108,9 +108,17 @@ class CongratsScreen:
         self.screen_height = screen_height
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
 
+        self.astronaut_img = pygame.image.load("assets/img/ui/astronaut.png").convert_alpha()
+        self.astronaut_img_rect = self.astronaut_img.get_rect(center=(400, 50))
+
     def show(self):
 
         self.screen.fill("black")
+
+        self.screen.blit(self.astronaut_img, self.astronaut_img_rect)
+        self.astronaut_img_rect.x -= 1
+        if self.astronaut_img_rect.right < 0:
+            self.astronaut_img_rect.center = (400, 50)
 
         text1 = self.font.render("congratulations, space resistance saved the planet", True, "white")
         text2 = self.font.render("alien attack has stopped and people live happy lives", True, "white")
@@ -122,7 +130,7 @@ class CongratsScreen:
 
         text1_rect.center = (self.screen_width // 2, self.screen_height // 2 - 10)
         text2_rect.center = (self.screen_width // 2, self.screen_height // 2)
-        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 20)
+        restart_rect.center = (self.screen_width // 2, self.screen_height // 2 + 30)
 
         self.screen.blit(text1, text1_rect)
         self.screen.blit(text2, text2_rect)
