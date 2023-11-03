@@ -85,7 +85,7 @@ class Enemy(pygame.sprite.Sprite):
             distance = math.sqrt(dx * dx + dy * dy)
             direction = (dx / distance, dy / distance)
 
-            shot = EnemyShot(self.rect, self.window_height, self.bg_img_width, direction)
+            shot = EnemyShot("normal", self.rect.midbottom, self.window_height, self.bg_img_width, direction)
             self.shots.add(shot)
             self.last_shot_time = cur_time
 
@@ -110,34 +110,33 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, bg_img_width, window_height, *args):
+    def __init__(self, screen, bg_img_width, window_height, player_rect, *args):
         super().__init__(*args)
 
+        self.screen = screen
         self.bg_img_width = bg_img_width
         self.window_height = window_height
+        self.player_rect = player_rect
 
         self.boss_img_1 = pygame.image.load("assets/img/boss/boss_1.png").convert_alpha()
         self.boss_img_2 = pygame.image.load("assets/img/boss/boss_2.png").convert_alpha()
         self.boss_frames = [self.boss_img_1, self.boss_img_2]
         self.boss_index = 0
+        self.image = self.boss_frames[self.boss_index]
+        self.rect = self.image.get_rect(center=(self.bg_img_width // 2, 10))
 
         self.energy = 300
+        self.shot_power = 25
         self.bump_power = 60
-        self.shot_score = 24
-        self.kill_score = 48
+        self.shot_score = 48
+        self.kill_score = 5000
         self.can_shoot = True
-
-        self.speed = 1
-        self.shot_power = 20
 
         self.direction = 1
         self.vert_speed = 1
 
         self.shots = pygame.sprite.Group()
         self.last_shot_time = pygame.time.get_ticks()
-
-        self.image = self.boss_frames[self.boss_index]
-        self.rect = self.image.get_rect(center=(self.bg_img_width // 2, 10))
 
     def animate(self):
         self.boss_index += 0.5
@@ -153,6 +152,26 @@ class Boss(pygame.sprite.Sprite):
 
         self.rect.y += self.direction * self.vert_speed
 
+    def shoot(self):
+        cur_time = pygame.time.get_ticks()
+        shot_timing = random.randint(800, 1800)
+
+        if cur_time - self.last_shot_time >= shot_timing and self.can_shoot:
+            dx = self.player_rect.x - self.rect.x
+            dy = self.player_rect.y - self.rect.y
+
+            # Calculate the angle to the player for each bullet
+            angle = math.atan2(dy, dx)
+
+            # Calculate the direction vectors for each bullet based on the angles
+            direction1 = (math.cos(angle), math.sin(angle))
+
+            # Create two bullets with their respective directions
+            shot1 = EnemyShot("boss", self.rect.center, self.window_height, self.bg_img_width, direction1)
+
+            self.shots.add(shot1)
+            self.last_shot_time = cur_time
+
     def deduct_energy(self, player_shot_power):
         self.energy -= player_shot_power
 
@@ -163,31 +182,43 @@ class Boss(pygame.sprite.Sprite):
     def update(self):
         self.animate()
         self.movement()
+        self.shoot()
         self.dead()
+        self.shots.draw(self.screen)
+        self.shots.update()
 
 
 class EnemyShot(pygame.sprite.Sprite):
-    def __init__(self, enemy_rect, window_width, window_height, direction):
+    def __init__(self, shot_type, placement, window_width, window_height, direction):
         super().__init__()
 
+        self.shot_type = shot_type
+        self.placement = placement  # rect tuple
         self.window_width = window_width
         self.window_height = window_height
         self.direction = direction
 
-        self.shot_ball_1 = self.image = pygame.image.load("assets/img/shot/shot_ball_a.png")
-        self.shot_ball_2 = self.image = pygame.image.load("assets/img/shot/shot_ball_b.png")
-        self.shot_ball_frames = [self.shot_ball_1, self.shot_ball_2]
-        self.shot_ball_index = 0
+        if shot_type == "normal":
+            self.shot_ball_1 = pygame.image.load("assets/img/shot/shot_ball_1.png").convert_alpha()
+            self.shot_ball_2 = pygame.image.load("assets/img/shot/shot_ball_2.png").convert_alpha()
+            self.shot_ball_3 = pygame.image.load("assets/img/shot/shot_ball_3.png").convert_alpha()
+            self.bullet_frames = [self.shot_ball_1, self.shot_ball_2, self.shot_ball_3]
+        elif shot_type == "boss":
+            self.boss_shot_1 = pygame.image.load("assets/img/shot/boss_shot_1.png").convert_alpha()
+            self.boss_shot_2 = pygame.image.load("assets/img/shot/boss_shot_2.png").convert_alpha()
+            self.boss_shot_3 = pygame.image.load("assets/img/shot/boss_shot_3.png").convert_alpha()
+            self.bullet_frames = [self.boss_shot_1, self.boss_shot_2, self.boss_shot_3]
+        self.bullet_index = 0
 
-        self.image = self.shot_ball_frames[self.shot_ball_index]
-        self.rect = self.image.get_rect(midbottom=enemy_rect.midbottom)
+        self.image = self.bullet_frames[self.bullet_index]
+        self.rect = self.image.get_rect(midbottom=self.placement)
         self.rect.x -= 1
 
     def animate(self):
-        self.shot_ball_index += 0.5
-        if self.shot_ball_index >= len(self.shot_ball_frames):
-            self.shot_ball_index = 0
-        self.image = self.shot_ball_frames[int(self.shot_ball_index)]
+        self.bullet_index += 0.5
+        if self.bullet_index >= len(self.bullet_frames):
+            self.bullet_index = 0
+        self.image = self.bullet_frames[int(self.bullet_index)]
 
     def movement(self):
         self.rect.x += self.direction[0] * 3
