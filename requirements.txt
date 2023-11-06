@@ -1,2 +1,1 @@
 pygame-ce
-setuptools~=68.2.2
