@@ -263,7 +263,6 @@ class Game:
                 self.deduct_life()
 
     def enemy_shot_collision(self):
-        """When shot collides with the Enemy"""
         for sprite in self.enemy_sprite_group.sprites():
             for shot in sprite.shots:
                 hits = pygame.sprite.collide_mask(shot, self.player)
