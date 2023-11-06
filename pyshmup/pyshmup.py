@@ -28,6 +28,8 @@ class Game:
         self.window_height = 180
         self.scale = 4
         self.fps = 120
+
+        # Game variables
         self.running = True
         self.level = 1
         self.enemy_kills = 0
@@ -333,6 +335,8 @@ class Game:
             if not self.boss_sprite:  # Check if the boss sprite is empty
                 self.congrats_screen_active = True
                 self.show_congrats_screen()
+                self.boss_sprite.add(Enemy(self.screen, self.bg.bg.get_width(), self.window_height,
+                                           "sm1", self.player.rect, self.set_enemy_speeds()))
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
@@ -367,12 +371,14 @@ class Game:
                 self.handle_events(event)
             if self.welcome_screen_active:
                 self.welcome_screen.show()
+                self.congrats_screen_active = False
             else:
                 self.show_first_level_message()
                 if self.running:
                     self.update_game()
                     self.running = self.game_over()
                 else:
+
                     self.game_over_screen.show()
                     self.reset_game_values()
 
