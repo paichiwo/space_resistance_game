@@ -165,12 +165,12 @@ class Boss(pygame.sprite.Sprite):
             angle = math.atan2(dy, dx)
 
             # Calculate the direction vectors for each bullet based on the angles
-            direction1 = (math.cos(angle), math.sin(angle))
+            direction = (math.cos(angle), math.sin(angle))
 
             # Create two bullets with their respective directions
-            shot1 = EnemyShot("boss", self.rect.center, self.window_height, self.bg_img_width, direction1)
+            shot = EnemyShot("boss", self.rect.center, self.window_height, self.bg_img_width, direction)
 
-            self.shots.add(shot1)
+            self.shots.add(shot)
             self.last_shot_time = cur_time
 
     def deduct_energy(self, player_shot_power):
