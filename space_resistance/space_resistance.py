@@ -35,7 +35,7 @@ class Game:
 
         # Game variables
         self.running = True
-        self.level = 1
+        self.level = 4
         self.enemy_kills = 0
 
         # Game setup
@@ -88,6 +88,9 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
+        # Level message
+        self.level_msg = False
+
         # Start game with welcome screen
         self.welcome_screen_active = True
         self.first_level_message = False
@@ -96,22 +99,25 @@ class Game:
         self.congrats_screen_active = False
 
         # Music
+        # pygame.mixer.init(44100, 16, 4, 4096)
         # welcome screen
         self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/welcome_screen.wav")
-        self.welcome_screen_music.set_volume(0.2)
+        self.welcome_screen_music.set_volume(0.7)
+        self.channel1 = pygame.mixer.Channel(1)
         # in game - levels 1-3
-        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/rtype.wav")
-        self.levels_1_3_music.set_volume(0.2)
+        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/levels_1_to_3.wav")
+        self.levels_1_3_music.set_volume(0.7)
+        self.channel2 = pygame.mixer.Channel(2)
         # in game - level 4
         self.level_4_music = pygame.mixer.Sound("assets/msx/music/1min.wav")
-        self.level_4_music.set_volume(0.2)
-        # congrats screen
+        self.level_4_music.set_volume(0.7)
+        self.channel3 = pygame.mixer.Channel(3)
+        # # congrats screen
         self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/congrats.wav")
-        self.congrats_screen_music.set_volume(0.2)
+        self.congrats_screen_music.set_volume(0.7)
+        self.channel4 = pygame.mixer.Channel(4)
 
         # Sound fx
-
-
 
     def handle_events(self, event):
         """Handle game events"""
@@ -120,13 +126,14 @@ class Game:
             sys.exit()
 
         if self.welcome_screen_active:
-            self.welcome_screen_music.play(loops=-1)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-                self.welcome_screen_music.stop()
                 self.welcome_screen_active = False
-        elif self.congrats_screen_active:
+                self.congrats_screen_active = False
+        if self.congrats_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.welcome_screen_active = True
+                self.reset_game_values()
+                self.congrats_screen_active = False
 
         else:
             if self.running:
@@ -182,6 +189,37 @@ class Game:
         # Check if boss is killed
         self.is_boss_killed()
 
+    def set_music_for_level_1_to_3(self):
+        if self.welcome_screen_active:
+            self.channel2.stop()
+            self.channel3.stop()
+            self.channel4.stop()
+            if not self.channel1.get_busy():
+                self.channel1.play(self.welcome_screen_music, loops=-1)
+        elif self.level in [1, 2, 3]:
+            self.channel1.stop()
+            self.channel3.stop()
+            self.channel4.stop()
+            if not self.channel2.get_busy():
+                self.channel2.play(self.levels_1_3_music, loops=-1)
+        elif self.level == 4:
+            self.channel1.stop()
+            self.channel2.stop()
+            self.channel4.stop()
+            if not self.channel3.get_busy():
+                self.channel3.play(self.level_4_music, loops=-1)
+        elif self.congrats_screen_active and self.level == 4:
+            self.channel1.stop()
+            self.channel2.stop()
+            self.channel3.stop()
+            if not self.channel4.get_busy():
+                self.channel4.play(self.congrats_screen_music, loops=-1)
+        # else:
+        #     self.channel1.stop()
+        #     self.channel2.stop()
+        #     self.channel3.stop()
+        #     self.channel4.stop()
+
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
             min_interval, max_interval = self.enemy_spawning_intervals[self.level]
@@ -222,14 +260,18 @@ class Game:
         kills_rect = kills_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2 + 30))
 
         while pygame.time.get_ticks() - start < 3000:
+            self.level_msg = True
             self.screen.fill(self.config_colors["BLACK"])
             self.screen.blit(level_text, level_rect)
             self.screen.blit(kills_text, kills_rect)
             pygame.display.flip()
             self.reset_level_values()
+        self.level_msg = False
 
     def show_first_level_message(self):
         if not self.first_level_message:
+            self.first_level_message = True
+            self.level_msg = True
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -241,7 +283,7 @@ class Game:
                 self.reset_game_values()
             self.screen.fill(self.config_colors["BLACK"])
             pygame.display.flip()
-            self.first_level_message = True
+            self.level_msg = False
 
     def player_shot_collision(self):
         """When shot collides with the Enemy"""
@@ -377,7 +419,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        # self.level = 1
+        self.level = 1
         self.bg.bg = self.bg.level_images[0]
         self.dashboard.score = 0
         self.player.lives = 4
@@ -390,11 +432,12 @@ class Game:
 
     def game_loop(self):
         while True:
+            self.set_music_for_level_1_to_3()
+
             for event in pygame.event.get():
                 self.handle_events(event)
             if self.welcome_screen_active:
                 self.welcome_screen.show()
-                self.congrats_screen_active = False
             else:
                 self.show_first_level_message()
                 if self.running:
