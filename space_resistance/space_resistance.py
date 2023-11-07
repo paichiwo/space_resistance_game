@@ -11,6 +11,10 @@ from src.dashboard import Dashboard
 from src.powerup import PowerUp
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
+# 1. delay after boss killed (display counting number of total enemies killed)
+# 2. high-score system (implement saving scores on web)
+# 3. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
+
 
 class Game:
 
@@ -91,6 +95,24 @@ class Game:
         # Game_won
         self.congrats_screen_active = False
 
+        # Music
+        # welcome screen
+        self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/welcome_screen.wav")
+        self.welcome_screen_music.set_volume(0.2)
+        # in game - levels 1-3
+        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/rtype.wav")
+        self.levels_1_3_music.set_volume(0.2)
+        # in game - level 4
+        self.level_4_music = pygame.mixer.Sound("assets/msx/music/1min.wav")
+        self.level_4_music.set_volume(0.2)
+        # congrats screen
+        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/congrats.wav")
+        self.congrats_screen_music.set_volume(0.2)
+
+        # Sound fx
+
+
+
     def handle_events(self, event):
         """Handle game events"""
         if event.type == pygame.QUIT:
@@ -98,7 +120,9 @@ class Game:
             sys.exit()
 
         if self.welcome_screen_active:
+            self.welcome_screen_music.play(loops=-1)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                self.welcome_screen_music.stop()
                 self.welcome_screen_active = False
         elif self.congrats_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
