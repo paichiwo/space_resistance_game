@@ -88,8 +88,8 @@ class GameOverScreen:
 
         self.screen.fill("black")
 
-        game_over_text = self.font.render("Game Over", True, "red")
-        restart_text = self.font.render("Press 'S' to START", True, "white")
+        game_over_text = self.font.render("GAME OVER", True, "red")
+        restart_text = self.font.render("Press 'R' TO RESTART", True, "white")
 
         game_over_rect = game_over_text.get_rect()
         restart_rect = restart_text.get_rect()
