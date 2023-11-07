@@ -21,6 +21,7 @@ class Game:
     def __init__(self):
 
         # Load config
+        self.level_msg = False
         self.c = Config()
         self.config_colors = self.c.color()
         self.enemy_choice_for_level = self.c.enemy_choices()
@@ -34,8 +35,8 @@ class Game:
         self.fps = 120
 
         # Game variables
-        self.running = True
-        self.level = 4
+        self.running = False
+        self.level = 1
         self.enemy_kills = 0
 
         # Game setup
@@ -88,14 +89,14 @@ class Game:
         self.life_lost_outline = None
         self.life_lost_timer = 0
 
-        # Level message
-        self.level_msg = False
-
         # Start game with welcome screen
         self.welcome_screen_active = True
         self.first_level_message = False
 
-        # Game_won
+        # Game lost
+        self.game_over_screen_active = False
+
+        # Game won
         self.congrats_screen_active = False
 
         # Music
@@ -126,14 +127,25 @@ class Game:
             sys.exit()
 
         if self.welcome_screen_active:
+            self.reset_game_values()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                self.game_over_screen_active = False
                 self.welcome_screen_active = False
                 self.congrats_screen_active = False
+                self.running = True
+
+        if self.game_over_screen_active:
+            self.running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                self.welcome_screen_active = True
+
         if self.congrats_screen_active:
+            self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.welcome_screen_active = True
-                self.reset_game_values()
-                self.congrats_screen_active = False
+
+        if self.level_msg:
+            self.running = False
 
         else:
             if self.running:
@@ -144,17 +156,27 @@ class Game:
                     self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
                     pygame.time.set_timer(self.energy_powerup_timer, 15000)
             else:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-                    self.running = True
+                # self.game_over_screen_active = True
+                # self.show_game_over_screen()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                    self.welcome_screen_active = True
+
+    def show_game_over_screen(self):
+        if self.game_over_screen_active:
+            self.running = False
+            self.game_over_screen.show()
 
     def update_game(self):
         """Update all game objects"""
+
+        if not self.running:
+            return
+
         self.screen.fill("black")
 
         # Change levels
         self.change_level()
         self.bg.update()
-
         self.set_last_level()
 
         # Draw game elements
@@ -405,6 +427,7 @@ class Game:
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
+            self.running = False
             self.congrats_screen.show()
 
     def game_over(self):
@@ -420,15 +443,22 @@ class Game:
 
     def reset_game_values(self):
         self.level = 1
-        self.bg.bg = self.bg.level_images[0]
-        self.dashboard.score = 0
+        self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100
+        self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
+
+        self.bg.bg = self.bg.level_images[0]
+        self.dashboard.score = 0
+
         self.god_mode = False
+
         self.enemy_sprite_group.empty()
         self.powerups.empty()
-        self.enemy_kills = 0
+        self.boss_sprite.empty()
+
         pygame.time.set_timer(self.enemy_timer_1, 2000)
+        pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     def game_loop(self):
         while True:
@@ -436,17 +466,20 @@ class Game:
 
             for event in pygame.event.get():
                 self.handle_events(event)
+
             if self.welcome_screen_active:
                 self.welcome_screen.show()
+
             else:
                 self.show_first_level_message()
+
                 if self.running:
                     self.update_game()
                     self.running = self.game_over()
                 else:
-
-                    self.game_over_screen.show()
-                    self.reset_game_values()
+                    if self.player.lives <= 0:
+                        self.game_over_screen_active = True
+                        self.show_game_over_screen()
 
             pygame.display.update()
             self.clock.tick(self.fps)
