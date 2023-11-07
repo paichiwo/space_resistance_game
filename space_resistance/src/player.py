@@ -43,6 +43,12 @@ class Player(pygame.sprite.Sprite):
         self.shot_cooldown = 0
         self.shot_speed = 10
         self.shot_power = 10
+        self.is_shooting = False
+
+        # Sound Effects
+        # player shot
+        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot_2.wav")
+        self.player_shot_sound.set_volume(0.2)
 
     def animate_left(self):
         self.left_index += 0.5
@@ -110,8 +116,12 @@ class Player(pygame.sprite.Sprite):
 
     def action(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and not self.is_shooting:
             self.shoot()
+            self.player_shot_sound.play()
+            self.is_shooting = True
+        elif not keys[pygame.K_SPACE]:
+            self.is_shooting = False
 
     def stay_within_boundaries(self):
         """Rules to stay on the screen"""
