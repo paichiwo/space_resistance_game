@@ -44,5 +44,11 @@ class Background:
             self.panels = self.get_panels()
             self.scroll_count = 0
 
+    def stop_scrolling(self):
+        self.speed = 0
+
+    def start_scrolling(self):
+        self.speed = 0.5
+
     def update(self):
         self.scrolling()
