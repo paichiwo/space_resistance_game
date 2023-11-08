@@ -11,9 +11,10 @@ from src.dashboard import Dashboard
 from src.powerup import PowerUp
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
-# 1. delay after boss killed (display counting number of total enemies killed)
-# 2. high-score system (implement saving scores on web)
-# 3. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
+# 1. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
+# 2. fix bg reset (still scrolling when the game ended)
+# 3. delay after boss killed (display counting number of total enemies killed)
+# 4. high-score system (implement saving scores on web)
 
 
 class Game:
@@ -158,7 +159,6 @@ class Game:
     def update_game(self):
         """Update all game objects"""
 
-        print(self.bg.scroll_count)
         self.screen.fill("black")
 
         # Change levels
@@ -198,46 +198,42 @@ class Game:
         # Check if boss is killed
         self.is_boss_killed()
 
-    def set_music_for_level_1_to_3(self):
+    def set_music_for_game(self):
         if self.welcome_screen_active:
             self.channels[1].stop()
             self.channels[2].stop()
             self.channels[3].stop()
+            self.channels[4].stop()
             if not self.channels[0].get_busy():
                 self.channels[0].play(self.welcome_screen_music, loops=-1)
         elif self.level in [1, 2, 3] and not self.game_over_screen_active and not self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[2].stop()
             self.channels[3].stop()
+            self.channels[4].stop()
             if not self.channels[1].get_busy():
                 self.channels[1].play(self.levels_1_3_music, loops=-1)
         elif self.level == 4 and not self.game_over_screen_active and not self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[1].stop()
             self.channels[3].stop()
+            self.channels[4].stop()
             if not self.channels[2].get_busy():
                 self.channels[2].play(self.level_4_music, loops=-1)
-
+        elif self.game_over_screen_active:
+            self.channels[0].stop()
+            self.channels[1].stop()
+            self.channels[2].stop()
+            self.channels[4].stop()
+            if not self.channels[3].get_busy():
+                self.channels[3].play(self.congrats_screen_music, loops=-1)
         elif self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[1].stop()
             self.channels[2].stop()
             self.channels[3].stop()
             if not self.channels[4].get_busy():
-                self.channels[4].play(self.congrats_screen_music, -1)
-        # elif self.game_over_screen_active and not self.running:
-        #     self.channels[0].stop()
-        #     self.channels[1].stop()
-        #     self.channels[2].stop()
-        #     if not self.channels[3].get_busy():
-        #         self.channels[3].play(self.welcome_screen_music, loops=-1)
-        # elif self.congrats_screen_active and not self.running:
-        #     self.channels[0].stop()
-        #     self.channels[1].stop()
-        #     self.channels[2].stop()
-        #     if not self.channels[4].get_busy():
-        #         self.channels[4].play(self.welcome_screen_music, loops=-1)
-
+                self.channels[4].play(self.congrats_screen_music, loops=-1)
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -415,13 +411,6 @@ class Game:
             self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2 - 54, self.window_height // 2 - 19))
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
-    def music_for_end_screens(self):
-        self.channels[0].stop()
-        self.channels[1].stop()
-        self.channels[2].stop()
-        if not self.channels[3].get_busy():
-            self.channels[3].play(self.welcome_screen_music, loops=-1)
-
     def game_over(self):
         return self.player.lives > 0
 
@@ -455,13 +444,12 @@ class Game:
         self.player.lives = 2
         self.player.cur_energy = 100
         self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
+        self.god_mode = False
 
         self.bg.bg = self.bg.level_images[0]
         self.bg.scroll_count = 0
         self.bg.scroll = 0
         self.dashboard.score = 0
-
-        self.god_mode = False
 
         self.enemy_sprite_group.empty()
         self.powerups.empty()
@@ -472,8 +460,7 @@ class Game:
 
     def game_loop(self):
         while True:
-
-            self.set_music_for_level_1_to_3()
+            self.set_music_for_game()
 
             for event in pygame.event.get():
                 self.handle_events(event)
@@ -485,7 +472,6 @@ class Game:
                     self.update_game()
                     self.running = self.game_over()
                 else:
-                    self.music_for_end_screens()
                     if self.player.lives <= 0:
                         self.game_over_screen_active = True
                         self.show_game_over_screen()
