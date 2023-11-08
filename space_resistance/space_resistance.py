@@ -101,10 +101,14 @@ class Game:
         # Game music
         pygame.mixer.init(44100, 16, 8, 4096)
         self.channels = [
+            pygame.mixer.Channel(0),
             pygame.mixer.Channel(1),
             pygame.mixer.Channel(2),
             pygame.mixer.Channel(3),
-            pygame.mixer.Channel(4)
+            pygame.mixer.Channel(4),
+            pygame.mixer.Channel(5),
+            pygame.mixer.Channel(6),
+            pygame.mixer.Channel(7)
         ]
         # Load music tracks
         self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/welcome_screen.wav")
@@ -119,12 +123,13 @@ class Game:
             sys.exit()
 
         if self.welcome_screen_active:
+            self.game_over_screen_active = False
+            self.congrats_screen_active = False
             self.bg.stop_scrolling()
             self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-                self.game_over_screen_active = False
                 self.welcome_screen_active = False
-                self.congrats_screen_active = False
+
                 self.reset_game_values()
                 self.running = True
                 self.bg.start_scrolling()
@@ -154,76 +159,85 @@ class Game:
         """Update all game objects"""
 
         print(self.bg.scroll_count)
-        if not self.welcome_screen_active and not self.game_over_screen_active and not self.congrats_screen_active:
-            self.screen.fill("black")
+        self.screen.fill("black")
 
-            # Change levels
-            self.change_level()
-            self.bg.update()
-            self.set_last_level()
+        # Change levels
+        self.change_level()
+        self.bg.update()
+        self.set_last_level()
 
-            # Draw game elements
-            self.player_sprite.draw(self.screen)
-            self.player.shots.draw(self.screen)
-            self.enemy_sprite_group.draw(self.screen)
-            self.boss_sprite.draw(self.screen)
-            self.explosions.draw(self.screen)
-            self.powerups.draw(self.screen)
+        # Draw game elements
+        self.player_sprite.draw(self.screen)
+        self.player.shots.draw(self.screen)
+        self.enemy_sprite_group.draw(self.screen)
+        self.boss_sprite.draw(self.screen)
+        self.explosions.draw(self.screen)
+        self.powerups.draw(self.screen)
 
-            # Update game elements
-            self.player.update(self.god_mode)
-            self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
-            self.enemy_sprite_group.update()
-            self.boss_sprite.update()
-            self.explosions.update()
-            self.powerups.update()
-            self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
+        # Update game elements
+        self.player.update(self.god_mode)
+        self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
+        self.enemy_sprite_group.update()
+        self.boss_sprite.update()
+        self.explosions.update()
+        self.powerups.update()
+        self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
 
-            # Check collisions
-            self.player_shot_collision()
-            self.player_enemy_collision()
-            self.player_boss_collision()
-            self.enemy_shot_collision()
-            self.boss_shot_collision()
-            self.powerup_collision()
-            self.check_god_mode()
+        # Check collisions
+        self.player_shot_collision()
+        self.player_enemy_collision()
+        self.player_boss_collision()
+        self.enemy_shot_collision()
+        self.boss_shot_collision()
+        self.powerup_collision()
+        self.check_god_mode()
 
-            # Show messages
-            self.show_lost_life_msg()
+        # Show messages
+        self.show_lost_life_msg()
 
-            # Check if boss is killed
-            self.is_boss_killed()
-        else:
-            self.bg.stop_scrolling()
-            self.bg.scroll_count = 0
+        # Check if boss is killed
+        self.is_boss_killed()
 
     def set_music_for_level_1_to_3(self):
         if self.welcome_screen_active:
             self.channels[1].stop()
             self.channels[2].stop()
             self.channels[3].stop()
-            # self.channels[0].stop()
             if not self.channels[0].get_busy():
                 self.channels[0].play(self.welcome_screen_music, loops=-1)
-        elif self.level in [1, 2, 3]:
+        elif self.level in [1, 2, 3] and not self.game_over_screen_active and not self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[2].stop()
             self.channels[3].stop()
             if not self.channels[1].get_busy():
                 self.channels[1].play(self.levels_1_3_music, loops=-1)
-        elif self.level == 4:
+        elif self.level == 4 and not self.game_over_screen_active and not self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[1].stop()
             self.channels[3].stop()
             if not self.channels[2].get_busy():
                 self.channels[2].play(self.level_4_music, loops=-1)
 
-        # else:
+        elif self.congrats_screen_active:
+            self.channels[0].stop()
+            self.channels[1].stop()
+            self.channels[2].stop()
+            self.channels[3].stop()
+            if not self.channels[4].get_busy():
+                self.channels[4].play(self.congrats_screen_music, -1)
+        # elif self.game_over_screen_active and not self.running:
         #     self.channels[0].stop()
         #     self.channels[1].stop()
         #     self.channels[2].stop()
         #     if not self.channels[3].get_busy():
-        #         self.channels[3].play(self.congrats_screen_music, loops=-1)
+        #         self.channels[3].play(self.welcome_screen_music, loops=-1)
+        # elif self.congrats_screen_active and not self.running:
+        #     self.channels[0].stop()
+        #     self.channels[1].stop()
+        #     self.channels[2].stop()
+        #     if not self.channels[4].get_busy():
+        #         self.channels[4].play(self.welcome_screen_music, loops=-1)
+
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -401,6 +415,13 @@ class Game:
             self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2 - 54, self.window_height // 2 - 19))
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
+    def music_for_end_screens(self):
+        self.channels[0].stop()
+        self.channels[1].stop()
+        self.channels[2].stop()
+        if not self.channels[3].get_busy():
+            self.channels[3].play(self.welcome_screen_music, loops=-1)
+
     def game_over(self):
         return self.player.lives > 0
 
@@ -411,6 +432,7 @@ class Game:
     def is_boss_killed(self):
         if self.level == 4:
             if not self.boss_sprite:  # Check if the boss sprite is empty
+                self.running = False
                 self.congrats_screen_active = True
                 self.show_congrats_screen()
 
@@ -419,7 +441,6 @@ class Game:
             self.bg.stop_scrolling()
             self.bg.scroll_count = 0
             self.congrats_screen.show()
-
 
     def reset_level_values(self):
         self.god_mode = False
@@ -431,7 +452,7 @@ class Game:
     def reset_game_values(self):
         self.level = 3
         self.enemy_kills = 0
-        self.player.lives = 1
+        self.player.lives = 2
         self.player.cur_energy = 100
         self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
 
@@ -464,6 +485,7 @@ class Game:
                     self.update_game()
                     self.running = self.game_over()
                 else:
+                    self.music_for_end_screens()
                     if self.player.lives <= 0:
                         self.game_over_screen_active = True
                         self.show_game_over_screen()
