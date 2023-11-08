@@ -39,13 +39,15 @@ class Background:
         return self.scroll_count
 
     def change_bg(self, level):
-        if 1 <= level <= len(self.level_images):
+        if 1 <= level <= len(self.level_images) and not level == 4:
             self.bg = self.level_images[level-1]
             self.panels = self.get_panels()
             self.scroll_count = 0
 
     def stop_scrolling(self):
         self.speed = 0
+        self.scroll = 0
+
 
     def start_scrolling(self):
         self.speed = 0.5

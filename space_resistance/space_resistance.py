@@ -21,7 +21,6 @@ class Game:
     def __init__(self):
 
         # Load config
-        self.level_msg = False
         self.c = Config()
         self.config_colors = self.c.color()
         self.enemy_choice_for_level = self.c.enemy_choices()
@@ -99,26 +98,19 @@ class Game:
         # Game won
         self.congrats_screen_active = False
 
-        # Music
-        # pygame.mixer.init(44100, 16, 4, 4096)
-        # welcome screen
+        # Game music
+        pygame.mixer.init(44100, 16, 8, 4096)
+        self.channels = [
+            pygame.mixer.Channel(1),
+            pygame.mixer.Channel(2),
+            pygame.mixer.Channel(3),
+            pygame.mixer.Channel(4)
+        ]
+        # Load music tracks
         self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/welcome_screen.wav")
-        self.welcome_screen_music.set_volume(0.7)
-        self.channel1 = pygame.mixer.Channel(1)
-        # in game - levels 1-3
         self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/levels_1_to_3.wav")
-        self.levels_1_3_music.set_volume(0.7)
-        self.channel2 = pygame.mixer.Channel(2)
-        # in game - level 4
         self.level_4_music = pygame.mixer.Sound("assets/msx/music/1min.wav")
-        self.level_4_music.set_volume(0.7)
-        self.channel3 = pygame.mixer.Channel(3)
-        # # congrats screen
         self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/congrats.wav")
-        self.congrats_screen_music.set_volume(0.7)
-        self.channel4 = pygame.mixer.Channel(4)
-
-        # Sound fx
 
     def handle_events(self, event):
         """Handle game events"""
@@ -127,25 +119,24 @@ class Game:
             sys.exit()
 
         if self.welcome_screen_active:
-            self.reset_game_values()
+            self.bg.stop_scrolling()
+            self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.game_over_screen_active = False
                 self.welcome_screen_active = False
                 self.congrats_screen_active = False
+                self.reset_game_values()
                 self.running = True
+                self.bg.start_scrolling()
+                self.show_first_level_message()
 
         if self.game_over_screen_active:
-            self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.welcome_screen_active = True
 
         if self.congrats_screen_active:
-            self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.welcome_screen_active = True
-
-        if self.level_msg:
-            self.running = False
 
         else:
             if self.running:
@@ -156,91 +147,83 @@ class Game:
                     self.powerups.add(PowerUp("energy", self.bg.bg.get_width(), self.window_height))
                     pygame.time.set_timer(self.energy_powerup_timer, 15000)
             else:
-                # self.game_over_screen_active = True
-                # self.show_game_over_screen()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                     self.welcome_screen_active = True
-
-    def show_game_over_screen(self):
-        if self.game_over_screen_active:
-            self.running = False
-            self.game_over_screen.show()
 
     def update_game(self):
         """Update all game objects"""
 
-        if not self.running:
-            return
+        print(self.bg.scroll_count)
+        if not self.welcome_screen_active and not self.game_over_screen_active and not self.congrats_screen_active:
+            self.screen.fill("black")
 
-        self.screen.fill("black")
+            # Change levels
+            self.change_level()
+            self.bg.update()
+            self.set_last_level()
 
-        # Change levels
-        self.change_level()
-        self.bg.update()
-        self.set_last_level()
+            # Draw game elements
+            self.player_sprite.draw(self.screen)
+            self.player.shots.draw(self.screen)
+            self.enemy_sprite_group.draw(self.screen)
+            self.boss_sprite.draw(self.screen)
+            self.explosions.draw(self.screen)
+            self.powerups.draw(self.screen)
 
-        # Draw game elements
-        self.player_sprite.draw(self.screen)
-        self.player.shots.draw(self.screen)
-        self.enemy_sprite_group.draw(self.screen)
-        self.boss_sprite.draw(self.screen)
-        self.explosions.draw(self.screen)
-        self.powerups.draw(self.screen)
+            # Update game elements
+            self.player.update(self.god_mode)
+            self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
+            self.enemy_sprite_group.update()
+            self.boss_sprite.update()
+            self.explosions.update()
+            self.powerups.update()
+            self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
 
-        # Update game elements
-        self.player.update(self.god_mode)
-        self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
-        self.enemy_sprite_group.update()
-        self.boss_sprite.update()
-        self.explosions.update()
-        self.powerups.update()
-        self.dashboard.update(self.player.lives, self.player.cur_energy, self.player.max_energy, self.level)
+            # Check collisions
+            self.player_shot_collision()
+            self.player_enemy_collision()
+            self.player_boss_collision()
+            self.enemy_shot_collision()
+            self.boss_shot_collision()
+            self.powerup_collision()
+            self.check_god_mode()
 
-        # Check collisions
-        self.player_shot_collision()
-        self.player_enemy_collision()
-        self.player_boss_collision()
-        self.enemy_shot_collision()
-        self.boss_shot_collision()
-        self.powerup_collision()
-        self.check_god_mode()
+            # Show messages
+            self.show_lost_life_msg()
 
-        # Show messages
-        self.show_lost_life_msg()
-
-        # Check if boss is killed
-        self.is_boss_killed()
+            # Check if boss is killed
+            self.is_boss_killed()
+        else:
+            self.bg.stop_scrolling()
+            self.bg.scroll_count = 0
 
     def set_music_for_level_1_to_3(self):
         if self.welcome_screen_active:
-            self.channel2.stop()
-            self.channel3.stop()
-            self.channel4.stop()
-            if not self.channel1.get_busy():
-                self.channel1.play(self.welcome_screen_music, loops=-1)
+            self.channels[1].stop()
+            self.channels[2].stop()
+            self.channels[3].stop()
+            # self.channels[0].stop()
+            if not self.channels[0].get_busy():
+                self.channels[0].play(self.welcome_screen_music, loops=-1)
         elif self.level in [1, 2, 3]:
-            self.channel1.stop()
-            self.channel3.stop()
-            self.channel4.stop()
-            if not self.channel2.get_busy():
-                self.channel2.play(self.levels_1_3_music, loops=-1)
+            self.channels[0].stop()
+            self.channels[2].stop()
+            self.channels[3].stop()
+            if not self.channels[1].get_busy():
+                self.channels[1].play(self.levels_1_3_music, loops=-1)
         elif self.level == 4:
-            self.channel1.stop()
-            self.channel2.stop()
-            self.channel4.stop()
-            if not self.channel3.get_busy():
-                self.channel3.play(self.level_4_music, loops=-1)
-        elif self.congrats_screen_active and self.level == 4:
-            self.channel1.stop()
-            self.channel2.stop()
-            self.channel3.stop()
-            if not self.channel4.get_busy():
-                self.channel4.play(self.congrats_screen_music, loops=-1)
+            self.channels[0].stop()
+            self.channels[1].stop()
+            self.channels[3].stop()
+            if not self.channels[2].get_busy():
+                self.channels[2].play(self.level_4_music, loops=-1)
+
         # else:
-        #     self.channel1.stop()
-        #     self.channel2.stop()
-        #     self.channel3.stop()
-        #     self.channel4.stop()
+        #     self.channels[0].stop()
+        #     self.channels[1].stop()
+        #     self.channels[2].stop()
+        #     if not self.channels[3].get_busy():
+        #         self.channels[3].play(self.congrats_screen_music, loops=-1)
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -275,6 +258,7 @@ class Game:
             self.show_level_message()
 
     def show_level_message(self):
+        self.bg.stop_scrolling()
         start = pygame.time.get_ticks()
         level_text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
         level_rect = level_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -282,18 +266,17 @@ class Game:
         kills_rect = kills_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2 + 30))
 
         while pygame.time.get_ticks() - start < 3000:
-            self.level_msg = True
             self.screen.fill(self.config_colors["BLACK"])
             self.screen.blit(level_text, level_rect)
             self.screen.blit(kills_text, kills_rect)
             pygame.display.flip()
             self.reset_level_values()
-        self.level_msg = False
+            self.bg.start_scrolling()
 
     def show_first_level_message(self):
         if not self.first_level_message:
+            self.bg.stop_scrolling()
             self.first_level_message = True
-            self.level_msg = True
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -305,7 +288,8 @@ class Game:
                 self.reset_game_values()
             self.screen.fill(self.config_colors["BLACK"])
             pygame.display.flip()
-            self.level_msg = False
+            self.first_level_message = False
+            self.bg.start_scrolling()
 
     def player_shot_collision(self):
         """When shot collides with the Enemy"""
@@ -417,38 +401,43 @@ class Game:
             self.screen.blit(self.life_lost_outline, (self.bg.bg_1.get_width() // 2 - 54, self.window_height // 2 - 19))
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
+    def game_over(self):
+        return self.player.lives > 0
+
+    def show_game_over_screen(self):
+        if self.game_over_screen_active:
+            self.game_over_screen.show()
+
     def is_boss_killed(self):
         if self.level == 4:
             if not self.boss_sprite:  # Check if the boss sprite is empty
                 self.congrats_screen_active = True
                 self.show_congrats_screen()
-                self.boss_sprite.add(Enemy(self.screen, self.bg.bg.get_width(), self.window_height,
-                                           "sm1", self.player.rect, self.set_enemy_speeds()))
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
-            self.running = False
+            self.bg.stop_scrolling()
+            self.bg.scroll_count = 0
             self.congrats_screen.show()
 
-    def game_over(self):
-        return self.player.lives > 0
 
     def reset_level_values(self):
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
         self.enemy_kills = 0
-        self.god_mode = False
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 1
+        self.level = 3
         self.enemy_kills = 0
-        self.player.lives = 4
+        self.player.lives = 1
         self.player.cur_energy = 100
         self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
 
         self.bg.bg = self.bg.level_images[0]
+        self.bg.scroll_count = 0
+        self.bg.scroll = 0
         self.dashboard.score = 0
 
         self.god_mode = False
@@ -462,6 +451,7 @@ class Game:
 
     def game_loop(self):
         while True:
+
             self.set_music_for_level_1_to_3()
 
             for event in pygame.event.get():
@@ -469,10 +459,7 @@ class Game:
 
             if self.welcome_screen_active:
                 self.welcome_screen.show()
-
             else:
-                self.show_first_level_message()
-
                 if self.running:
                     self.update_game()
                     self.running = self.game_over()
@@ -480,6 +467,7 @@ class Game:
                     if self.player.lives <= 0:
                         self.game_over_screen_active = True
                         self.show_game_over_screen()
+                        self.bg.stop_scrolling()
 
             pygame.display.update()
             self.clock.tick(self.fps)
