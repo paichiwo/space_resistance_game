@@ -100,7 +100,8 @@ class Game:
         self.congrats_screen_active = False
 
         # Game music
-        pygame.mixer.init(44100, 16, 8, 4096)
+        pygame.mixer.init(44100, 16, 2, 4096)
+        pygame.mixer.set_num_channels(16)
         self.channels = [
             pygame.mixer.Channel(0),
             pygame.mixer.Channel(1),
@@ -109,7 +110,15 @@ class Game:
             pygame.mixer.Channel(4),
             pygame.mixer.Channel(5),
             pygame.mixer.Channel(6),
-            pygame.mixer.Channel(7)
+            pygame.mixer.Channel(7),
+            pygame.mixer.Channel(8),
+            pygame.mixer.Channel(9),
+            pygame.mixer.Channel(10),
+            pygame.mixer.Channel(11),
+            pygame.mixer.Channel(12),
+            pygame.mixer.Channel(13),
+            pygame.mixer.Channel(14),
+            pygame.mixer.Channel(15),
         ]
         # Load music tracks
         self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/Welcome_Screen.wav")
@@ -118,8 +127,10 @@ class Game:
         self.levels_1_3_music.set_volume(0.5)
         self.level_4_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2_boss.wav")
         self.level_4_music.set_volume(0.5)
-        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Congrats.wav")
-        self.congrats_screen_music.set_volume(0.7)
+        self.game_over_screen_music = pygame.mixer.Sound("assets/msx/music/Congrats.wav")
+        self.game_over_screen_music.set_volume(0.7)
+        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Amiga_Lotus_2.wav")
+        self.congrats_screen_music.set_volume(1)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -230,7 +241,7 @@ class Game:
             self.channels[2].stop()
             self.channels[4].stop()
             if not self.channels[3].get_busy():
-                self.channels[3].play(self.congrats_screen_music, loops=-1)
+                self.channels[3].play(self.game_over_screen_music, loops=-1)
         elif self.congrats_screen_active:
             self.channels[0].stop()
             self.channels[1].stop()
