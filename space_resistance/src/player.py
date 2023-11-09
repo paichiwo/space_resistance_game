@@ -46,7 +46,6 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting = False
 
         # Sound Effects
-        pygame.mixer.init(44100, 16, 8, 2048)
         self.channel = pygame.mixer.Channel(5)
         # player shot
         self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.wav")
