@@ -46,9 +46,11 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting = False
 
         # Sound Effects
+        pygame.mixer.init(44100, 16, 8, 2048)
+        self.channel = pygame.mixer.Channel(5)
         # player shot
-        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot_2.wav")
-        self.player_shot_sound.set_volume(0.2)
+        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.wav")
+        self.player_shot_sound.set_volume(0.4)
 
     def animate_left(self):
         self.left_index += 0.5
@@ -114,12 +116,17 @@ class Player(pygame.sprite.Sprite):
         else:
             self.movement_animation_god_mode(keys)
 
+    def play_shot_sound(self):
+        if not self.channel.get_busy():
+            self.channel.play(self.player_shot_sound)
+
     def action(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not self.is_shooting:
             self.shoot()
-            self.player_shot_sound.play()
             self.is_shooting = True
+            self.play_shot_sound()
+
         elif not keys[pygame.K_SPACE]:
             self.is_shooting = False
 
