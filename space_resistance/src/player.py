@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.channel = pygame.mixer.Channel(5)
         # player shot
         self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.wav")
-        self.player_shot_sound.set_volume(0.4)
+        self.player_shot_sound.set_volume(0.6)
 
     def animate_left(self):
         self.left_index += 0.5
