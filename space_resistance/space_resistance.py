@@ -121,15 +121,15 @@ class Game:
             pygame.mixer.Channel(15),
         ]
         # Load music tracks
-        self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/Welcome_Screen.wav")
+        self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/Welcome_Screen.ogg")
         self.welcome_screen_music.set_volume(0.5)
-        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2.wav")
+        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2.ogg")
         self.levels_1_3_music.set_volume(0.5)
-        self.level_4_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2_boss.wav")
+        self.level_4_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2_boss.ogg")
         self.level_4_music.set_volume(0.5)
-        self.game_over_screen_music = pygame.mixer.Sound("assets/msx/music/Congrats.wav")
+        self.game_over_screen_music = pygame.mixer.Sound("assets/msx/music/Congrats.ogg")
         self.game_over_screen_music.set_volume(0.7)
-        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Amiga_Lotus_2.wav")
+        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Amiga_Lotus_2.ogg")
         self.congrats_screen_music.set_volume(1)
 
     def handle_events(self, event):
@@ -461,7 +461,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 3
+        self.level = 1
         self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100
