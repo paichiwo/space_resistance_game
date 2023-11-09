@@ -113,9 +113,13 @@ class Game:
         ]
         # Load music tracks
         self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/welcome_screen.wav")
-        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/levels_1_to_3.wav")
-        self.level_4_music = pygame.mixer.Sound("assets/msx/music/1min.wav")
-        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/congrats.wav")
+        self.welcome_screen_music.set_volume(0.7)
+        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/Turrican_2.wav")
+        self.levels_1_3_music.set_volume(0.7)
+        self.level_4_music = pygame.mixer.Sound("assets/msx/music/space_fight.wav")
+        self.level_4_music.set_volume(0.9)
+        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/1min.wav")
+        self.congrats_screen_music.set_volume(0.8)
 
     def handle_events(self, event):
         """Handle game events"""
@@ -234,6 +238,11 @@ class Game:
             self.channels[3].stop()
             if not self.channels[4].get_busy():
                 self.channels[4].play(self.congrats_screen_music, loops=-1)
+        # elif self.first_level_message and not self.welcome_screen_active:
+        else:
+            self.channels[0].stop()
+
+
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -287,6 +296,7 @@ class Game:
         if not self.first_level_message:
             self.bg.stop_scrolling()
             self.first_level_message = True
+            self.channels[0].stop()
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -439,9 +449,9 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 3
+        self.level = 1
         self.enemy_kills = 0
-        self.player.lives = 2
+        self.player.lives = 4
         self.player.cur_energy = 100
         self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
         self.god_mode = False
