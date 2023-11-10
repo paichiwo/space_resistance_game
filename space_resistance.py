@@ -274,9 +274,11 @@ class Game:
                     hit_enemy.deduct_energy(self.player.shot_power)
                     self.dashboard.score += hit_enemy.shot_score
                     self.explosions.add(Explosion(hit_enemy.rect.center))
+                    self.sound_manager.play_explosion_fx()
                 for enemy in self.enemy_sprite_group:
                     if enemy.energy <= 0:
                         self.explosions.add(Explosion(enemy.rect.center))
+                        self.sound_manager.play_explosion_fx()
                         self.dashboard.score += enemy.kill_score
                         self.enemy_kills += 1
             boss_hits = pygame.sprite.spritecollide(shot, self.boss_sprite, False)
@@ -287,9 +289,11 @@ class Game:
                     print(self.boss.energy)
                     self.dashboard.score += hit_boss.shot_score
                     self.explosions.add(Explosion(hit_boss.rect.center))
+                    self.sound_manager.play_explosion_fx()
                 for boss in self.boss_sprite:
                     if boss.energy <= 0:
                         self.explosions.add(Explosion(boss.rect.center))
+                        self.sound_manager.play_explosion_fx()
                         self.dashboard.score += boss.kill_score
                         self.enemy_kills += 1
 
@@ -304,6 +308,7 @@ class Game:
                     and not self.god_mode):
                 self.player.get_damage(enemy.bump_power)
                 self.explosions.add(Explosion(self.player.rect.center))
+                self.sound_manager.play_explosion_fx()
                 self.last_collision_time = pygame.time.get_ticks()
                 self.deduct_life()
 
@@ -315,6 +320,7 @@ class Game:
                     shot.kill()
                     self.player.cur_energy -= sprite.shot_power
                     self.explosions.add(Explosion(shot.rect.center))
+                    self.sound_manager.play_explosion_fx()
                     self.deduct_life()
 
     def player_boss_collision(self):
@@ -327,6 +333,7 @@ class Game:
                     and not self.god_mode):
                 self.player.get_damage(boss.bump_power)
                 self.explosions.add(Explosion(self.player.rect.center))
+                self.sound_manager.play_explosion_fx()
                 self.last_collision_time = pygame.time.get_ticks()
                 self.deduct_life()
 
@@ -338,12 +345,14 @@ class Game:
                     shot.kill()
                     self.player.cur_energy -= sprite.shot_power
                     self.explosions.add(Explosion(shot.rect.center))
+                    self.sound_manager.play_explosion_fx()
                     self.deduct_life()
 
     def powerup_collision(self):
         for powerup in self.powerups:
             if pygame.sprite.collide_mask(powerup, self.player):
                 self.player.cur_energy = powerup.action(self.player.cur_energy, self.player.max_energy)
+                self.sound_manager.play_power_up_fx()
                 powerup.kill()
 
     def deduct_life(self):
@@ -351,7 +360,7 @@ class Game:
             self.player.cur_energy = self.player.max_energy
             if self.player.lives > 0:
                 self.player.lives -= 1
-                self.sound_manager.play_sound_fx(channel=6, sound=self.sound_manager.lost_life_sound)
+                self.sound_manager.play_lost_life_fx()
 
                 # set invincibility
                 self.god_mode = True
