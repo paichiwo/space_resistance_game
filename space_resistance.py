@@ -42,7 +42,7 @@ class Game:
 
         # Game setup
         pygame.init()
-        pygame.display.set_caption("pyshump")
+        pygame.display.set_caption("space resistance by paichiwo")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height),
                                               flags=pygame.RESIZABLE | pygame.HIDDEN | pygame.SCALED,
                                               vsync=1)
@@ -213,7 +213,7 @@ class Game:
             self.enemy_sprite_group.add(Enemy(self.screen, width, height, enemy_choice, self.player.rect, enemy_speeds))
 
     def set_last_level(self):
-        if self.level == 4:
+        if self.level == 4 and self.boss.energy > 0:
             self.boss_sprite.add(self.boss)
 
     def set_enemy_speeds(self):
@@ -286,7 +286,7 @@ class Game:
                 shot.kill()
                 for hit_boss in boss_hits:
                     hit_boss.deduct_energy(self.player.shot_power)
-                    print(self.boss.energy)
+                    print(self.boss_sprite.sprites()[0].energy)  # print boss energy
                     self.dashboard.score += hit_boss.shot_score
                     self.explosions.add(Explosion(hit_boss.rect.center))
                     self.sound_manager.play_explosion_fx()
@@ -393,16 +393,17 @@ class Game:
 
     def is_boss_killed(self):
         if self.level == 4:
-            if not self.boss_sprite:  # Check if the boss sprite is empty
+            if not self.boss_sprite:
                 self.running = False
                 self.congrats_screen_active = True
-                self.show_congrats_screen()
+                # self.show_congrats_screen()
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
             self.bg.stop_scrolling()
             self.bg.scroll_count = 0
             self.congrats_screen.show()
+            self.sound_manager.stop_all_music()
 
     def reset_level_values(self):
         self.god_mode = False
@@ -412,7 +413,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 1
+        self.level = 4
         self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100

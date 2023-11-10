@@ -179,6 +179,7 @@ class Boss(pygame.sprite.Sprite):
     def dead(self):
         if self.energy <= 0:
             self.kill()
+            self.shots.empty()
 
     def update(self):
         self.animate()
