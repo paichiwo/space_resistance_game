@@ -9,6 +9,7 @@ from src.enemy import Enemy, Boss
 from src.explosion import Explosion
 from src.dashboard import Dashboard
 from src.powerup import PowerUp
+from src.sound_manager import SoundManager
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
 # 1. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
@@ -53,13 +54,16 @@ class Game:
         self.window.position = pg_sdl2.WINDOWPOS_CENTERED
         self.window.show()
 
+        # Import sounds
+        self.sound_manager = SoundManager()
+
         # Create game objects
         self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors)
         self.game_over_screen = GameOverScreen(self.screen, self.window_width, self.window_height)
         self.congrats_screen = CongratsScreen(self.screen, self.window_width, self.window_height)
         self.dashboard = Dashboard(self.screen, self.config_colors)
         self.bg = Background(self.screen, self.window_height)
-        self.player = Player(self.bg.bg.get_width(), self.window_height)
+        self.player = Player(self.bg.bg.get_width(), self.window_height, self.sound_manager)
         self.fumes = Fumes()
         self.boss = Boss(self.screen, self.bg.bg.get_width(), self.window_height, self.player.rect)
 
@@ -98,46 +102,6 @@ class Game:
 
         # Game won
         self.congrats_screen_active = False
-
-        # Game music
-        pygame.mixer.init(44100, 16, 2, 4096)
-        pygame.mixer.set_num_channels(16)
-        self.channels = [
-            pygame.mixer.Channel(0),
-            pygame.mixer.Channel(1),
-            pygame.mixer.Channel(2),
-            pygame.mixer.Channel(3),
-            pygame.mixer.Channel(4),
-            pygame.mixer.Channel(5),
-            pygame.mixer.Channel(6),
-            pygame.mixer.Channel(7),
-            pygame.mixer.Channel(8),
-            pygame.mixer.Channel(9),
-            pygame.mixer.Channel(10),
-            pygame.mixer.Channel(11),
-            pygame.mixer.Channel(12),
-            pygame.mixer.Channel(13),
-            pygame.mixer.Channel(14),
-            pygame.mixer.Channel(15),
-        ]
-        # Load music tracks
-        self.welcome_screen_music = pygame.mixer.Sound("assets/msx/music/Welcome_Screen.ogg")
-        self.welcome_screen_music.set_volume(0.5)
-        self.levels_1_3_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2.ogg")
-        self.levels_1_3_music.set_volume(0.5)
-        self.level_4_music = pygame.mixer.Sound("assets/msx/music/C64_Turrican_2_boss.ogg")
-        self.level_4_music.set_volume(0.5)
-        self.game_over_screen_music = pygame.mixer.Sound("assets/msx/music/Congrats.ogg")
-        self.game_over_screen_music.set_volume(0.7)
-        self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Amiga_Lotus_2.ogg")
-        self.congrats_screen_music.set_volume(1)
-
-        # Game sound effects
-        self.explosion_sound = pygame.mixer.Sound("assets/msx/fx/explosion_2.wav")
-
-        self.lost_life_sound = pygame.mixer.Sound("assets/msx/fx/lost_life.wav")
-
-        self.power_up_sound = pygame.mixer.Sound("assets/msx/fx/power_up.wav")
 
     def handle_events(self, event):
         """Handle game events"""
@@ -222,45 +186,15 @@ class Game:
 
     def set_music_for_game(self):
         if self.welcome_screen_active:
-            self.channels[1].stop()
-            self.channels[2].stop()
-            self.channels[3].stop()
-            self.channels[4].stop()
-            if not self.channels[0].get_busy():
-                self.channels[0].play(self.welcome_screen_music, loops=-1)
+            self.sound_manager.play_welcome_screen_music()
         elif self.level in [1, 2, 3] and not self.game_over_screen_active and not self.congrats_screen_active:
-            self.channels[0].stop()
-            self.channels[2].stop()
-            self.channels[3].stop()
-            self.channels[4].stop()
-            if not self.channels[1].get_busy():
-                self.channels[1].play(self.levels_1_3_music, loops=-1)
+            self.sound_manager.play_levels_1_3_music()
         elif self.level == 4 and not self.game_over_screen_active and not self.congrats_screen_active:
-            self.channels[0].stop()
-            self.channels[1].stop()
-            self.channels[3].stop()
-            self.channels[4].stop()
-            if not self.channels[2].get_busy():
-                self.channels[2].play(self.level_4_music, loops=-1)
+            self.sound_manager.play_level_4_music()
         elif self.game_over_screen_active:
-            self.channels[0].stop()
-            self.channels[1].stop()
-            self.channels[2].stop()
-            self.channels[4].stop()
-            if not self.channels[3].get_busy():
-                self.channels[3].play(self.game_over_screen_music, loops=-1)
+            self.sound_manager.play_game_over_music()
         elif self.congrats_screen_active:
-            self.channels[0].stop()
-            self.channels[1].stop()
-            self.channels[2].stop()
-            self.channels[3].stop()
-            if not self.channels[4].get_busy():
-                self.channels[4].play(self.congrats_screen_music, loops=-1)
-
-    def stop_all_music(self):
-        for channel in self.channels:
-            if channel.get_busy():
-                channel.stop()
+            self.sound_manager.play_congrats_music()
 
     def set_timers_for_level(self):
         if self.level in self.enemy_spawning_intervals:
@@ -296,7 +230,7 @@ class Game:
 
     def show_level_message(self):
         self.bg.stop_scrolling()
-        self.stop_all_music()
+        self.sound_manager.stop_all_music()
         start = pygame.time.get_ticks()
         level_text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
         level_rect = level_text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -315,7 +249,7 @@ class Game:
         if not self.first_level_message:
             self.bg.stop_scrolling()
             self.first_level_message = True
-            self.stop_all_music()
+            self.sound_manager.stop_all_music()
             start_time = pygame.time.get_ticks()
             text = self.font.render(f"Level {self.level}", False, self.config_colors["WHITE"])
             rect = text.get_rect(midtop=(self.window_width // 2, self.window_height // 2))
@@ -417,8 +351,7 @@ class Game:
             self.player.cur_energy = self.player.max_energy
             if self.player.lives > 0:
                 self.player.lives -= 1
-                if not self.channels[6].get_busy():
-                    self.channels[6].play(self.lost_life_sound)
+                self.sound_manager.play_sound_fx(channel=6, sound=self.sound_manager.lost_life_sound)
 
                 # set invincibility
                 self.god_mode = True

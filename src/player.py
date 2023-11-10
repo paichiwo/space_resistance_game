@@ -3,11 +3,12 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     """Create the Player object"""
-    def __init__(self, bg_img_width, window_height, *args):
+    def __init__(self, bg_img_width, window_height, sound_manager, *args):
         super().__init__(*args)
 
         self.bg_img_width = bg_img_width
         self.window_height = window_height
+        self.sound_manager = sound_manager
 
         self.ship_mid = pygame.image.load("assets/img/ship/middle.png").convert_alpha()
 
@@ -44,12 +45,6 @@ class Player(pygame.sprite.Sprite):
         self.shot_speed = 10
         self.shot_power = 10
         self.is_shooting = False
-
-        # Sound Effects
-        self.channel = pygame.mixer.Channel(5)
-        # player shot
-        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.wav")
-        self.player_shot_sound.set_volume(0.6)
 
     def animate_left(self):
         self.left_index += 0.5
@@ -115,16 +110,12 @@ class Player(pygame.sprite.Sprite):
         else:
             self.movement_animation_god_mode(keys)
 
-    def play_shot_sound(self):
-        if not self.channel.get_busy():
-            self.channel.play(self.player_shot_sound)
-
     def action(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not self.is_shooting:
             self.shoot()
             self.is_shooting = True
-            self.play_shot_sound()
+            self.sound_manager.play_player_shot_fx()
 
         elif not keys[pygame.K_SPACE]:
             self.is_shooting = False
