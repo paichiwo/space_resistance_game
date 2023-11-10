@@ -32,7 +32,7 @@ class Game:
         self.window_width = 320
         self.window_height = 180
         self.scale = 4
-        self.fps = 120
+        self.fps = 60
 
         # Game variables
         self.running = False
@@ -131,6 +131,13 @@ class Game:
         self.game_over_screen_music.set_volume(0.7)
         self.congrats_screen_music = pygame.mixer.Sound("assets/msx/music/Amiga_Lotus_2.ogg")
         self.congrats_screen_music.set_volume(1)
+
+        # Game sound effects
+        self.explosion_sound = pygame.mixer.Sound("assets/msx/fx/explosion_2.wav")
+
+        self.lost_life_sound = pygame.mixer.Sound("assets/msx/fx/lost_life.wav")
+
+        self.power_up_sound = pygame.mixer.Sound("assets/msx/fx/power_up.wav")
 
     def handle_events(self, event):
         """Handle game events"""
@@ -410,6 +417,8 @@ class Game:
             self.player.cur_energy = self.player.max_energy
             if self.player.lives > 0:
                 self.player.lives -= 1
+                if not self.channels[6].get_busy():
+                    self.channels[6].play(self.lost_life_sound)
 
                 # set invincibility
                 self.god_mode = True
