@@ -72,6 +72,12 @@ class SoundManager:
     def play_player_shot_fx(self):
         self.play_sound_fx(channel=5, sound=self.player_shot_sound)
 
+    def play_explosion_fx(self):
+        self.play_sound_fx(channel=6, sound=self.explosion_sound)
+
+    def play_lost_life_fx(self):
+        self.play_sound_fx(channel=7, sound=self.lost_life_sound)
+
     def play_track(self, channel, sound):
         if not self.channels[channel].get_busy():
             self.channels[channel].play(sound, loops=-1)
