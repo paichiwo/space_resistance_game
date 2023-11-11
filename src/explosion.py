@@ -3,10 +3,10 @@ import pygame
 
 class Explosion(pygame.sprite.Sprite):
     """Create explosion object"""
-    def __init__(self, enemy_pos):
+    def __init__(self, position):
         super().__init__()
 
-        self.enemy_pos = enemy_pos
+        self.position = position
 
         explosion_1 = pygame.image.load("assets/img/explosion/explosion_a.png").convert_alpha()
         explosion_2 = pygame.image.load("assets/img/explosion/explosion_b.png").convert_alpha()
@@ -20,7 +20,7 @@ class Explosion(pygame.sprite.Sprite):
         self.animation_speed = 0.5
 
         self.image = self.explosion_frames[self.explosion_index]
-        self.rect = self.image.get_rect(center=enemy_pos)
+        self.rect = self.image.get_rect(center=self.position)
 
     def animate(self):
         self.explosion_index += self.animation_speed

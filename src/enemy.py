@@ -5,7 +5,7 @@ import pygame
 
 
 class Enemy(pygame.sprite.Sprite):
-
+    """Creates enemy objects"""
     def __init__(self, screen, bg_img_width, window_height, enemy_size, player_rect, enemy_speeds):
         super().__init__()
 

@@ -4,6 +4,7 @@ import pygame
 
 class WelcomeScreen:
     def __init__(self, screen, screen_width, screen_height, colors):
+
         self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -37,7 +38,6 @@ class WelcomeScreen:
         self.planet_last_anim_update = pygame.time.get_ticks()
 
     def show(self):
-
         self.screen.fill("black")
 
         # Background animation
@@ -79,13 +79,13 @@ class WelcomeScreen:
 
 class GameOverScreen:
     def __init__(self, screen, screen_width, screen_height):
+
         self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
 
     def show(self):
-
         self.screen.fill("black")
 
         game_over_text = self.font.render("GAME OVER", True, "red")
@@ -112,7 +112,6 @@ class CongratsScreen:
         self.astronaut_img_rect = self.astronaut_img.get_rect(center=(400, 50))
 
     def show(self):
-
         self.screen.fill("black")
 
         self.screen.blit(self.astronaut_img, self.astronaut_img_rect)

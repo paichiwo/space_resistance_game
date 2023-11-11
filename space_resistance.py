@@ -148,7 +148,6 @@ class Game:
 
     def update_game(self):
         """Update all game objects"""
-
         self.screen.fill("black")
 
         # Change levels

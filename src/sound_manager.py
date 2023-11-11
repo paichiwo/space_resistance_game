@@ -2,8 +2,9 @@ import pygame
 
 
 class SoundManager:
-
+    """Manages all sounds for the game"""
     def __init__(self):
+
         # Initialize pygame mixer
         pygame.mixer.init(44100, 16, 2, 4096)
         pygame.mixer.set_num_channels(16)

@@ -48,7 +48,6 @@ class Background:
         self.speed = 0
         self.scroll = 0
 
-
     def start_scrolling(self):
         self.speed = 0.5
 
