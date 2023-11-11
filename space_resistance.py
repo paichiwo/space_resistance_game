@@ -39,6 +39,7 @@ class Game:
         self.running = False
         self.level = 1
         self.enemy_kills = 0
+        self.boss_killed = False
 
         # Game setup
         pygame.init()
@@ -80,6 +81,9 @@ class Game:
 
         self.energy_powerup_timer = pygame.USEREVENT + 2
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
+
+        self.boss_killed_time = None
+        self.boss_killed_delay = 3000
 
         # God mode when life lost
         self.last_collision_time = 0
@@ -161,7 +165,7 @@ class Game:
         self.powerups.draw(self.screen)
 
         # Update game elements
-        self.player.update(self.god_mode)
+        self.player.update(self.god_mode, self.boss_killed)
         self.fumes.update((self.player.rect.midbottom[0], self.player.rect.midbottom[1] + 8))
         self.enemy_sprite_group.update()
         self.boss_sprite.update()
@@ -391,25 +395,38 @@ class Game:
         if self.game_over_screen_active:
             self.game_over_screen.show()
 
+    def kill_leftover_enemies(self):
+        for enemy in self.enemy_sprite_group:
+            self.explosions.add(Explosion(enemy.rect.center))
+            enemy.kill()
+
     def is_boss_killed(self):
         if self.level == 4:
             if not self.boss_sprite:
-                self.running = False
-                self.congrats_screen_active = True
-                # self.show_congrats_screen()
+                self.kill_leftover_enemies()
+                self.player.shots.empty()
+                self.boss_killed = True
+                self.god_mode = False
+                if self.boss_killed_time is None:
+                    self.boss_killed_time = pygame.time.get_ticks()
+                if pygame.time.get_ticks() - self.boss_killed_time >= self.boss_killed_delay:
+                    self.running = False
+                    self.congrats_screen_active = True
+                    self.show_congrats_screen()
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
             self.bg.stop_scrolling()
             self.bg.scroll_count = 0
             self.congrats_screen.show()
-            self.sound_manager.stop_all_music()
 
     def reset_level_values(self):
         self.god_mode = False
         self.enemy_sprite_group.empty()
         self.powerups.empty()
         self.enemy_kills = 0
+        self.boss_killed_time = None
+        self.boss_killed = False
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
@@ -419,6 +436,9 @@ class Game:
         self.player.cur_energy = 100
         self.player.rect.midbottom = (self.bg.bg.get_width() // 2, self.window_height - 10)
         self.god_mode = False
+        self.boss_killed_time = None
+        self.boss_killed = False
+        self.boss.energy = 300
 
         self.bg.bg = self.bg.level_images[0]
         self.bg.scroll_count = 0
