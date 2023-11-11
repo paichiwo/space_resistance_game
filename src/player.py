@@ -110,6 +110,9 @@ class Player(pygame.sprite.Sprite):
         else:
             self.movement_animation_god_mode(keys)
 
+    def movement_after_boss_killed(self):
+        self.rect.y -= 2
+
     def action(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not self.is_shooting:
@@ -145,12 +148,15 @@ class Player(pygame.sprite.Sprite):
         if self.cur_energy > 0:
             self.cur_energy -= damage_value
 
-    def update(self, god_mode):
-        self.movement(god_mode)
-        self.action()
-        self.stay_within_boundaries()
-        self.shots.update()
-        self.handle_shot_cooldown()
+    def update(self, god_mode, boss_killed):
+        if not boss_killed:
+            self.movement(god_mode)
+            self.action()
+            self.stay_within_boundaries()
+            self.shots.update()
+            self.handle_shot_cooldown()
+        else:
+            self.movement_after_boss_killed()
 
 
 class Fumes(pygame.sprite.Sprite):
