@@ -108,16 +108,38 @@ class CongratsScreen:
         self.screen_height = screen_height
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
 
-        self.astronaut_img = pygame.image.load("assets/img/ui/astronaut.png").convert_alpha()
-        self.astronaut_img_rect = self.astronaut_img.get_rect(center=(400, 50))
+        self.astronaut_dir = "assets/img/ui/astronaut"
+        self.astronaut_frames = []
+        self.astronaut_index = 0
+        for astronaut_image in os.listdir(self.astronaut_dir):
+            if astronaut_image.endswith(".png"):
+                astronaut_filename = os.path.join(self.astronaut_dir, astronaut_image)
+                bg_frame = pygame.image.load(astronaut_filename).convert_alpha()
+                self.astronaut_frames.append(bg_frame)
+
+        self.astronaut_img = self.astronaut_frames[self.astronaut_index]
+        self.astronaut_rect = self.astronaut_img.get_rect(center=(380, 50))
+
+        self.astronaut_anim_delay = 100
+        self.astronaut_last_anim_update = pygame.time.get_ticks()
+
+    def animate_astronaut(self):
+        cur = pygame.time.get_ticks()
+        if cur - self.astronaut_last_anim_update >= self.astronaut_anim_delay:
+            self.astronaut_index = (self.astronaut_index + 1) % len(self.astronaut_frames)
+            self.astronaut_last_anim_update = cur
+
+        astronaut_frame = self.astronaut_frames[self.astronaut_index]
+        self.screen.blit(astronaut_frame, self.astronaut_rect)
+
+        self.astronaut_rect.x -= 1
+        if self.astronaut_rect.right < 0:
+            self.astronaut_rect.center = (380, 50)
 
     def show(self):
         self.screen.fill("black")
 
-        self.screen.blit(self.astronaut_img, self.astronaut_img_rect)
-        self.astronaut_img_rect.x -= 1
-        if self.astronaut_img_rect.right < 0:
-            self.astronaut_img_rect.center = (400, 50)
+        self.animate_astronaut()
 
         text1 = self.font.render("congratulations, space resistance saved the planet", True, "white")
         text2 = self.font.render("alien attack has stopped and people live happy lives", True, "white")
