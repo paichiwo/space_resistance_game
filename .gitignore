@@ -1,5 +1,7 @@
 /venv/
 /.idea/
 /__pycache__/
-
+/devlog/
+/assets/original_assets/
+/assets/mockup
 /test/
