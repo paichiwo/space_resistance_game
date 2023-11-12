@@ -12,6 +12,8 @@ from src.powerup import PowerUp
 from src.sound_manager import SoundManager
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
+import asyncio
+
 # 1. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
 # 2. fix bg reset (still scrolling when the game ended)
 # 3. delay after boss killed (display counting number of total enemies killed)
@@ -451,7 +453,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
-    def game_loop(self):
+    async def main(self):
         while True:
             self.set_music_for_game()
 
@@ -472,10 +474,8 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(self.fps)
-
-    def run(self):
-        self.game_loop()
+            await asyncio.sleep(0)
 
 
 if __name__ == "__main__":
-    Game().run()
+    asyncio.run(Game().main())
