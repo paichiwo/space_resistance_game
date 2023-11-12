@@ -27,10 +27,10 @@ class SoundManager:
         self.congrats_screen_music.set_volume(1)
 
         # Load sound effects
-        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.wav")
-        self.explosion_sound = pygame.mixer.Sound("assets/msx/fx/explosion_2.wav")
-        self.lost_life_sound = pygame.mixer.Sound("assets/msx/fx/lost_life.wav")
-        self.power_up_sound = pygame.mixer.Sound("assets/msx/fx/power_up.wav")
+        self.player_shot_sound = pygame.mixer.Sound("assets/msx/fx/player_shot.ogg")
+        self.explosion_sound = pygame.mixer.Sound("assets/msx/fx/explosion_2.ogg")
+        self.lost_life_sound = pygame.mixer.Sound("assets/msx/fx/lost_life.ogg")
+        self.power_up_sound = pygame.mixer.Sound("assets/msx/fx/power_up.ogg")
 
         # Set volume for sound effects
         self.player_shot_sound.set_volume(0.6)
