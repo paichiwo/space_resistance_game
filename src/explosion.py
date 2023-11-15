@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 
@@ -8,15 +10,17 @@ class Explosion(pygame.sprite.Sprite):
 
         self.position = position
 
-        explosion_1 = pygame.image.load("assets/img/explosion/explosion_a.png").convert_alpha()
-        explosion_2 = pygame.image.load("assets/img/explosion/explosion_b.png").convert_alpha()
-        explosion_3 = pygame.image.load("assets/img/explosion/explosion_c.png").convert_alpha()
-        explosion_4 = pygame.image.load("assets/img/explosion/explosion_d.png").convert_alpha()
-        explosion_5 = pygame.image.load("assets/img/explosion/explosion_e.png").convert_alpha()
-        explosion_6 = pygame.image.load("assets/img/explosion/explosion_f.png").convert_alpha()
-
-        self.explosion_frames = [explosion_1, explosion_2, explosion_3, explosion_4, explosion_5, explosion_6]
+        # small explosion
+        self.explosion_frames = []
         self.explosion_index = 0
+
+        self.directory = "assets/img/explosion"
+        for file in os.listdir(self.directory):
+            if file.endswith(".png"):
+                explosion_filename = os.path.join(self.directory, file)
+                explosion_frame = pygame.image.load(explosion_filename).convert_alpha()
+                self.explosion_frames.append(explosion_frame)
+
         self.animation_speed = 0.5
 
         self.image = self.explosion_frames[self.explosion_index]
