@@ -3,6 +3,7 @@ import pygame
 
 
 class WelcomeScreen:
+    """Create a scene for the Welcome Screen"""
     def __init__(self, screen, screen_width, screen_height, colors):
 
         self.screen = screen
@@ -78,6 +79,7 @@ class WelcomeScreen:
 
 
 class GameOverScreen:
+    """Create a scene for the Game Over screen"""
     def __init__(self, screen, screen_width, screen_height):
 
         self.screen = screen
@@ -102,6 +104,7 @@ class GameOverScreen:
 
 
 class CongratsScreen:
+    """Create a scene for the Congrats Screen"""
     def __init__(self, screen, screen_width, screen_height):
         self.screen = screen
         self.screen_width = screen_width
