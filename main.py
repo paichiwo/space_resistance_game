@@ -14,10 +14,7 @@ from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 
 import asyncio
 
-# 1. music / sound effects(player_dead, explosion, player shot, level 1-3 music, level 4 music)
-# 2. fix bg reset (still scrolling when the game ended)
-# 3. delay after boss killed (display counting number of total enemies killed)
-# 4. high-score system (implement saving scores on web)
+# 1. high-score system (implement saving scores on web)
 
 
 class Game:
