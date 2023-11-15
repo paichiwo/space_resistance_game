@@ -111,6 +111,7 @@ class Player(pygame.sprite.Sprite):
             self.movement_animation_god_mode(keys)
 
     def movement_after_boss_killed(self):
+        self.image = self.ship_mid
         self.rect.y -= 2
 
     def action(self):
