@@ -38,9 +38,11 @@ class WelcomeScreen:
         self.bg_last_anim_update = pygame.time.get_ticks()
         self.planet_last_anim_update = pygame.time.get_ticks()
 
-    def show(self):
-        self.screen.fill("black")
+        self.show_welcome_scene = True
+        self.scene_switch_delay = 5000
+        self.last_scene_switch = pygame.time.get_ticks()
 
+    def welcome_scene(self):
         # Background animation
         cur = pygame.time.get_ticks()
         if cur - self.bg_last_anim_update >= self.anim_delay:
@@ -76,6 +78,27 @@ class WelcomeScreen:
         start_text = self.font.render("PRESS 'S' TO START", True, self.colors["WHITE"])
         start_rect = start_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 70))
         self.screen.blit(start_text, start_rect)
+
+    def high_score_scene(self):
+        self.screen.fill("black")
+
+        # Text 1
+        message_text = self.font.render("HIGH SCORES:", True, self.colors["WHITE"])
+        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1]-60))
+        self.screen.blit(message_text, message_rect)
+
+    def show(self):
+        self.screen.fill("black")
+
+        cur = pygame.time.get_ticks()
+        if cur - self.last_scene_switch >= self.scene_switch_delay:
+            self.show_welcome_scene = not self.show_welcome_scene
+            self.last_scene_switch = cur
+
+        if self.show_welcome_scene:
+            self.welcome_scene()
+        else:
+            self.high_score_scene()
 
 
 class GameOverScreen:
