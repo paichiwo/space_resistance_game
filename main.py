@@ -11,6 +11,7 @@ from src.dashboard import Dashboard
 from src.powerup import PowerUp
 from src.sound_manager import SoundManager
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
+from src.high_score import HighScoreManager
 
 import asyncio
 
@@ -54,11 +55,16 @@ class Game:
         self.window.position = pg_sdl2.WINDOWPOS_CENTERED
         self.window.show()
 
-        # Import sounds
+        # Sound manager
         self.sound_manager = SoundManager()
 
+        # High-score manager
+        self.high_score_manager = HighScoreManager()
+        self.high_score_manager.create_db()
+        self.scores = self.high_score_manager.retrieve_all_scores()
+
         # Create game objects
-        self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors, self.scores)
         self.game_over_screen = GameOverScreen(self.screen, self.window_width, self.window_height)
         self.congrats_screen = CongratsScreen(self.screen, self.window_width, self.window_height)
         self.dashboard = Dashboard(self.screen, self.config_colors)
@@ -387,7 +393,11 @@ class Game:
             self.screen.blit(self.life_lost_text, (self.bg.bg_1.get_width() // 2 - 55, self.window_height // 2 - 20))
 
     def game_over(self):
-        return self.player.lives > 0
+        if self.player.lives > 0:
+            return True
+        else:
+            self.high_score_manager.check_high_score(self.dashboard.score)
+            return False
 
     def show_game_over_screen(self):
         if self.game_over_screen_active:
@@ -428,7 +438,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 4
+        self.level = 1
         self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100
@@ -451,27 +461,30 @@ class Game:
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
     async def main(self):
-        while True:
-            self.set_music_for_game()
+        try:
+            while True:
+                self.set_music_for_game()
 
-            for event in pygame.event.get():
-                self.handle_events(event)
+                for event in pygame.event.get():
+                    self.handle_events(event)
 
-            if self.welcome_screen_active:
-                self.welcome_screen.show()
-            else:
-                if self.running:
-                    self.update_game()
-                    self.running = self.game_over()
+                if self.welcome_screen_active:
+                    self.welcome_screen.show()
                 else:
-                    if self.player.lives <= 0:
-                        self.game_over_screen_active = True
-                        self.show_game_over_screen()
-                        self.bg.stop_scrolling()
+                    if self.running:
+                        self.update_game()
+                        self.running = self.game_over()
+                    else:
+                        if self.player.lives <= 0:
+                            self.game_over_screen_active = True
+                            self.show_game_over_screen()
+                            self.bg.stop_scrolling()
 
-            pygame.display.update()
-            self.clock.tick(self.fps)
-            await asyncio.sleep(0)
+                pygame.display.update()
+                self.clock.tick(self.fps)
+                await asyncio.sleep(0)
+        finally:
+            self.high_score_manager.close_db()
 
 
 if __name__ == "__main__":
