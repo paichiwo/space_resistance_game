@@ -83,7 +83,7 @@ class Game:
 
         # Timers
         self.enemy_timer_1 = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.enemy_timer_1, 1500)
+        pygame.time.set_timer(self.enemy_timer_1, 500)
 
         self.energy_powerup_timer = pygame.USEREVENT + 2
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
@@ -236,7 +236,7 @@ class Game:
             return speeds
 
     def change_level(self):
-        if self.bg.scroll_count == 1 and not self.level == 4:
+        if self.bg.scroll_count == 5 and not self.level == 4:
             self.level += 1
             self.bg.change_bg(self.level)
             self.show_level_message()
@@ -381,7 +381,7 @@ class Game:
 
                 # stop spawning enemies for 2s
                 self.enemy_sprite_group.empty()
-                pygame.time.set_timer(self.enemy_timer_1, 2000)
+                pygame.time.set_timer(self.enemy_timer_1, 500)
 
                 # set data for a life-lost message
                 self.life_lost_outline = self.font.render("LIFE LOST", False, self.config_colors["BLACK"])
@@ -446,10 +446,10 @@ class Game:
         self.enemy_kills = 0
         self.boss_killed_time = None
         self.boss_killed = False
-        pygame.time.set_timer(self.enemy_timer_1, 2000)
+        pygame.time.set_timer(self.enemy_timer_1, 500)
 
     def reset_game_values(self):
-        self.level = 4
+        self.level = 1
         self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100
@@ -470,7 +470,7 @@ class Game:
         self.powerups.empty()
         self.boss_sprite.empty()
 
-        pygame.time.set_timer(self.enemy_timer_1, 2000)
+        pygame.time.set_timer(self.enemy_timer_1, 500)
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
         self.scores = self.high_score_manager.retrieve_all_scores()
