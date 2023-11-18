@@ -1,3 +1,4 @@
+import os.path
 import sqlite3
 import tkinter as tk
 from tkinter.simpledialog import askstring
@@ -12,13 +13,16 @@ class HighScoreManager:
         self.root = tk.Tk()
 
     def create_db(self):
-        with open("scores_db/scores.sql", 'r', encoding='utf-8') as sql_file:
-            try:
-                self.cur.executescript(sql_file.read())
-                self.con.commit()
-                print("Database created")
-            except sqlite3.Error:
-                print("Database exists, proceeding...")
+        if not os.path.exists("scores_db/scores.db"):
+            with open("scores_db/scores.sql", 'r', encoding='utf-8') as sql_file:
+                try:
+                    self.cur.executescript(sql_file.read())
+                    self.con.commit()
+                    print("Database created")
+                except sqlite3.Error as e:
+                    print(f"sqlite error: {e}")
+        else:
+            print("Database exists, proceeding...")
 
     def close_db(self):
         self.con.close()
