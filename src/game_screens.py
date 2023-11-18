@@ -60,25 +60,40 @@ class WelcomeScreen:
             self.planet_index = (self.planet_index + 1) % len(self.planet_frames)
             self.planet_last_anim_update = cur
 
-        glow_rect = self.planet_glow.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
+        glow_rect = self.planet_glow.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 30))
         self.screen.blit(self.planet_glow, glow_rect)
 
         planet_frame = self.planet_frames[self.planet_index]
-        planet_rect = planet_frame.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
+        planet_rect = planet_frame.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 30))
         self.screen.blit(planet_frame, planet_rect)
 
         # Logo display
-        logo_rect = self.logo.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 20))
+        logo_rect = self.logo.get_rect(center=(self.mid_screen[0], self.mid_screen[1] - 30))
         self.screen.blit(self.logo, logo_rect)
 
         # Text 1
         message_text = self.font.render("MADE BY PAICHIWO USING PYTHON / PYGAME", True, self.colors["WHITE"])
-        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 60))
+        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 35))
         self.screen.blit(message_text, message_rect)
 
         # Text 2
-        start_text = self.font.render("PRESS 'S' TO START", True, self.colors["WHITE"])
-        start_rect = start_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 70))
+        message_text = self.font.render("SPECIAL THANKS:", True, self.colors["YELLOW"])
+        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 45))
+        self.screen.blit(message_text, message_rect)
+
+        # Text 3
+        message_text = self.font.render("DWIGHT - FOR YOUR GUIDANCE AND PATIENCE", True, self.colors["YELLOW"])
+        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 55))
+        self.screen.blit(message_text, message_rect)
+
+        # Text 4
+        message_text = self.font.render("ANSIMUZ - FOR THIS BEAUTIFUL ASSETS", True, self.colors["YELLOW"])
+        message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 65))
+        self.screen.blit(message_text, message_rect)
+
+        # Text 5
+        start_text = self.font.render("PRESS 'S' TO START", True, self.colors["RED"])
+        start_rect = start_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1] + 80))
         self.screen.blit(start_text, start_rect)
 
     def high_score_scene(self):
