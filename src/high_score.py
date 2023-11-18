@@ -32,7 +32,7 @@ class HighScoreManager:
         top_10 = self.retrieve_all_scores()
         if len(top_10) < 10 or player_score > top_10[-1][1]:
             player_name = self.get_player_name()
-            if player_name:
+            if player_name is not None:
                 self.save_score(player_name, player_score)
             else:
                 messagebox.showerror("Error", "Please enter your name")
@@ -52,3 +52,9 @@ class HighScoreManager:
         self.root.withdraw()
         player_name = askstring("High Score", "Enter your name:")
         return player_name
+
+    def insert_10_sample_records(self):
+        name = "paichiwo"
+        for i in range(1, 11):
+            score = i * 100
+            self.save_score(name, score)
