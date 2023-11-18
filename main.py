@@ -62,6 +62,7 @@ class Game:
         self.high_score_manager = HighScoreManager()
         self.high_score_manager.create_db()
         self.scores = self.high_score_manager.retrieve_all_scores()
+        self.score_entered = False
 
         # Create game objects
         self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height, self.config_colors, self.scores)
@@ -137,6 +138,10 @@ class Game:
 
         if self.congrats_screen_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                self.scores = self.high_score_manager.retrieve_all_scores()
+                self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height,
+                                                    self.config_colors, self.scores)
+
                 self.welcome_screen_active = True
 
         else:
@@ -396,7 +401,7 @@ class Game:
         if self.player.lives > 0:
             return True
         else:
-            self.high_score_manager.check_high_score(self.dashboard.score)
+            self.enter_high_score()
             return False
 
     def show_game_over_screen(self):
@@ -410,7 +415,7 @@ class Game:
 
     def is_boss_killed(self):
         if self.level == 4:
-            if not self.boss_sprite:
+            if not self.boss_sprite or self.boss_sprite.sprites()[0].energy <= 0:
                 self.kill_leftover_enemies()
                 self.player.shots.empty()
                 self.boss_killed = True
@@ -421,12 +426,18 @@ class Game:
                     self.running = False
                     self.congrats_screen_active = True
                     self.show_congrats_screen()
+                    self.enter_high_score()
 
     def show_congrats_screen(self):
         if self.congrats_screen_active:
             self.bg.stop_scrolling()
             self.bg.scroll_count = 0
             self.congrats_screen.show()
+
+    def enter_high_score(self):
+        if not self.score_entered:
+            self.high_score_manager.check_high_score(self.dashboard.score)
+            self.score_entered = True
 
     def reset_level_values(self):
         self.god_mode = False
@@ -438,7 +449,7 @@ class Game:
         pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
-        self.level = 1
+        self.level = 4
         self.enemy_kills = 0
         self.player.lives = 4
         self.player.cur_energy = 100
@@ -446,6 +457,8 @@ class Game:
         self.god_mode = False
         self.boss_killed_time = None
         self.boss_killed = False
+        self.game_over_screen_active = False
+        self.score_entered = False
         self.boss.energy = 300
 
         self.bg.bg = self.bg.level_images[0]
@@ -459,6 +472,8 @@ class Game:
 
         pygame.time.set_timer(self.enemy_timer_1, 2000)
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
+
+        self.scores = self.high_score_manager.retrieve_all_scores()
 
     async def main(self):
         try:
