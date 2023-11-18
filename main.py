@@ -15,8 +15,6 @@ from src.high_score import HighScoreManager
 
 import asyncio
 
-# 1. high-score system (implement saving scores on web)
-
 
 class Game:
 
@@ -83,8 +81,7 @@ class Game:
 
         # Timers
         self.enemy_timer_1 = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.enemy_timer_1, 500)
-
+        pygame.time.set_timer(self.enemy_timer_1, 2000)
         self.energy_powerup_timer = pygame.USEREVENT + 2
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
@@ -141,7 +138,6 @@ class Game:
                 self.scores = self.high_score_manager.retrieve_all_scores()
                 self.welcome_screen = WelcomeScreen(self.screen, self.window_width, self.window_height,
                                                     self.config_colors, self.scores)
-
                 self.welcome_screen_active = True
 
         else:
@@ -210,9 +206,9 @@ class Game:
             self.sound_manager.play_congrats_music()
 
     def set_timers_for_level(self):
-        if self.level in self.enemy_spawning_intervals:
-            min_interval, max_interval = self.enemy_spawning_intervals[self.level]
-            pygame.time.set_timer(self.enemy_timer_1, random.randint(min_interval, max_interval))
+        min_interval, max_interval = self.enemy_spawning_intervals[str(self.level)]
+        pygame.time.set_timer(self.enemy_timer_1, random.randint(min_interval, max_interval))
+        print(f"Timer set for level {self.level} with interval {min_interval} to {max_interval} milliseconds.")
 
     def set_enemies_for_level(self):
         level = str(self.level)
@@ -381,7 +377,7 @@ class Game:
 
                 # stop spawning enemies for 2s
                 self.enemy_sprite_group.empty()
-                pygame.time.set_timer(self.enemy_timer_1, 500)
+                pygame.time.set_timer(self.enemy_timer_1, 2000)
 
                 # set data for a life-lost message
                 self.life_lost_outline = self.font.render("LIFE LOST", False, self.config_colors["BLACK"])
@@ -446,7 +442,7 @@ class Game:
         self.enemy_kills = 0
         self.boss_killed_time = None
         self.boss_killed = False
-        pygame.time.set_timer(self.enemy_timer_1, 500)
+        pygame.time.set_timer(self.enemy_timer_1, 2000)
 
     def reset_game_values(self):
         self.level = 1
@@ -470,7 +466,7 @@ class Game:
         self.powerups.empty()
         self.boss_sprite.empty()
 
-        pygame.time.set_timer(self.enemy_timer_1, 500)
+        self.set_timers_for_level()
         pygame.time.set_timer(self.energy_powerup_timer, 5000)
 
         self.scores = self.high_score_manager.retrieve_all_scores()
