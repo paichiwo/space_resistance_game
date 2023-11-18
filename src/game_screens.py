@@ -4,7 +4,7 @@ import pygame
 
 class WelcomeScreen:
     """Create a scene for the Welcome Screen"""
-    def __init__(self, screen, screen_width, screen_height, colors):
+    def __init__(self, screen, screen_width, screen_height, colors, high_scores):
 
         self.screen = screen
         self.screen_width = screen_width
@@ -12,6 +12,8 @@ class WelcomeScreen:
         self.colors = colors
         self.mid_screen = (self.screen_width // 2, self.screen_height // 2)
         self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
+        self.font20 = pygame.font.Font("assets/font/visitor1.ttf", 20)
+        self.high_scores = high_scores
 
         self.bg_dir = "assets/img/ui/welcome_screen_bg"
         self.bg_frames = []
@@ -82,10 +84,27 @@ class WelcomeScreen:
     def high_score_scene(self):
         self.screen.fill("black")
 
-        # Text 1
-        message_text = self.font.render("HIGH SCORES:", True, self.colors["WHITE"])
+        # Background animation
+        cur = pygame.time.get_ticks()
+        if cur - self.bg_last_anim_update >= self.anim_delay:
+            self.bg_index = (self.bg_index + 1) % len(self.bg_frames)
+            self.bg_last_anim_update = cur
+
+        bg_frame = self.bg_frames[self.bg_index]
+        self.screen.blit(bg_frame, (0, 0))
+
+        # Header
+        message_text = self.font20.render("HIGH SCORES:", True, self.colors["WHITE"])
         message_rect = message_text.get_rect(center=(self.mid_screen[0], self.mid_screen[1]-60))
         self.screen.blit(message_text, message_rect)
+
+        # Scores
+        y_pos = 0
+        for score in self.high_scores:
+            score_text = self.font.render(f"{score[0]}: {score[1]}", True, self.colors["WHITE"])
+            score_rect = score_text.get_rect(center=(self.mid_screen[0], (self.mid_screen[1]-40)+y_pos))
+            self.screen.blit(score_text, score_rect)
+            y_pos += 10
 
     def show(self):
         self.screen.fill("black")
