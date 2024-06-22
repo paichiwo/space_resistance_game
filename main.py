@@ -13,7 +13,6 @@ from src.sound_manager import SoundManager
 from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.high_score import HighScoreManager
 
-import asyncio
 
 
 class Game:
@@ -58,7 +57,6 @@ class Game:
 
         # High-score manager
         self.high_score_manager = HighScoreManager()
-        self.high_score_manager.create_db()
         self.scores = self.high_score_manager.retrieve_all_scores()
         self.score_entered = False
 
@@ -471,7 +469,7 @@ class Game:
 
         self.scores = self.high_score_manager.retrieve_all_scores()
 
-    async def main(self):
+    def main(self):
         try:
             while True:
                 self.set_music_for_game()
@@ -493,10 +491,9 @@ class Game:
 
                 pygame.display.update()
                 self.clock.tick(self.fps)
-                await asyncio.sleep(0)
         finally:
             self.high_score_manager.close_db()
 
 
 if __name__ == "__main__":
-    asyncio.run(Game().main())
+    Game().main()
