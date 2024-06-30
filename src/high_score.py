@@ -67,4 +67,3 @@ class HighScoreManager:
         for i in range(1, 11):
             score = i * 100
             writer.writerow([name, score])
-
