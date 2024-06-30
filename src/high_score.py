@@ -1,53 +1,39 @@
 import os
-import sqlite3
+import csv
 import tkinter as tk
 from tkinter.simpledialog import askstring
 from tkinter import messagebox
 
 
 class HighScoreManager:
-    """Manages a high-score database"""
+    """Manages a high-score database stored in a text file."""
     def __init__(self):
-        self.cur = None
-        self.con = None
-        self.db_path = "scores_db/scores.db"
-        self.sql_script_path = "scores_db/scores.sql"
+        self.file_path = "data/scores.txt"
         self.root = tk.Tk()
-        self.ensure_db()
+        self.root.withdraw()  # Hide the root window initially
+        self.ensure_file()
 
-    def ensure_db(self):
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
-
-        # Connect to the database
-        self.con = sqlite3.connect(self.db_path)
-        self.cur = self.con.cursor()
-
-        # Check if the table exists, if not, create it
-        self.cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='scores'")
-        if not self.cur.fetchone():
-            self.create_db()
-            self.insert_10_sample_records()
-
-    def create_db(self):
-        with open(self.sql_script_path, 'r', encoding='utf-8') as sql_file:
-            try:
-                self.cur.executescript(sql_file.read())
-                self.con.commit()
-                print("Database created")
-            except sqlite3.Error as e:
-                print(f"SQLite error: {e}")
-
-    def close_db(self):
-        if self.con:
-            self.con.close()
+    def ensure_file(self):
+        """Ensures that the text file exists."""
+        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+        if not os.path.exists(self.file_path):
+            with open(self.file_path, 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["player_name", "score"])  # Write the header
+                self.insert_sample_records(writer)
 
     def retrieve_all_scores(self):
-        query = "SELECT player_name, score FROM scores ORDER BY score DESC LIMIT 10"
-        self.cur.execute(query)
-        return self.cur.fetchall()
+        """Retrieves the top 10 high scores from the text file."""
+        scores = []
+        with open(self.file_path, 'r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                scores.append((row["player_name"], int(row["score"])))
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores[:10]
 
     def check_high_score(self, player_score):
+        """Checks if the given score is a high score and, if so, saves it."""
         top_10 = self.retrieve_all_scores()
         if len(top_10) < 10 or player_score > top_10[-1][1]:
             player_name = self.get_player_name()
@@ -57,24 +43,27 @@ class HighScoreManager:
                 messagebox.showerror("Error", "Please enter your name")
 
     def save_score(self, player_name, score):
-        query = "INSERT INTO scores (player_name, score) VALUES (?, ?)"
-        self.cur.execute(query, (player_name, score))
-        self.con.commit()
-        # self.remove_lowest_score()
+        """Saves a new high score to the text file."""
+        scores = self.retrieve_all_scores()
+        scores.append((player_name, score))
+        scores.sort(key=lambda x: x[1], reverse=True)
+        scores = scores[:10]  # Keep only the top 10 scores
 
-    def remove_lowest_score(self):
-        query = "DELETE FROM scores WHERE id NOT IN (SELECT id FROM scores ORDER BY score DESC LIMIT 10)"
-        self.cur.execute(query)
-        self.con.commit()
+        with open(self.file_path, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["player_name", "score"])  # Write the header
+            for player, score in scores:
+                writer.writerow([player, score])
 
-    def get_player_name(self):
-        self.root.withdraw()
-        player_name = askstring("High Score", "Enter your name:")
-        return player_name
+    @staticmethod
+    def get_player_name():
+        """Prompts the player to enter their name."""
+        return askstring("High Score", "Enter your name:")
 
-    def insert_10_sample_records(self):
+    @staticmethod
+    def insert_sample_records(writer):
+        """Inserts 10 sample records into the text file."""
         name = "paichiwo"
         for i in range(1, 11):
             score = i * 100
-            self.save_score(name, score)
-
+            writer.writerow([name, score])

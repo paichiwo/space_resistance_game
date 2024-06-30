@@ -40,7 +40,7 @@ class Game:
 
         # Game setup
         pygame.init()
-        pygame.display.set_caption("space resistance by paichiwo")
+        pygame.display.set_caption("Space Resistance by Paichiwo")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height),
                                               flags=pygame.RESIZABLE | pygame.HIDDEN | pygame.SCALED,
                                               vsync=1)
