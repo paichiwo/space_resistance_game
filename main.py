@@ -14,7 +14,6 @@ from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.high_score import HighScoreManager
 
 
-
 class Game:
 
     def __init__(self):
@@ -40,7 +39,7 @@ class Game:
 
         # Game setup
         pygame.init()
-        pygame.display.set_caption("space resistance by paichiwo")
+        pygame.display.set_caption("Space Resistance by Paichiwo")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height),
                                               flags=pygame.RESIZABLE | pygame.HIDDEN | pygame.SCALED,
                                               vsync=1)
@@ -470,29 +469,26 @@ class Game:
         self.scores = self.high_score_manager.retrieve_all_scores()
 
     def main(self):
-        try:
-            while True:
-                self.set_music_for_game()
+        while True:
+            self.set_music_for_game()
 
-                for event in pygame.event.get():
-                    self.handle_events(event)
+            for event in pygame.event.get():
+                self.handle_events(event)
 
-                if self.welcome_screen_active:
-                    self.welcome_screen.show()
+            if self.welcome_screen_active:
+                self.welcome_screen.show()
+            else:
+                if self.running:
+                    self.update_game()
+                    self.running = self.game_over()
                 else:
-                    if self.running:
-                        self.update_game()
-                        self.running = self.game_over()
-                    else:
-                        if self.player.lives <= 0:
-                            self.game_over_screen_active = True
-                            self.show_game_over_screen()
-                            self.bg.stop_scrolling()
+                    if self.player.lives <= 0:
+                        self.game_over_screen_active = True
+                        self.show_game_over_screen()
+                        self.bg.stop_scrolling()
 
-                pygame.display.update()
-                self.clock.tick(self.fps)
-        finally:
-            self.high_score_manager.close_db()
+            pygame.display.update()
+            self.clock.tick(self.fps)
 
 
 if __name__ == "__main__":
