@@ -36,12 +36,6 @@ class Game:
         self.welcome_screen = WelcomeScreen(self.screen)
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
 
-        # Timers
-
-        # God Mode
-
-        # Life Lost msg
-
     def handle_game_events(self, event):
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -77,7 +71,7 @@ class Game:
     def run(self):
         while True:
             self.set_music_for_game()
-            self.screen.fill(COLORS['BLACK'])
+            # self.screen.fill(COLORS['BLACK'])
             self.renderer.clear()
 
             for event in pygame.event.get():

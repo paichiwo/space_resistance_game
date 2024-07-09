@@ -38,8 +38,13 @@ class LevelManager:
         self.enemy_spawn_timer = None
         self.set_enemy_spawn_timer()
 
+        # Messages
         self.level_message = Message(self.screen, f'LEVEL {self.level_index+1}', 3000)
         self.enemy_kills_message = Message(self.screen, f'ENEMY KILLS: {self.player.enemy_kill_count}', 3000)
+
+        # Message display state
+        self.showing_level_message = False
+        self.message_start_time = None
 
     def get_panels(self):
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
@@ -48,9 +53,9 @@ class LevelManager:
         for i in range(self.panels):
             y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height())
             self.screen.blit(self.bg_img, (0, y_pos))
-            if abs(self.scroll_pos) >= self.bg_img.get_height():
-                self.scroll_pos = 0
-                self.count_scrolls()
+        if abs(self.scroll_pos) >= self.bg_img.get_height():
+            self.scroll_pos = 0
+            self.count_scrolls()
         self.scroll_pos += self.scroll_speed * dt
 
     def start_scrolling(self):
@@ -73,28 +78,44 @@ class LevelManager:
     def set_levels(self):
         if self.scroll_count == 1 and not self.level_index == 3:
             self.level_index += 1
-
+            self.finish_level()
             self.change_bg(self.level_index)
-        if self.level_index == 3:
-            self.spawn_boss()
+            if self.level_index == 3:
+                self.spawn_boss()
+
+    def finish_level(self):
+        self.stop_scrolling()
+        self.message_start_time = pygame.time.get_ticks()
+        self.showing_level_message = True
 
     def show_level_message(self):
-        self.stop_scrolling()
-        self.sound_manager.stop_all_music()
-        start = pygame.time.get_ticks()
-        level_text = FONT20.render(f"Level {self.level_index+1}", False, COLORS["WHITE"])
-        level_rect = level_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2))
-        kills_text = FONT10.render(f"Enemy Kills: {self.player.enemy_kill_count}", False, COLORS["WHITE"])
-        kills_rect = kills_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2 + 30))
+        x = Message(self.screen, 'TEST', 3000)
+        x.show()
+        x.update()
+        # level_text = FONT20.render(f"Level {self.level_index + 1}", False, COLORS["WHITE"])
+        # level_rect = level_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2))
+        # kills_text = FONT10.render(f"Enemy Kills: {self.player.enemy_kill_count}", False, COLORS["WHITE"])
+        # kills_rect = kills_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2 + 30))
+        # self.screen.blit(level_text, level_rect)
+        # self.screen.blit(kills_text, kills_rect)
+        sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+        self.renderer.present()
 
-        while pygame.time.get_ticks() - start < 3000:
-            self.screen.fill(COLORS["BLACK"])
-            self.screen.blit(level_text, level_rect)
-            self.screen.blit(kills_text, kills_rect)
-            sdl2.Texture.from_surface(self.renderer, self.screen).draw()
-            self.renderer.present()
-            # self.reset_level_values()
-            self.start_scrolling()
+    def start_new_level(self):
+        self.start_scrolling()
+        self.scroll_pos = 0
+        self.scroll_count = 0
+        self.all_sprites.remove(sprite for sprite in self.enemy_sprites if sprite in self.all_sprites)
+        self.enemy_sprites.empty()
+
+    def between_levels(self):
+        self.sound_manager.stop_all_music()
+        current_time = pygame.time.get_ticks()
+        if current_time - self.message_start_time < 3000:
+            self.show_level_message()
+        else:
+            self.showing_level_message = False
+            self.start_new_level()
 
     def set_enemy_spawn_timer(self):
         level = str(self.level_index + 1)
@@ -115,11 +136,6 @@ class LevelManager:
     def spawn_boss(self):
         pass
 
-    def reset_level_values(self):
-        self.player.god_mode = False
-        self.enemy_sprites.empty()
-        self.player.enemy_kill_count = 0
-
     def restart(self):
         self.level_index = 0
         self.bg_img = self.level_images[0]
@@ -129,11 +145,13 @@ class LevelManager:
         self.player.reset()
 
     def update(self, dt):
-        self.scroll(dt)
-        self.all_sprites.draw(self.screen)
-        self.all_sprites.update(dt)
-        self.dashboard.update(self.player, self.level_index, dt)
-        self.enemy_spawn_timer.update()
-        self.set_levels()
-
-        print(self.level_index)
+        if self.showing_level_message:
+            self.between_levels()
+            # self.sound_manager.stop_all_music()
+        else:
+            self.scroll(dt)
+            self.all_sprites.draw(self.screen)
+            self.all_sprites.update(dt)
+            self.dashboard.update(self.player, self.level_index, dt)
+            self.enemy_spawn_timer.update()
+            self.set_levels()
