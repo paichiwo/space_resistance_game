@@ -7,7 +7,7 @@ from src.timer import Timer
 from src.dashboard import Dashboard
 from src.player import Player
 from src.enemy import Enemy
-from src.in_game_msg import Message
+from src.in_game_msg import MessageBetweenLevels
 
 
 class LevelManager:
@@ -39,8 +39,8 @@ class LevelManager:
         self.set_enemy_spawn_timer()
 
         # Messages
-        self.level_message = Message(self.screen, f'LEVEL {self.level_index+1}', 3000)
-        self.enemy_kills_message = Message(self.screen, f'ENEMY KILLS: {self.player.enemy_kill_count}', 3000)
+        # self.level_message = Message(self.screen, f'LEVEL {self.level_index+1}', 3000)
+        # self.enemy_kills_message = Message(self.screen, f'ENEMY KILLS: {self.player.enemy_kill_count}', 3000)
 
         # Message display state
         self.showing_level_message = False
@@ -89,24 +89,19 @@ class LevelManager:
         self.showing_level_message = True
 
     def show_level_message(self):
-        x = Message(self.screen, 'TEST', 3000)
-        x.show()
-        x.update()
-        # level_text = FONT20.render(f"Level {self.level_index + 1}", False, COLORS["WHITE"])
-        # level_rect = level_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2))
-        # kills_text = FONT10.render(f"Enemy Kills: {self.player.enemy_kill_count}", False, COLORS["WHITE"])
-        # kills_rect = kills_text.get_rect(midtop=(WIDTH // 2, HEIGHT // 2 + 30))
-        # self.screen.blit(level_text, level_rect)
-        # self.screen.blit(kills_text, kills_rect)
+        message = [f'LEVEL {self.level_index + 1}', f'ENEMY KILLS: {self.player.enemy_kill_count}']
+        MessageBetweenLevels(self.screen, message).show()
         sdl2.Texture.from_surface(self.renderer, self.screen).draw()
         self.renderer.present()
 
     def start_new_level(self):
-        self.start_scrolling()
         self.scroll_pos = 0
         self.scroll_count = 0
         self.all_sprites.remove(sprite for sprite in self.enemy_sprites if sprite in self.all_sprites)
         self.enemy_sprites.empty()
+        self.player.shots_group.empty()
+        self.player.enemy_kill_count = 0
+        self.start_scrolling()
 
     def between_levels(self):
         self.sound_manager.stop_all_music()
@@ -147,7 +142,6 @@ class LevelManager:
     def update(self, dt):
         if self.showing_level_message:
             self.between_levels()
-            # self.sound_manager.stop_all_music()
         else:
             self.scroll(dt)
             self.all_sprites.draw(self.screen)
