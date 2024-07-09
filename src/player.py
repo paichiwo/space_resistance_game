@@ -2,7 +2,7 @@ from src.config import *
 from src.helpers import import_image, import_assets
 from src.timer import Timer
 from src.sprites import Shot, Explosion
-from src.in_game_msg import Message
+from src.messages import Message
 
 
 class Player(pygame.sprite.Sprite):

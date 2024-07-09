@@ -7,7 +7,7 @@ from src.timer import Timer
 from src.dashboard import Dashboard
 from src.player import Player
 from src.enemy import Enemy
-from src.in_game_msg import MessageBetweenLevels
+from src.messages import MessageBetweenLevels
 
 
 class LevelManager:
@@ -37,10 +37,6 @@ class LevelManager:
         # Timers
         self.enemy_spawn_timer = None
         self.set_enemy_spawn_timer()
-
-        # Messages
-        # self.level_message = Message(self.screen, f'LEVEL {self.level_index+1}', 3000)
-        # self.enemy_kills_message = Message(self.screen, f'ENEMY KILLS: {self.player.enemy_kill_count}', 3000)
 
         # Message display state
         self.showing_level_message = False
