@@ -7,7 +7,7 @@ FONT20 = pygame.font.Font('assets/font/visitor1.ttf', 20)
 TITLE = 'Space Resistance'
 VERSION = '0.5'
 
-WIDTH, HEIGHT = 320, 180
+WIDTH, HEIGHT = 256, 180
 SCALE = 4
 BACKGROUND_WIDTH = 256
 

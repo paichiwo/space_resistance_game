@@ -151,7 +151,7 @@ class LevelManager:
             self.scroll(dt)
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
-            self.dashboard.update(self.player, self.level_index, dt)
             self.enemy_spawn_timer.update()
             self.set_levels()
             self.check_game_over()
+            self.dashboard.update(self.level_index)
