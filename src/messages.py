@@ -30,8 +30,8 @@ class MessageBetweenLevels:
     def __init__(self, screen, text_array):
         self.screen = screen
 
-        self.texts = [(FONT20.render(text_array[0], False, COLORS['WHITE']), (BACKGROUND_WIDTH // 2, HEIGHT // 2)),
-                      (FONT10.render(text_array[1], False, COLORS['WHITE']), (BACKGROUND_WIDTH // 2, HEIGHT // 2 + 30))]
+        self.texts = [(FONT20.render(text_array[0], False, COLORS['WHITE']), (WIDTH // 2, HEIGHT // 2)),
+                      (FONT10.render(text_array[1], False, COLORS['WHITE']), (WIDTH // 2, HEIGHT // 2 + 30))]
 
     def show(self):
         for text, pos in self.texts:
