@@ -132,6 +132,7 @@ class LevelManager:
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
         self.scroll_pos = 0
+        self.all_sprites.remove(sprite for sprite in self.enemy_sprites if sprite in self.all_sprites)
         self.enemy_sprites.empty()
         self.player.reset()
 
