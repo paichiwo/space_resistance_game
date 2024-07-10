@@ -23,7 +23,7 @@ class Dashboard:
         energy_bar_outline = pygame.Rect(9, 6, bar_length + 2, 3)
 
         pygame.draw.rect(self.screen, COLORS['RED'], energy_bar)
-        pygame.draw.rect(self.screen, 'darkorchid4', energy_bar_outline, 1)
+        pygame.draw.rect(self.screen, 'indigo', energy_bar_outline, 1)
 
     def draw_lives(self):
         life_x = 86
