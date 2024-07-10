@@ -23,7 +23,7 @@ class LevelManager:
         self.panels = self.get_panels()
 
         self.scroll_pos = 0
-        self.scroll_speed = 60
+        self.scroll_speed = 30
         self.scroll_count = 0
 
         # Groups
@@ -145,3 +145,4 @@ class LevelManager:
             self.dashboard.update(self.player, self.level_index, dt)
             self.enemy_spawn_timer.update()
             self.set_levels()
+            print(self.scroll_pos)
