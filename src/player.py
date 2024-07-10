@@ -45,7 +45,6 @@ class Player(pygame.sprite.Sprite):
         self.lives = 4
         self.score = 0
         self.enemy_kill_count = 0
-        self.game_over = False
 
         # Shots
         self.shots_group = pygame.sprite.Group()
@@ -59,7 +58,6 @@ class Player(pygame.sprite.Sprite):
 
         # Extra
         self.god_mode = False
-        self.boss_killed = False
         self.message = Message(self.screen, 'LIFE LOST', 3000)
 
     def animate_player(self, frames, dt):
@@ -183,8 +181,6 @@ class Player(pygame.sprite.Sprite):
             self.current_energy = self.max_energy
             self.god_mode = True
             self.god_mode_timer.activate()
-            if self.lives <= 0:
-                self.game_over = True
 
     def reset_god_mode(self):
         self.god_mode = False
@@ -198,8 +194,6 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.direction = pygame.math.Vector2()
         self.god_mode = False
-        self.boss_killed = False
-        self.game_over = False
 
     def update_groups(self, dt):
         self.shots_group.update(dt)

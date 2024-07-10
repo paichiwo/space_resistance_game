@@ -28,6 +28,7 @@ class LevelManager:
 
         # Groups
         self.all_sprites = pygame.sprite.Group()
+        self.player_sprite = pygame.sprite.Group
         self.enemy_sprites = pygame.sprite.Group()
 
         # Objects
@@ -42,6 +43,9 @@ class LevelManager:
         self.showing_level_message = False
         self.message_start_time = None
 
+        # Game over
+        self.game_over = False
+
     def get_panels(self):
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
 
@@ -55,7 +59,7 @@ class LevelManager:
         self.scroll_pos += self.scroll_speed * dt
 
     def start_scrolling(self):
-        self.scroll_speed = 60
+        self.scroll_speed = 30
 
     def stop_scrolling(self):
         self.scroll_speed = 0
@@ -63,7 +67,6 @@ class LevelManager:
 
     def count_scrolls(self):
         self.scroll_count += 1
-        return self.scroll_count
 
     def change_bg(self, level):
         if 1 <= level <= len(self.level_images) and not level == 4:
@@ -72,7 +75,7 @@ class LevelManager:
             self.scroll_count = 0
 
     def set_levels(self):
-        if self.scroll_count == 1 and not self.level_index == 3:
+        if self.scroll_count == 2 and not self.level_index == 3:
             self.level_index += 1
             self.finish_level()
             self.change_bg(self.level_index)
@@ -97,6 +100,7 @@ class LevelManager:
         self.enemy_sprites.empty()
         self.player.shots_group.empty()
         self.player.enemy_kill_count = 0
+        self.player.god_mode = False
         self.start_scrolling()
 
     def between_levels(self):
@@ -127,6 +131,10 @@ class LevelManager:
     def spawn_boss(self):
         pass
 
+    def check_game_over(self):
+        if self.player.lives <= 0:
+            self.game_over = True
+
     def restart(self):
         self.level_index = 0
         self.bg_img = self.level_images[0]
@@ -146,4 +154,4 @@ class LevelManager:
             self.dashboard.update(self.player, self.level_index, dt)
             self.enemy_spawn_timer.update()
             self.set_levels()
-            print(self.scroll_pos)
+            self.check_game_over()

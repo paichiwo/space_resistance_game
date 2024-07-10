@@ -71,7 +71,7 @@ class Game:
     def run(self):
         while True:
             self.set_music_for_game()
-            # self.screen.fill(COLORS['BLACK'])
+            self.screen.fill(COLORS['BLACK'])
             self.renderer.clear()
 
             for event in pygame.event.get():
@@ -83,7 +83,7 @@ class Game:
             else:
                 if self.states['game_running']:
                     self.level_manager.update(dt)
-                    self.game_over(self.level_manager.player.game_over)
+                    self.game_over(self.level_manager.game_over)
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
