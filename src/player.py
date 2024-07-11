@@ -194,6 +194,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.direction = pygame.math.Vector2()
         self.god_mode = False
+        self.message.hide()
 
     def update_groups(self, dt):
         self.shots_group.update(dt)
