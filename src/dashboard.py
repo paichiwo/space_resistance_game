@@ -19,11 +19,8 @@ class Dashboard:
         ratio = self.player.max_energy / bar_length
         bar_width = self.player.current_energy / ratio
 
-        energy_bar = pygame.Rect(10, 7, bar_width, 1)
-        energy_bar_outline = pygame.Rect(9, 6, bar_length + 2, 3)
-
-        pygame.draw.rect(self.screen, COLORS['RED'], energy_bar)
-        pygame.draw.rect(self.screen, 'indigo', energy_bar_outline, 1)
+        pygame.draw.rect(self.screen, COLORS['RED'], pygame.Rect(10, 7, bar_width, 1))
+        pygame.draw.rect(self.screen, 'indigo', pygame.Rect(9, 6, bar_length + 2, 3), 1)
 
     def draw_lives(self):
         x = 86
