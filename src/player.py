@@ -61,23 +61,17 @@ class Player(pygame.sprite.Sprite):
         self.message = Message(self.screen, 'LIFE LOST', 3000)
 
     def animate_player(self, frames, dt):
-        if not self.god_mode:
-            self.frame_index += 1 * dt
-        else:
-            self.frame_index += 10 * dt
-
+        self.frame_index += 10 * dt if self.god_mode else dt
         if self.frame_index >= len(frames):
             self.frame_index = 1
         self.image = frames[int(self.frame_index)]
 
     def animate_fumes(self, dt):
-        if not self.god_mode:
-            self.fumes_index += 20 * dt
-            if self.fumes_index >= len(self.fumes_frames):
-                self.fumes_index = 0
-            self.fumes_image = self.fumes_frames[int(self.fumes_index)]
-        else:
-            self.fumes_image = self.ship_empty_frames
+        frames = self.god_mode_fumes_frames if self.god_mode else self.fumes_frames
+        self.fumes_index += (10 if self.god_mode else 20) * dt
+        if self.fumes_index >= len(frames):
+            self.fumes_index = 0
+        self.fumes_image = frames[int(self.fumes_index)]
 
     def animate(self, dt):
         frames = {
