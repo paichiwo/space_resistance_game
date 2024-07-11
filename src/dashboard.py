@@ -26,11 +26,10 @@ class Dashboard:
         pygame.draw.rect(self.screen, 'indigo', energy_bar_outline, 1)
 
     def draw_lives(self):
-        life_x = 86
-
+        x = 86
         for _ in range(0, self.player.lives-1):
-            self.screen.blit(self.life_img, (life_x, 3))
-            life_x += 12
+            self.screen.blit(self.life_img, (x, 3))
+            x += 12
 
     def draw_score(self):
         text = FONT10.render('{:07}'.format(self.player.score), False, COLORS['WHITE'])
