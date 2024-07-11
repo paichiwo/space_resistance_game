@@ -43,11 +43,11 @@ class Game:
         if not self.states['game_running']:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.restart_game()
-        elif self.states['game_running']:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                self.window.set_fullscreen(True)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.window.set_windowed()
+        # Full screen
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+            self.window.set_fullscreen(True)
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self.window.set_windowed()
 
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
@@ -58,7 +58,11 @@ class Game:
             self.sound_manager.play_music(MUSIC_TRACKS['levels_1_3_music'])
 
     def reset_game_values(self):
-        pass
+        self.enemy_kills = 0
+        self.boss_killed = False
+        self.first_level_msg = False
+        self.level_manager.restart()
+        self.welcome_screen.reset()
 
     def restart_game(self):
         self.reset_game_values()
