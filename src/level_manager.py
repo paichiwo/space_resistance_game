@@ -136,6 +136,7 @@ class LevelManager:
             self.game_over = True
 
     def restart(self):
+        self.game_over = False
         self.level_index = 0
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
