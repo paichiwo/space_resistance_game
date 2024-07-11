@@ -1,6 +1,4 @@
 import sys
-
-import pygame
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.scenes import WelcomeScreen
@@ -26,7 +24,6 @@ class Game:
         # Scaled Window
         self.window = pygame.Window(size=(WIDTH * SCALE, HEIGHT * SCALE), title=f'{TITLE} v{VERSION}')
         self.window.resizable = True
-        self.window.borderless = True
         self.renderer = sdl2.Renderer(self.window)
         self.renderer.logical_size = (WIDTH, HEIGHT)
         self.screen = pygame.Surface((WIDTH, HEIGHT))
@@ -48,7 +45,9 @@ class Game:
                 self.restart_game()
         elif self.states['game_running']:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                pass  # toggle fullscreen
+                self.window.set_fullscreen(True)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.window.set_windowed()
 
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
