@@ -53,7 +53,7 @@ ENEMY_LEVEL_DATA = {
             {'choice': 'small_1', 'probability': 1},
             {'choice': 'small_2', 'probability': 2}
         ],
-        'speed': {'small_1': 1, 'small_2': 2},
+        'speed': {'small_1': 90, 'small_2': 120},
         'spawning_intervals': [1000, 1500]
     }
 }
@@ -96,7 +96,7 @@ ENEMY_DATA = {
         'frames': 'assets/img/boss/',
         'energy': 300,
         'bump_power': 60,
-        'shot_power': 25,
+        'shot_score': 48,
         'kill_score': 5000,
         'can_shoot': True
     }
