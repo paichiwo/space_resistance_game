@@ -4,10 +4,12 @@ from src.config import *
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
+from src.high_score_manager import HighScoreManager
 
-# Finish game logic - add level 4 and boss, game over screen and game won screen
 # Redesign welcome screen - implement menu - start, options, credits
 # add the lowest score to beat to the dashboard
+# create entry in pygame and implement on congrats screen - player writes name inside pygame not
+#      tkinter, and that name is saved to high_scores
 
 
 class Game:
@@ -27,11 +29,15 @@ class Game:
             'welcome_screen_running': True,
             'game_running': False,
             'game_over_screen_running': False,
-            'congrats_screen_running': False
+            'congrats_screen_running': False,
+            'score_entered': False
         }
 
         # Sound Manager
         self.sound_manager = SoundManager()
+
+        # Hi Score Manager
+        self.high_score_manager = HighScoreManager()
 
         # Game Objects
         self.welcome_screen = WelcomeScreen(self.screen)
@@ -62,9 +68,10 @@ class Game:
 
     def restart_game(self):
         self.states['welcome_screen_running'] = False
+        self.states['game_running'] = True
         self.states['game_over_screen_running'] = False
         self.states['congrats_screen_running'] = False
-        self.states['game_running'] = True
+        self.states['score_entered'] = False
         self.level_manager.restart()
         self.welcome_screen.reset()
 
@@ -78,6 +85,11 @@ class Game:
         if boss_killed:
             self.states['game_running'] = False
             self.states['congrats_screen_running'] = True
+
+    def high_score(self):
+        if not self.states['score_entered']:
+            self.high_score_manager.check_high_score(self.level_manager.player.score)
+            self.states['score_entered'] = True
 
     def run(self):
         while True:
@@ -102,6 +114,7 @@ class Game:
 
             if self.states['congrats_screen_running']:
                 self.congrats_screen.update(dt)
+                self.high_score()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
