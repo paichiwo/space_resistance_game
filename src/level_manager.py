@@ -47,7 +47,9 @@ class LevelManager:
         self.game_over = False
 
         # Boss
+        self.boss = None
         self.boss_spawned = False
+        self.boss_killed = False
 
     def get_panels(self):
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
@@ -133,16 +135,21 @@ class LevelManager:
                   self.level_index, [self.enemy_sprites, self.all_sprites])
 
     def spawn_boss(self):
-        Boss(self.screen, self.player, self.sound_manager, self.all_sprites)
+        self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
         self.boss_spawned = True
 
-    def check_game_over(self):
+    def game_win_or_game_over(self):
+        if self.level_index == 3:
+            if self.boss not in self.enemy_sprites:
+                self.boss_killed = True
+
         if self.player.lives <= 0:
             self.game_over = True
 
     def restart(self):
         self.game_over = False
         self.boss_spawned = False
+        self.boss_killed = False
         self.level_index = 3
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
@@ -160,5 +167,5 @@ class LevelManager:
             self.all_sprites.update(dt)
             self.enemy_spawn_timer.update()
             self.set_levels()
-            self.check_game_over()
+            self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
