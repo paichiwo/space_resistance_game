@@ -5,22 +5,13 @@ from src.scenes import WelcomeScreen
 from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
 
+# Finish game logic - add level 4 and boss, game over screen and game won screen
+# Redesign welcome screen - implement menu - start, options, credits
 
 class Game:
     def __init__(self):
-        self.enemy_kills = 0
-        self.boss_killed = False
-        self.first_level_msg = False
-
-        self.states = {
-            'welcome_screen_running': True,
-            'game_running': False,
-            'game_over_screen_running': False,
-            'congrats_screen_running': False
-        }
-
-        # Game Setup
         self.clock = pygame.time.Clock()
+
         # Scaled Window
         self.window = pygame.Window(size=(WIDTH * SCALE, HEIGHT * SCALE), title=f'{TITLE} v{VERSION}')
         self.window.resizable = True
@@ -28,6 +19,14 @@ class Game:
         self.renderer.logical_size = (WIDTH, HEIGHT)
         self.screen = pygame.Surface((WIDTH, HEIGHT))
         self.window.get_surface()
+
+        # States
+        self.states = {
+            'welcome_screen_running': True,
+            'game_running': False,
+            'game_over_screen_running': False,
+            'congrats_screen_running': False
+        }
 
         # Sound Manager
         self.sound_manager = SoundManager()
@@ -40,7 +39,7 @@ class Game:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if not self.states['game_running']:
+        if self.states['welcome_screen_running']:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 self.restart_game()
         # Full screen
@@ -57,19 +56,11 @@ class Game:
               and not self.states['congrats_screen_running']):
             self.sound_manager.play_music(MUSIC_TRACKS['levels_1_3_music'])
 
-    def reset_game_values(self):
-        self.enemy_kills = 0
-        self.boss_killed = False
-        self.first_level_msg = False
-        self.level_manager.restart()
-        self.welcome_screen.reset()
-
     def restart_game(self):
-        self.reset_game_values()
         self.states['welcome_screen_running'] = False
         self.states['game_running'] = True
         self.level_manager.restart()
-        self.welcome_screen.retrieve_scores()
+        self.welcome_screen.reset()
 
     def game_over(self, game_over):
         if game_over:
