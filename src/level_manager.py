@@ -6,7 +6,7 @@ from src.helpers import import_assets
 from src.timer import Timer
 from src.dashboard import Dashboard
 from src.player import Player
-from src.enemy import Enemy
+from src.enemy import Enemy, Boss
 from src.messages import MessageBetweenLevels
 
 
@@ -46,6 +46,9 @@ class LevelManager:
         # Game over
         self.game_over = False
 
+        # Boss
+        self.boss_spawned = False
+
     def get_panels(self):
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
 
@@ -69,18 +72,20 @@ class LevelManager:
         self.scroll_count += 1
 
     def change_bg(self, level):
-        if 1 <= level <= len(self.level_images) and not level == 4:
+        if 1 <= level <= len(self.level_images) and not level == 3:
             self.bg_img = self.level_images[level]
             self.panels = self.get_panels()
             self.scroll_count = 0
 
     def set_levels(self):
-        if self.scroll_count == 2 and not self.level_index == 3:
+        if self.scroll_count == 1 and not self.level_index == 3:
             self.level_index += 1
             self.finish_level()
             self.change_bg(self.level_index)
-            if self.level_index == 3:
-                self.spawn_boss()
+
+        if self.level_index == 3 and not self.boss_spawned:
+            self.bg_img = self.level_images[2]
+            self.spawn_boss()
 
     def finish_level(self):
         self.stop_scrolling()
@@ -101,6 +106,7 @@ class LevelManager:
         self.player.shots_group.empty()
         self.player.enemy_kill_count = 0
         self.player.god_mode = False
+        self.boss_spawned = False
         self.start_scrolling()
 
     def between_levels(self):
@@ -127,7 +133,8 @@ class LevelManager:
                   self.level_index, [self.enemy_sprites, self.all_sprites])
 
     def spawn_boss(self):
-        pass
+        Boss(self.screen, self.player, self.sound_manager, self.all_sprites)
+        self.boss_spawned = True
 
     def check_game_over(self):
         if self.player.lives <= 0:
@@ -135,7 +142,8 @@ class LevelManager:
 
     def restart(self):
         self.game_over = False
-        self.level_index = 0
+        self.boss_spawned = False
+        self.level_index = 3
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
         self.scroll_pos = 0
