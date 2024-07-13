@@ -43,6 +43,16 @@ class EnemyBase(pygame.sprite.Sprite):
             Shot(self.rect, self.shots_group, 'enemy', direction)
             self.shoot_timer.activate()
 
+    def collisions(self):
+        if not self.player.god_mode:
+            for sprite in self.group[0].sprites():
+                for shot in sprite.shots_group:
+                    if pygame.sprite.collide_mask(shot, self.player):
+                        shot.kill()
+                        self.player.current_energy -= sprite.shot_power
+                        Explosion(shot.rect.center, self.group[1])
+                        self.sound_manager.play_sound(SOUND_EFFECTS['explosion'])
+
     def deduct_energy(self, player_shot_power):
         self.energy -= player_shot_power
         if self.energy <= 0:
@@ -52,14 +62,12 @@ class EnemyBase(pygame.sprite.Sprite):
         if self.rect.top > HEIGHT * 2 or self.rect.right < 0 or self.rect.left > WIDTH + 20:
             self.kill()
 
-    def update_shots(self, dt):
-        self.shots_group.update(dt)
-        self.shots_group.draw(self.screen)
-
     def update(self, dt):
         self.shoot_timer.update()
         self.animate(dt)
-        self.update_shots(dt)
+        self.shots_group.update(dt)
+        self.shots_group.draw(self.screen)
+        self.collisions()
 
 
 class Enemy(EnemyBase):
@@ -97,17 +105,6 @@ class Enemy(EnemyBase):
             self.pos.y += self.enemy_speed * dt
             self.rect.midbottom = round(self.pos)
 
-    def collisions(self):
-        if not self.player.god_mode:
-            for sprite in self.group[0].sprites():
-                for shot in sprite.shots_group:
-                    hits = pygame.sprite.collide_mask(shot, self.player)
-                    if hits:
-                        shot.kill()
-                        self.player.current_energy -= sprite.shot_power
-                        Explosion(shot.rect.center, self.group[1])
-                        self.sound_manager.play_sound(SOUND_EFFECTS['explosion'])
-
     def update(self, dt):
         super().update(dt)
         self.move(dt)
@@ -134,12 +131,6 @@ class Boss(EnemyBase):
         self.pos.y += self.direction * self.vert_speed * dt
         self.rect.center = self.pos
 
-    def dead(self):
-        if self.energy <= 0:
-            self.kill()
-            self.shots_group.empty()
-
     def update(self, dt):
         super().update(dt)
         self.move(dt)
-        self.dead()
