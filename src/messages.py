@@ -22,8 +22,8 @@ class Message:
     def update(self):
         self.timer.update()
         if self.visible:
-            self.screen.blit(self.outline, (BACKGROUND_WIDTH // 2 - 54, HEIGHT // 2 - 19))
-            self.screen.blit(self.text, (BACKGROUND_WIDTH // 2 - 55, HEIGHT // 2 - 20))
+            self.screen.blit(self.outline, (WIDTH / 2 - 54, HEIGHT / 2 - 19))
+            self.screen.blit(self.text, (WIDTH / 2 - 55, HEIGHT / 2 - 20))
 
 
 class MessageBetweenLevels:
@@ -36,4 +36,3 @@ class MessageBetweenLevels:
     def show(self):
         for text, pos in self.texts:
             self.screen.blit(text, text.get_rect(midtop=pos))
-

@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
 
         # Player image and rect
         self.image = self.ship_idle_frames
-        self.rect = self.image.get_rect(midbottom=(BACKGROUND_WIDTH // 2, HEIGHT - 10))
+        self.rect = self.image.get_rect(midbottom=(WIDTH // 2, HEIGHT - 10))
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
 
@@ -126,8 +126,8 @@ class Player(pygame.sprite.Sprite):
     def stay_within_boundaries(self):
         if self.rect.left < 0:
             self.pos.x = self.rect.width / 2
-        elif self.rect.right > BACKGROUND_WIDTH:
-            self.pos.x = BACKGROUND_WIDTH - self.rect.width / 2
+        elif self.rect.right > WIDTH:
+            self.pos.x = WIDTH - self.rect.width / 2
 
         if self.rect.top < 0:
             self.pos.y = self.rect.height / 2
@@ -184,7 +184,7 @@ class Player(pygame.sprite.Sprite):
         self.enemy_kill_count = 0
         self.lives = 4
         self.current_energy = 100
-        self.rect = self.image.get_rect(midbottom=(BACKGROUND_WIDTH // 2, HEIGHT - 10))
+        self.rect = self.image.get_rect(midbottom=(WIDTH // 2, HEIGHT - 10))
         self.pos = pygame.math.Vector2(self.rect.center)
         self.direction = pygame.math.Vector2()
         self.god_mode = False

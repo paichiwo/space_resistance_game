@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
         self.can_shoot = data['can_shoot']
         self.enemy_speed = ENEMY_LEVEL_DATA[self.current_level]['speed'][self.enemy_size]
 
-        self.pos = pygame.math.Vector2(random.randint(10, BACKGROUND_WIDTH - 10), 0)
+        self.pos = pygame.math.Vector2(random.randint(10, WIDTH - 10), 0)
 
         self.shots_group = pygame.sprite.Group()
         self.shot_power = 20
@@ -37,7 +37,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(midbottom=self.pos)
 
         self.waypoints = [
-            pygame.math.Vector2(random.randint(10, BACKGROUND_WIDTH - 10), random.randint(10, HEIGHT))
+            pygame.math.Vector2(random.randint(10, WIDTH - 10), random.randint(10, HEIGHT))
             for _ in range(3)
         ]
         self.current_waypoint = 0
@@ -91,7 +91,7 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > HEIGHT * 2 or self.rect.right < 0 or self.rect.left > BACKGROUND_WIDTH + 20:
+        if self.rect.top > HEIGHT * 2 or self.rect.right < 0 or self.rect.left > WIDTH + 20:
             self.kill()
 
     def update(self, dt):
@@ -102,3 +102,83 @@ class Enemy(pygame.sprite.Sprite):
         self.shots_group.update(dt)
         self.shots_group.draw(self.screen)
         self.collisions()
+
+
+class Boss(pygame.sprite.Sprite):
+    def __init__(self, screen, bg_img_width, window_height, player_rect, *args):
+        super().__init__(*args)
+
+        self.screen = screen
+        self.bg_img_width = bg_img_width
+        self.window_height = window_height
+        self.player_rect = player_rect
+
+        self.boss_img_1 = pygame.image.load("assets/img/boss/boss_1.png").convert_alpha()
+        self.boss_img_2 = pygame.image.load("assets/img/boss/boss_2.png").convert_alpha()
+        self.boss_frames = [self.boss_img_1, self.boss_img_2]
+        self.boss_index = 0
+        self.image = self.boss_frames[self.boss_index]
+        self.rect = self.image.get_rect(center=(self.bg_img_width // 2, 10))
+
+        self.energy = 300
+        self.shot_power = 25
+        self.bump_power = 60
+        self.shot_score = 48
+        self.kill_score = 5000
+        self.can_shoot = True
+
+        self.direction = 1
+        self.vert_speed = 1
+
+        self.shots = pygame.sprite.Group()
+        self.last_shot_time = pygame.time.get_ticks()
+
+    def animate(self):
+        self.boss_index += 0.5
+        if self.boss_index >= len(self.boss_frames):
+            self.boss_index = 0
+        self.image = self.boss_frames[int(self.boss_index)]
+
+    def movement(self):
+        if self.rect.y >= self.window_height - 100:
+            self.direction = -1  # Move up when close to the bottom
+        elif self.rect.y <= 10:
+            self.direction = 1  # Move down when close to the top
+
+        self.rect.y += self.direction * self.vert_speed
+
+    def shoot(self):
+        cur_time = pygame.time.get_ticks()
+        shot_timing = random.randint(800, 1800)
+
+        if cur_time - self.last_shot_time >= shot_timing and self.can_shoot:
+            dx = self.player_rect.x - self.rect.x
+            dy = self.player_rect.y - self.rect.y
+
+            # Calculate the angle to the player for each bullet
+            angle = math.atan2(dy, dx)
+
+            # Calculate the direction vectors for each bullet based on the angles
+            direction = (math.cos(angle), math.sin(angle))
+
+            # Create two bullets with their respective directions
+            shot = EnemyShot("boss", self.rect.center, self.window_height, self.bg_img_width, direction)
+
+            self.shots.add(shot)
+            self.last_shot_time = cur_time
+
+    def deduct_energy(self, player_shot_power):
+        self.energy -= player_shot_power
+
+    def dead(self):
+        if self.energy <= 0:
+            self.kill()
+            self.shots.empty()
+
+    def update(self):
+        self.animate()
+        self.movement()
+        self.shoot()
+        self.dead()
+        self.shots.draw(self.screen)
+        self.shots.update()

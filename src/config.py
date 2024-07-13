@@ -9,7 +9,6 @@ VERSION = '1.5'
 
 WIDTH, HEIGHT = 256, 180
 SCALE = 4
-BACKGROUND_WIDTH = 256
 
 COLORS = {
     'RED': [248, 0, 0],
@@ -91,6 +90,14 @@ ENEMY_DATA = {
         'bump_power': 60,
         'shot_score': 24,
         'kill_score': 48,
+        'can_shoot': True
+    },
+    'boss': {
+        'frames': 'assets/img/boss/',
+        'energy': 300,
+        'bump_power': 60,
+        'shot_power': 25,
+        'kill_score': 5000,
         'can_shoot': True
     }
 }

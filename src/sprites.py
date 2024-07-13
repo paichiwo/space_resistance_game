@@ -64,4 +64,3 @@ class Explosion(pygame.sprite.Sprite):
     def update(self, dt):
         self.animate(dt)
         self.move()
-
