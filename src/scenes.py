@@ -1,3 +1,5 @@
+import pygame
+
 from src.config import *
 from src.timer import Timer
 from src.helpers import import_image, import_assets
@@ -57,9 +59,9 @@ class WelcomeScreen:
     def welcome_scene(self):
         self.draw_planet()
         self.draw_logo()
-
-        for text, color, offset in WELCOME_SCREEN_MESSAGES:
-            self.draw_text(text, (self.mid_screen[0], self.mid_screen[1] + offset), FONT10, color)
+        #
+        # for text, color, offset in WELCOME_SCREEN_MESSAGES:
+        #     self.draw_text(text, (self.mid_screen[0], self.mid_screen[1] + offset), FONT10, color)
 
     def high_score_scene(self):
         self.draw_text('HIGH SCORES:', (self.mid_screen[0], self.mid_screen[1] - 60), FONT20, COLORS['WHITE'])
@@ -90,3 +92,59 @@ class WelcomeScreen:
         else:
             self.high_score_scene()
         self.draw_version()
+
+
+class GameOverScreen:
+    def __init__(self, screen):
+        self.screen = screen
+
+    def show(self):
+        self.screen.fill('black')
+
+        texts = [FONT10.render('GAME OVER', True, 'red'),
+                 FONT10.render('Press "R" TO RESTART', True, 'white'),]
+
+        x_pos = WIDTH / 2
+        y_pos = HEIGHT / 2
+
+        for text in texts:
+            self.screen.blit(text, text.get_rect(center=(x_pos, y_pos)))
+            y_pos += 10
+
+
+class CongratsScreen:
+    def __init__(self, screen):
+        self.screen = screen
+
+        self.frames = import_assets('assets/img/ui/astronaut/')
+        self.index = 0
+
+        self.image = self.frames[self.index]
+        self.rect = self.image.get_frect(center=(300, 50))
+
+    def animate(self, dt):
+        self.index = (self.index + 10 * dt) % len(self.frames)
+        self.image = self.frames[int(self.index)]
+
+    def move(self, dt):
+        self.rect.x -= 30 * dt
+        if self.rect.right <= -10:
+            self.rect.center = (300, 50)
+
+    def show(self):
+
+        texts = [FONT10.render('congratulations, space resistance saved the planet', True, 'white'),
+                 FONT10.render('alien attack has stopped and people live happy lives', True, 'white'),
+                 FONT10.render('press "r" to restart game', True, 'white')]
+
+        x_pos = WIDTH / 2
+        y_pos = [80, 90, 120]
+
+        for text, position in zip(texts, y_pos):
+            self.screen.blit(text, text.get_rect(center=(x_pos, position)))
+
+    def update(self, dt):
+        self.show()
+        self.move(dt)
+        self.animate(dt)
+        self.screen.blit(self.image, self.rect)
