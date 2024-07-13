@@ -20,7 +20,7 @@ COLORS = {
 }
 
 ENEMY_LEVEL_DATA = {
-    '1': {
+    0: {
         'choices': [
             {'choice': 'small_1', 'probability': 2},
             {'choice': 'small_2', 'probability': 2},
@@ -29,7 +29,7 @@ ENEMY_LEVEL_DATA = {
         'speed': {'small_1': 90, 'small_2': 120, 'medium': 90},
         'spawning_intervals': [700, 1200]
     },
-    '2': {
+    1: {
         'choices': [
             {'choice': 'small_1', 'probability': 2},
             {'choice': 'small_2', 'probability': 2},
@@ -39,7 +39,7 @@ ENEMY_LEVEL_DATA = {
         'speed': {'small_1': 120, 'small_2': 90, 'medium': 90, 'large': 90},
         'spawning_intervals': [700, 1000]
     },
-    '3': {
+    2: {
         'choices': [
             {'choice': 'small_1', 'probability': 1},
             {'choice': 'small_2', 'probability': 1},
@@ -49,7 +49,7 @@ ENEMY_LEVEL_DATA = {
         'speed': {'small_1': 120, 'small_2': 120, 'medium': 90, 'large': 90},
         'spawning_intervals': [500, 1000]
     },
-    '4': {
+    3: {
         'choices': [
             {'choice': 'small_1', 'probability': 1},
             {'choice': 'small_2', 'probability': 2}

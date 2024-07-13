@@ -113,20 +113,18 @@ class LevelManager:
             self.start_new_level()
 
     def set_enemy_spawn_timer(self):
-        level = str(self.level_index + 1)
-        if level in ENEMY_LEVEL_DATA:
-            interval_range = ENEMY_LEVEL_DATA[level]['spawning_intervals']
+        if self.level_index in ENEMY_LEVEL_DATA:
+            interval_range = ENEMY_LEVEL_DATA[self.level_index]['spawning_intervals']
             interval = random.randint(interval_range[0], interval_range[1])
             self.enemy_spawn_timer = Timer(interval, self.spawn_enemy, repeat=True, autostart=True)
 
     def spawn_enemy(self):
-        level = str(self.level_index + 1)
-        if level in ENEMY_LEVEL_DATA:
-            choices = [entry['choice'] for entry in ENEMY_LEVEL_DATA[level]['choices']]
-            probabilities = [entry['probability'] for entry in ENEMY_LEVEL_DATA[level]['choices']]
+        if self.level_index in ENEMY_LEVEL_DATA:
+            choices = [entry['choice'] for entry in ENEMY_LEVEL_DATA[self.level_index]['choices']]
+            probabilities = [entry['probability'] for entry in ENEMY_LEVEL_DATA[self.level_index]['choices']]
             enemy_choice = random.choices(choices, probabilities)[0]
             Enemy(self.screen, self.sound_manager, self.player, enemy_choice,
-                  level, [self.enemy_sprites, self.all_sprites])
+                  self.level_index, [self.enemy_sprites, self.all_sprites])
 
     def spawn_boss(self):
         pass

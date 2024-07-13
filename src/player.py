@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.fumes_frames = import_assets('assets/img/ship/fumes')
         self.god_mode_fumes_frames = [self.fumes_frames[0], self.ship_empty_frames, self.fumes_frames[1]]
         self.fumes_index = 0
-        self.fumes_image = self.fumes_frames[0]
+        self.fumes_image = self.fumes_frames[self.fumes_index]
         self.fumes_rect = self.image.get_rect()
 
         # Data

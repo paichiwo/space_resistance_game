@@ -7,6 +7,7 @@ from src.sound_manager import SoundManager
 
 # Finish game logic - add level 4 and boss, game over screen and game won screen
 # Redesign welcome screen - implement menu - start, options, credits
+# add lowest score to beat to the dashboard
 
 class Game:
     def __init__(self):
