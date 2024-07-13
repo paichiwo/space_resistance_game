@@ -1,7 +1,7 @@
 import sys
 import pygame._sdl2 as sdl2
 from src.config import *
-from src.scenes import WelcomeScreen
+from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
 
@@ -36,6 +36,8 @@ class Game:
         # Game Objects
         self.welcome_screen = WelcomeScreen(self.screen)
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
+        self.game_over_screen = GameOverScreen(self.screen)
+        self.congrats_screen = CongratsScreen(self.screen)
 
     def handle_game_events(self, event):
         if event.type == pygame.QUIT:
@@ -60,6 +62,8 @@ class Game:
 
     def restart_game(self):
         self.states['welcome_screen_running'] = False
+        self.states['game_over_screen_running'] = False
+        self.states['congrats_screen_running'] = False
         self.states['game_running'] = True
         self.level_manager.restart()
         self.welcome_screen.reset()
@@ -67,8 +71,13 @@ class Game:
     def game_over(self, game_over):
         if game_over:
             self.states['game_running'] = False
-            self.states['welcome_screen_running'] = True
+            self.states['game_over_screen_running'] = True
             self.welcome_screen.reset()
+
+    def game_win(self, boss_killed):
+        if boss_killed:
+            self.states['game_running'] = False
+            self.states['congrats_screen_running'] = True
 
     def run(self):
         while True:
@@ -82,10 +91,17 @@ class Game:
             dt = self.clock.tick() / 1000
             if self.states['welcome_screen_running']:
                 self.welcome_screen.update()
-            else:
-                if self.states['game_running']:
-                    self.level_manager.update(dt)
-                    self.game_over(self.level_manager.game_over)
+
+            if self.states['game_running']:
+                self.level_manager.update(dt)
+                self.game_over(self.level_manager.game_over)
+                self.game_win(self.level_manager.boss_killed)
+
+            if self.states['game_over_screen_running']:
+                self.game_over_screen.show()
+
+            if self.states['congrats_screen_running']:
+                self.congrats_screen.update(dt)
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
