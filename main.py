@@ -7,7 +7,8 @@ from src.sound_manager import SoundManager
 
 # Finish game logic - add level 4 and boss, game over screen and game won screen
 # Redesign welcome screen - implement menu - start, options, credits
-# add lowest score to beat to the dashboard
+# add the lowest score to beat to the dashboard
+
 
 class Game:
     def __init__(self):
@@ -52,7 +53,7 @@ class Game:
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
             self.sound_manager.play_music(MUSIC_TRACKS['welcome_screen_music'])
-        elif (self.level_manager.level_index + 1 in [1, 2, 3]
+        elif (self.level_manager.level_index in [0, 1, 2]
               and not self.states['game_over_screen_running']
               and not self.states['congrats_screen_running']):
             self.sound_manager.play_music(MUSIC_TRACKS['levels_1_3_music'])
