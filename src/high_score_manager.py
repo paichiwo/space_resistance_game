@@ -1,12 +1,10 @@
 import os
 import json
-from tkinter import Tk, simpledialog, messagebox
 
 
-class HighScoreManager(Tk):
+class HighScoreManager:
     def __init__(self):
         super().__init__()
-        self.withdraw()
         self.file_path = 'data/scores.json'
         self.create_scores_file()
 
@@ -26,12 +24,7 @@ class HighScoreManager(Tk):
 
     def check_high_score(self, player_score):
         top_10 = self.retrieve_all_scores()
-        if len(top_10) < 10 or player_score > top_10[-1][1]:
-            player_name = self.get_player_name()
-            if player_name:
-                self.save_score(player_name, player_score)
-            else:
-                messagebox.showerror('Error', 'Please enter your name')
+        return True if len(top_10) < 10 or player_score > top_10[-1][1] else False
 
     def save_score(self, player_name, score):
         with open(self.file_path, 'r') as file:
@@ -43,10 +36,6 @@ class HighScoreManager(Tk):
 
         with open(self.file_path, 'w') as file:
             json.dump(data, file, indent=4)
-
-    @staticmethod
-    def get_player_name():
-        return simpledialog.askstring('High Score', 'Enter your name:')
 
     def insert_sample_records(self):
         sample_scores = [{'player_name': 'paichiwo', 'score': i * 100} for i in range(1, 11)]

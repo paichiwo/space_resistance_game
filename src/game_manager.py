@@ -26,12 +26,15 @@ class Game:
 
         # States
         self.states = {
-            'welcome_screen_running': True,
+            'welcome_screen_running': False,
             'game_running': False,
             'game_over_screen_running': False,
-            'congrats_screen_running': False,
+            'congrats_screen_running': True,
             'score_entered': False
         }
+
+        # User Name
+        self.user_name = ''
 
         # Sound Manager
         self.sound_manager = SoundManager()
@@ -50,8 +53,18 @@ class Game:
             pygame.quit()
             sys.exit()
         if self.states['welcome_screen_running']:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-                self.restart_game()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    self.restart_game()
+        if self.states['congrats_screen_running']:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.user_name = self.user_name[:-1]
+                elif len(self.user_name) < 8 and not event.key == pygame.K_RETURN:
+                    self.user_name += event.unicode
+                if event.key == pygame.K_RETURN:
+                    self.states['score_entered'] = True
+
         # Full screen
         if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
             self.window.set_fullscreen(True)
@@ -86,10 +99,18 @@ class Game:
             self.states['game_running'] = False
             self.states['congrats_screen_running'] = True
 
-    def high_score(self):
-        if not self.states['score_entered']:
-            self.high_score_manager.check_high_score(self.level_manager.player.score)
-            self.states['score_entered'] = True
+    def check_high_score(self):
+        high_score = self.high_score_manager.check_high_score(self.level_manager.player.score)
+        if high_score:
+            self.congrats_screen.high_score_entry(self.user_name)
+        else:
+            self.user_name = ''
+            self.congrats_screen.not_high_score()
+
+        if self.states['score_entered']:
+            self.high_score_manager.save_score(self.user_name, self.level_manager.player.score)
+            self.states['congrats_screen_running'] = False
+            self.states['welcome_screen_running'] = True
 
     def run(self):
         while True:
@@ -114,7 +135,7 @@ class Game:
 
             if self.states['congrats_screen_running']:
                 self.congrats_screen.update(dt)
-                self.high_score()
+                self.check_high_score()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()

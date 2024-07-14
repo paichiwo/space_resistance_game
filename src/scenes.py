@@ -1,5 +1,4 @@
-import pygame
-
+import math
 from src.config import *
 from src.timer import Timer
 from src.helpers import import_image, import_assets
@@ -99,7 +98,7 @@ class GameOverScreen:
         self.screen = screen
 
     def show(self):
-        self.screen.fill('black')
+        self.screen.fill(COLORS['BLACK'])
 
         texts = [FONT10.render('GAME OVER', True, 'red'),
                  FONT10.render('Press "R" TO RESTART', True, 'white'),]
@@ -115,12 +114,11 @@ class GameOverScreen:
 class CongratsScreen:
     def __init__(self, screen):
         self.screen = screen
-
         self.frames = import_assets('assets/img/ui/astronaut/')
         self.index = 0
-
         self.image = self.frames[self.index]
-        self.rect = self.image.get_frect(center=(300, 50))
+        self.rect = self.image.get_frect(center=(300, 40))
+        self.time_elapsed = 0  # To track the elapsed time for the scaling effect
 
     def animate(self, dt):
         self.index = (self.index + 10 * dt) % len(self.frames)
@@ -129,22 +127,57 @@ class CongratsScreen:
     def move(self, dt):
         self.rect.x -= 30 * dt
         if self.rect.right <= -10:
-            self.rect.center = (300, 50)
+            self.rect.center = (300, 40)
+        self.screen.blit(self.image, self.rect)
 
-    def show(self):
+    def draw_astronaut_text(self, dt):
+        self.time_elapsed += dt
+        scale_factor = 1 + 1 * math.sin(self.time_elapsed * 1 * math.pi)
 
-        texts = [FONT10.render('congratulations, space resistance saved the planet', True, 'white'),
-                 FONT10.render('alien attack has stopped and people live happy lives', True, 'white'),
-                 FONT10.render('press "r" to restart game', True, 'white')]
+        texts = [
+            FONT10.render('YOU', True, COLORS['BLACK']),
+            FONT10.render('WIN', True, COLORS['BLACK'])
+        ]
+        x_pos = [self.rect.x + 19, self.rect.x + 26]
+        y_pos = [self.rect.y + 13, self.rect.y + 24]
 
+        for text, x_position, y_position in zip(texts, x_pos, y_pos):
+            text_rect = text.get_rect(center=(x_position, y_position))
+            scaled_text = pygame.transform.scale(text,
+                                                 (int(text_rect.width * scale_factor),
+                                                  int(text_rect.height * scale_factor)))
+            scaled_rect = scaled_text.get_rect(center=text_rect.center)
+            self.screen.blit(scaled_text, scaled_rect.topleft)
+
+    def high_score_entry(self, user_name):
+        user_name_text = FONT20.render(user_name, True, COLORS['WHITE'])
+        self.screen.blit(user_name_text, user_name_text.get_rect(center=(WIDTH / 2, HEIGHT / 2)))
+
+        pygame.draw.rect(self.screen, 'indigo', ((WIDTH / 2 - 52, HEIGHT / 2 - 10), (102, 20)), 2)
+
+        texts = [
+            FONT10.render('CONGRATULATIONS, YOU BEAT THE HIGH SCORE', True, COLORS['YELLOW']),
+            FONT10.render('PLEASE ENTER YOUR NAME', True, COLORS['YELLOW'])
+        ]
         x_pos = WIDTH / 2
-        y_pos = [80, 90, 120]
+        y_pos = [120, 132]
 
-        for text, position in zip(texts, y_pos):
-            self.screen.blit(text, text.get_rect(center=(x_pos, position)))
+        for text, y_position in zip(texts, y_pos):
+            self.screen.blit(text, text.get_rect(center=(x_pos, y_position)))
+
+    def not_high_score(self):
+        texts = [
+            FONT10.render('CONGRATULATIONS, YOU BEAT THE GAME', True, COLORS['YELLOW']),
+            FONT10.render('YOUR SCORE IS TOO LOW FOR HIGH SCORES', True, COLORS['YELLOW'])
+        ]
+        x_pos = WIDTH / 2
+        y_pos = [120, 132]
+
+        for text, y_position in zip(texts, y_pos):
+            self.screen.blit(text, text.get_rect(center=(x_pos, y_position)))
 
     def update(self, dt):
-        self.show()
-        self.move(dt)
+        self.screen.fill(COLORS['BLACK'])
         self.animate(dt)
-        self.screen.blit(self.image, self.rect)
+        self.move(dt)
+        self.draw_astronaut_text(dt)
