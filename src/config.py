@@ -1,4 +1,5 @@
 import pygame
+from string import ascii_letters, digits
 
 pygame.init()
 FONT10 = pygame.font.Font('assets/font/visitor1.ttf', 10)
@@ -161,3 +162,5 @@ WELCOME_SCREEN_MESSAGES = [
     ('ANSIMUZ - FOR THIS BEAUTIFUL ASSETS', COLORS['YELLOW'], 65),
     ('PRESS [S] TO START', COLORS['RED'], 80)
 ]
+
+ALLOWED_CHARACTERS = list(ascii_letters + digits)

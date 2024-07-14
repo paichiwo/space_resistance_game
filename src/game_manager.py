@@ -60,7 +60,7 @@ class Game:
                 if event.key == pygame.K_BACKSPACE:
                     self.user_name = self.user_name[:-1]
                 elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
-                    self.user_name += event.unicode
+                    self.user_name += event.unicode if event.unicode in ALLOWED_CHARACTERS else ''
                 if event.key == pygame.K_RETURN:
                     if len(self.user_name) >= 1:
                         self.states['score_entered'] = True
