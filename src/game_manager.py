@@ -62,7 +62,8 @@ class Game:
                 elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
                     self.user_name += event.unicode
                 if event.key == pygame.K_RETURN:
-                    self.states['score_entered'] = True
+                    if len(self.user_name) >= 1:
+                        self.states['score_entered'] = True
 
         # Full screen
         if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
@@ -113,6 +114,7 @@ class Game:
 
         if self.states['score_entered']:
             self.high_score_manager.save_score(self.user_name, self.level_manager.player.score)
+            self.welcome_screen.reset()
             self.states['congrats_screen_running'] = False
             self.states['welcome_screen_running'] = True
 
