@@ -26,10 +26,10 @@ class Game:
 
         # States
         self.states = {
-            'welcome_screen_running': False,
+            'welcome_screen_running': True,
             'game_running': False,
             'game_over_screen_running': False,
-            'congrats_screen_running': True,
+            'congrats_screen_running': False,
             'score_entered': False
         }
 
@@ -52,15 +52,14 @@ class Game:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if self.states['welcome_screen_running']:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
-                    self.restart_game()
-        if self.states['congrats_screen_running']:
-            if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
+            if self.states['welcome_screen_running'] and event.key == pygame.K_s:
+                self.restart_game()
+
+            if self.states['congrats_screen_running']:
                 if event.key == pygame.K_BACKSPACE:
                     self.user_name = self.user_name[:-1]
-                elif len(self.user_name) < 8 and not event.key == pygame.K_RETURN:
+                elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
                     self.user_name += event.unicode
                 if event.key == pygame.K_RETURN:
                     self.states['score_entered'] = True
@@ -74,10 +73,15 @@ class Game:
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
             self.sound_manager.play_music(MUSIC_TRACKS['welcome_screen_music'])
-        elif (self.level_manager.level_index in [0, 1, 2]
-              and not self.states['game_over_screen_running']
-              and not self.states['congrats_screen_running']):
-            self.sound_manager.play_music(MUSIC_TRACKS['levels_1_3_music'])
+        elif self.states['game_over_screen_running']:
+            self.sound_manager.play_music(MUSIC_TRACKS['game_over_screen'])
+        elif self.states['congrats_screen_running']:
+            self.sound_manager.play_music(MUSIC_TRACKS['congrats_screen'])
+        elif self.states['game_running']:
+            if self.level_manager.level_index in [0, 1, 2]:
+                self.sound_manager.play_music(MUSIC_TRACKS['levels_1_3_music'])
+            elif self.level_manager.level_index == 3:
+                self.sound_manager.play_music(MUSIC_TRACKS['level_4'])
 
     def restart_game(self):
         self.states['welcome_screen_running'] = False
@@ -131,7 +135,7 @@ class Game:
                 self.game_win(self.level_manager.boss_killed)
 
             if self.states['game_over_screen_running']:
-                self.game_over_screen.show()
+                self.game_over_screen.update()
 
             if self.states['congrats_screen_running']:
                 self.congrats_screen.update(dt)

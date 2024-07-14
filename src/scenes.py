@@ -58,9 +58,6 @@ class WelcomeScreen:
     def welcome_scene(self):
         self.draw_planet()
         self.draw_logo()
-        #
-        # for text, color, offset in WELCOME_SCREEN_MESSAGES:
-        #     self.draw_text(text, (self.mid_screen[0], self.mid_screen[1] + offset), FONT10, color)
 
     def high_score_scene(self):
         self.draw_text('HIGH SCORES:', (self.mid_screen[0], self.mid_screen[1] - 60), FONT20, COLORS['WHITE'])
@@ -85,23 +82,21 @@ class WelcomeScreen:
         self.draw_background()
         self.animation_timer.update()
         self.scene_switch_timer.update()
+        self.draw_version()
 
         if self.show_welcome_scene:
             self.welcome_scene()
         else:
             self.high_score_scene()
-        self.draw_version()
 
 
 class GameOverScreen:
     def __init__(self, screen):
         self.screen = screen
 
-    def show(self):
-        self.screen.fill(COLORS['BLACK'])
-
-        texts = [FONT10.render('GAME OVER', True, 'red'),
-                 FONT10.render('Press "R" TO RESTART', True, 'white'),]
+    def draw_text(self):
+        texts = [FONT10.render('GAME OVER', True, COLORS['RED']),
+                 FONT10.render('PRESS "R" TO RESTART', True, COLORS['WHITE']), ]
 
         x_pos = WIDTH / 2
         y_pos = HEIGHT / 2
@@ -109,6 +104,9 @@ class GameOverScreen:
         for text in texts:
             self.screen.blit(text, text.get_rect(center=(x_pos, y_pos)))
             y_pos += 10
+
+    def update(self):
+        self.draw_text()
 
 
 class CongratsScreen:
@@ -120,11 +118,11 @@ class CongratsScreen:
         self.rect = self.image.get_frect(center=(300, 40))
         self.time_elapsed = 0  # To track the elapsed time for the scaling effect
 
-    def animate(self, dt):
+    def animate_astronaut(self, dt):
         self.index = (self.index + 10 * dt) % len(self.frames)
         self.image = self.frames[int(self.index)]
 
-    def move(self, dt):
+    def move_astronaut(self, dt):
         self.rect.x -= 30 * dt
         if self.rect.right <= -10:
             self.rect.center = (300, 40)
@@ -132,7 +130,7 @@ class CongratsScreen:
 
     def draw_astronaut_text(self, dt):
         self.time_elapsed += dt
-        scale_factor = 1 + 1 * math.sin(self.time_elapsed * 1 * math.pi)
+        scale_factor = 1 + math.sin(self.time_elapsed * .8 * math.pi)
 
         texts = [
             FONT10.render('YOU', True, COLORS['BLACK']),
@@ -177,7 +175,6 @@ class CongratsScreen:
             self.screen.blit(text, text.get_rect(center=(x_pos, y_position)))
 
     def update(self, dt):
-        self.screen.fill(COLORS['BLACK'])
-        self.animate(dt)
-        self.move(dt)
+        self.animate_astronaut(dt)
+        self.move_astronaut(dt)
         self.draw_astronaut_text(dt)
