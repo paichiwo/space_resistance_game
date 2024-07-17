@@ -10,6 +10,7 @@ from src.high_score_manager import HighScoreManager
 # add: the lowest score to beat to the dashboard
 # implement: new enemy following paths logic
 # implement: first level message
+# power-ups
 
 
 class Game:

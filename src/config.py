@@ -22,9 +22,16 @@ COLORS = {
 
 ENEMY_WAVES = {
     0: {
-        '100': {
+        (100, 200): {
             'type': 'small_1',
             'quantity': 8,
+            'delay': 500,
+            'speed': 90,
+            'waypoints': generate_circular_waypoints(WIDTH, HEIGHT)
+        },
+        (400, 460): {
+            'type': 'small_1',
+            'quantity': 4,
             'delay': 500,
             'speed': 90,
             'waypoints': generate_circular_waypoints(WIDTH, HEIGHT)

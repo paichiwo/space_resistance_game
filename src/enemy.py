@@ -26,7 +26,7 @@ class EnemyBase(pygame.sprite.Sprite):
 
         self.shots_group = pygame.sprite.Group()
         self.shot_power = 20
-        self.shoot_timer = Timer(1000, self.shoot, repeat=True, autostart=True)
+        # self.shoot_timer = Timer(5000, self.shoot, repeat=True, autostart=True)
 
         self.image = self.frames[self.index]
 
@@ -38,11 +38,11 @@ class EnemyBase(pygame.sprite.Sprite):
 
     def shoot(self):
         if self.can_shoot:
-            dx = self.player.rect.centerx - self.rect.centerx
-            dy = self.player.rect.centery - self.rect.centery
-            direction = pygame.math.Vector2(dx, dy).normalize()
-            Shot(self.rect, self.shots_group, 'enemy', direction)
-            self.shoot_timer.activate()
+            if 1 == random.choice([0, 0, 0, 0, 1]):
+                dx = self.player.rect.centerx - self.rect.centerx
+                dy = self.player.rect.centery - self.rect.centery
+                direction = pygame.math.Vector2(dx, dy).normalize()
+                Shot(self.rect, self.shots_group, 'enemy', direction)
 
     def collisions(self):
         if not self.player.god_mode:
@@ -60,12 +60,14 @@ class EnemyBase(pygame.sprite.Sprite):
             self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > HEIGHT * 2 or self.rect.right < -50 or self.rect.left > WIDTH + 50:
+        if self.rect.top > HEIGHT * 2 or self.rect.right < -30 or self.rect.left > WIDTH + 50:
             self.kill()
 
     def update(self, dt):
-        self.shoot_timer.update()
+        # self.shoot_timer.update()
         self.animate(dt)
+        # self.shoot()
+
         self.shots_group.update(dt)
         self.shots_group.draw(self.screen)
         self.collisions()

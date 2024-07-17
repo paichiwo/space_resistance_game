@@ -16,17 +16,17 @@ def import_image(image_path):
 
 
 def generate_circular_waypoints(width, height):
-    center_x, center_y = width / 2, height / 2
+    start_x, start_y = width / 2, height / 2 - 30
     radius = 50
     num_points = 150
 
     # waypoints = []
-    waypoints = [(width + 30, center_y), (center_x, center_y)]
+    waypoints = [(width + 30, start_y)]
     for i in range(num_points):
         angle = i * (2 * math.pi / num_points)
-        x = center_x + radius * math.cos(angle)
-        y = center_y + radius * math.sin(angle)
+        x = start_x + radius * math.cos(angle)
+        y = start_y + radius * math.sin(angle)
         waypoints.append((x, y))
-    waypoints.append((-30, center_y))
+    waypoints.append((-51, start_y))
     return waypoints
 

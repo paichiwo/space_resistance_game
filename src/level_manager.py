@@ -84,7 +84,7 @@ class LevelManager:
             self.scroll_count = 0
 
     def set_levels(self):
-        if self.scroll_count == 1 and not self.level_index == 3:
+        if self.scroll_count == 5 and not self.level_index == 3:
             self.level_index += 1
             self.finish_level()
             self.change_bg(self.level_index)
@@ -126,16 +126,14 @@ class LevelManager:
 
     def spawn_enemy(self):
         current_time = pygame.time.get_ticks()
-        print(current_time - self.start_time)
         if self.level_index in ENEMY_WAVES:
-            for spawn_pos in ENEMY_WAVES[self.level_index]:
-                if round(self.total_pos_count) == int(spawn_pos):
+            for spawn_pos in ENEMY_WAVES[self.level_index].keys():
+                wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
+                quantity = wave_info['quantity']
+                delay = wave_info['delay']
 
-                    wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
-                    quantity = wave_info['quantity']
-                    delay = wave_info['delay']
-
-                    if quantity > 0 and current_time - self.start_time >= delay:
+                if current_time - self.start_time >= delay:
+                    if round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]) and quantity > 0:
                         Enemy(
                             self.screen,
                             self.sound_manager,
@@ -145,8 +143,11 @@ class LevelManager:
                             wave_info['waypoints'],
                             [self.enemy_sprites, self.all_sprites]
                         )
-                        self.start_time = pygame.time.get_ticks()
+                        self.start_time = current_time
                         quantity -= 1
+
+
+                    print(quantity)
 
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
@@ -177,13 +178,14 @@ class LevelManager:
             self.between_levels()
         else:
             self.scroll(dt)
+            self.spawn_enemy()
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
             # self.enemy_spawn_timer.update()
             self.set_levels()
-            self.spawn_enemy()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
         # print(self.total_pos_count)
         # print(len(self.enemy_sprites))
         # print(self.start_time)
+
