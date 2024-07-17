@@ -8,7 +8,7 @@ from src.high_score_manager import HighScoreManager
 class WelcomeScreen:
     def __init__(self, screen):
         self.screen = screen
-        self.mid_screen = (WIDTH // 2, HEIGHT // 2)
+        self.mid_screen = (WIDTH / 2, HEIGHT / 2)
 
         self.bg_frames = import_assets('assets/img/ui/welcome_screen_bg')
         self.planet_frames = import_assets('assets/img/ui/rotating_planet')

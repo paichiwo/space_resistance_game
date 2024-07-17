@@ -8,8 +8,6 @@ from src.high_score_manager import HighScoreManager
 
 # Redesign welcome screen - implement menu - start, options, credits
 # add the lowest score to beat to the dashboard
-# create entry in pygame and implement on congrats screen - player writes name inside pygame not
-#      tkinter, and that name is saved to high_scores
 
 
 class Game:

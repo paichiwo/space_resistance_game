@@ -25,6 +25,7 @@ class LevelManager:
         self.scroll_pos = 0
         self.scroll_speed = 30
         self.scroll_count = 0
+        self.total_pos_count = 0
 
         # Groups
         self.all_sprites = pygame.sprite.Group()
@@ -62,6 +63,7 @@ class LevelManager:
             self.scroll_pos = 0
             self.count_scrolls()
         self.scroll_pos += self.scroll_speed * dt
+        self.total_pos_count += self.scroll_speed * dt
 
     def start_scrolling(self):
         self.scroll_speed = 30
@@ -150,7 +152,7 @@ class LevelManager:
         self.game_over = False
         self.boss_spawned = False
         self.boss_killed = False
-        self.level_index = 3
+        self.level_index = 0
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
         self.scroll_pos = 0
