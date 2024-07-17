@@ -1,4 +1,5 @@
 import pygame
+from src.helpers import generate_circular_waypoints
 from string import ascii_letters, digits
 
 pygame.init()
@@ -19,45 +20,58 @@ COLORS = {
     'GREY': [4, 4, 4]
 }
 
-ENEMY_LEVEL_DATA = {
+ENEMY_WAVES = {
     0: {
-        'choices': [
-            {'choice': 'small_1', 'probability': 2},
-            {'choice': 'small_2', 'probability': 2},
-            {'choice': 'medium', 'probability': 1}
-        ],
-        'speed': {'small_1': 90, 'small_2': 120, 'medium': 90},
-        'spawning_intervals': [700, 1200]
-    },
-    1: {
-        'choices': [
-            {'choice': 'small_1', 'probability': 2},
-            {'choice': 'small_2', 'probability': 2},
-            {'choice': 'medium', 'probability': 1},
-            {'choice': 'large', 'probability': 1}
-        ],
-        'speed': {'small_1': 120, 'small_2': 90, 'medium': 90, 'large': 90},
-        'spawning_intervals': [700, 1000]
-    },
-    2: {
-        'choices': [
-            {'choice': 'small_1', 'probability': 1},
-            {'choice': 'small_2', 'probability': 1},
-            {'choice': 'medium', 'probability': 2},
-            {'choice': 'large', 'probability': 2}
-        ],
-        'speed': {'small_1': 120, 'small_2': 120, 'medium': 90, 'large': 90},
-        'spawning_intervals': [500, 1000]
-    },
-    3: {
-        'choices': [
-            {'choice': 'small_1', 'probability': 1},
-            {'choice': 'small_2', 'probability': 2}
-        ],
-        'speed': {'small_1': 90, 'small_2': 120},
-        'spawning_intervals': [1000, 1500]
+        '100': {
+            'type': 'small_1',
+            'quantity': 8,
+            'delay': 500,
+            'speed': 90,
+            'waypoints': generate_circular_waypoints(WIDTH, HEIGHT)
+        }
+
     }
 }
+
+# ENEMY_LEVEL_DATA = {
+#     0: {
+#         'choices': [
+#             {'choice': 'small_1', 'probability': 2},
+#             {'choice': 'small_2', 'probability': 2},
+#             {'choice': 'medium', 'probability': 1}
+#         ],
+#         'speed': {'small_1': 90, 'small_2': 120, 'medium': 90},
+#         'spawning_intervals': [700, 1200]
+#     },
+#     1: {
+#         'choices': [
+#             {'choice': 'small_1', 'probability': 2},
+#             {'choice': 'small_2', 'probability': 2},
+#             {'choice': 'medium', 'probability': 1},
+#             {'choice': 'large', 'probability': 1}
+#         ],
+#         'speed': {'small_1': 120, 'small_2': 90, 'medium': 90, 'large': 90},
+#         'spawning_intervals': [700, 1000]
+#     },
+#     2: {
+#         'choices': [
+#             {'choice': 'small_1', 'probability': 1},
+#             {'choice': 'small_2', 'probability': 1},
+#             {'choice': 'medium', 'probability': 2},
+#             {'choice': 'large', 'probability': 2}
+#         ],
+#         'speed': {'small_1': 120, 'small_2': 120, 'medium': 90, 'large': 90},
+#         'spawning_intervals': [500, 1000]
+#     },
+#     3: {
+#         'choices': [
+#             {'choice': 'small_1', 'probability': 1},
+#             {'choice': 'small_2', 'probability': 2}
+#         ],
+#         'speed': {'small_1': 90, 'small_2': 120},
+#         'spawning_intervals': [1000, 1500]
+#     }
+# }
 
 
 ENEMY_DATA = {

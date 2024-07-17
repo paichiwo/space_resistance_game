@@ -10,6 +10,9 @@ from src.enemy import Enemy, Boss
 from src.messages import MessageBetweenLevels
 
 
+# if player at certain scroll pos spawn 8 enemies with 300 ms delay
+
+
 class LevelManager:
     def __init__(self, screen, renderer, sound_manager):
         self.screen = screen
@@ -37,8 +40,7 @@ class LevelManager:
         self.dashboard = Dashboard(self.screen, self.player)
 
         # Timers
-        self.enemy_spawn_timer = None
-        self.set_enemy_spawn_timer()
+        self.start_time = pygame.time.get_ticks()
 
         # Message display state
         self.showing_level_message = False
@@ -122,19 +124,29 @@ class LevelManager:
             self.showing_level_message = False
             self.start_new_level()
 
-    def set_enemy_spawn_timer(self):
-        if self.level_index in ENEMY_LEVEL_DATA:
-            interval_range = ENEMY_LEVEL_DATA[self.level_index]['spawning_intervals']
-            interval = random.randint(interval_range[0], interval_range[1])
-            self.enemy_spawn_timer = Timer(interval, self.spawn_enemy, repeat=True, autostart=True)
-
     def spawn_enemy(self):
-        if self.level_index in ENEMY_LEVEL_DATA:
-            choices = [entry['choice'] for entry in ENEMY_LEVEL_DATA[self.level_index]['choices']]
-            probabilities = [entry['probability'] for entry in ENEMY_LEVEL_DATA[self.level_index]['choices']]
-            enemy_choice = random.choices(choices, probabilities)[0]
-            Enemy(self.screen, self.sound_manager, self.player, enemy_choice,
-                  self.level_index, [self.enemy_sprites, self.all_sprites])
+        current_time = pygame.time.get_ticks()
+        print(current_time - self.start_time)
+        if self.level_index in ENEMY_WAVES:
+            for spawn_pos in ENEMY_WAVES[self.level_index]:
+                if round(self.total_pos_count) == int(spawn_pos):
+
+                    wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
+                    quantity = wave_info['quantity']
+                    delay = wave_info['delay']
+
+                    if quantity > 0 and current_time - self.start_time >= delay:
+                        Enemy(
+                            self.screen,
+                            self.sound_manager,
+                            self.player,
+                            wave_info['type'],
+                            wave_info['speed'],
+                            wave_info['waypoints'],
+                            [self.enemy_sprites, self.all_sprites]
+                        )
+                        self.start_time = pygame.time.get_ticks()
+                        quantity -= 1
 
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
@@ -167,7 +179,11 @@ class LevelManager:
             self.scroll(dt)
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
-            self.enemy_spawn_timer.update()
+            # self.enemy_spawn_timer.update()
             self.set_levels()
+            self.spawn_enemy()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
+        # print(self.total_pos_count)
+        # print(len(self.enemy_sprites))
+        # print(self.start_time)

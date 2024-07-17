@@ -1,3 +1,4 @@
+import math
 import random
 from src.helpers import import_assets
 from src.config import *
@@ -59,7 +60,7 @@ class EnemyBase(pygame.sprite.Sprite):
             self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > HEIGHT * 2 or self.rect.right < 0 or self.rect.left > WIDTH + 20:
+        if self.rect.top > HEIGHT * 2 or self.rect.right < -50 or self.rect.left > WIDTH + 50:
             self.kill()
 
     def update(self, dt):
@@ -71,44 +72,63 @@ class EnemyBase(pygame.sprite.Sprite):
 
 
 class Enemy(EnemyBase):
-    def __init__(self, screen, sound_manager, player, enemy_size, current_level, group):
-        data = ENEMY_DATA[enemy_size]
+    def __init__(self, screen, sound_manager, player, enemy_type, enemy_speed, waypoints, group):
+        data = ENEMY_DATA[enemy_type]
         super().__init__(screen, sound_manager, player, data, group)
 
-        self.enemy_size = enemy_size
-        self.current_level = current_level
-        self.enemy_speed = ENEMY_LEVEL_DATA[self.current_level]['speed'][self.enemy_size]
-        self.pos = pygame.math.Vector2(random.randint(10, WIDTH - 10), 0)
-
-        self.rect = self.image.get_rect(midbottom=self.pos)
-
-        self.waypoints = [
-            pygame.math.Vector2(random.randint(10, WIDTH - 10), random.randint(10, HEIGHT))
-            for _ in range(3)
-        ]
+        self.enemy_type = enemy_type
+        self.enemy_speed = enemy_speed
+        self.waypoints = waypoints
         self.current_waypoint = 0
+
+        self.pos = pygame.math.Vector2(waypoints[0])
+        self.rect = self.image.get_rect(center=self.pos)
+
+        # self.waypoints = [
+        #     pygame.math.Vector2(random.randint(10, WIDTH - 10), random.randint(10, HEIGHT))
+        #     for _ in range(3)
+        # ]
+        # self.current_waypoint = 0
+
+    # def move(self, dt):
+    #     if self.current_waypoint < len(self.waypoints):
+    #         target = self.waypoints[self.current_waypoint]
+    #         direction = target - self.pos
+    #         distance = direction.length()
+    #
+    #         if distance > 0:
+    #             direction.normalize_ip()
+    #             self.pos += direction * self.enemy_speed * dt
+    #             self.rect.midbottom = round(self.pos)
+    #
+    #             if distance < self.enemy_speed * dt:
+    #                 self.current_waypoint += 1
+    #     else:
+    #         self.pos.y += self.enemy_speed * dt
+    #         self.rect.midbottom = round(self.pos)
 
     def move(self, dt):
         if self.current_waypoint < len(self.waypoints):
-            target = self.waypoints[self.current_waypoint]
-            direction = target - self.pos
-            distance = direction.length()
+            target_x, target_y = self.waypoints[self.current_waypoint]
+            dx, dy = target_x - self.pos.x, target_y - self.pos.y
+            dist = math.hypot(dx, dy)
 
-            if distance > 0:
-                direction.normalize_ip()
-                self.pos += direction * self.enemy_speed * dt
-                self.rect.midbottom = round(self.pos)
+            if dist != 0:
+                dx, dy = dx / dist, dy / dist
+                self.pos.x += dx * self.enemy_speed * dt
+                self.pos.y += dy * self.enemy_speed * dt
 
-                if distance < self.enemy_speed * dt:
-                    self.current_waypoint += 1
-        else:
-            self.pos.y += self.enemy_speed * dt
-            self.rect.midbottom = round(self.pos)
+                self.rect.x = self.pos.x
+                self.rect.y = self.pos.y
+
+            if dist < self.enemy_speed * dt:
+                self.current_waypoint += 1
 
     def update(self, dt):
         super().update(dt)
         self.move(dt)
         self.kill_off_screen()
+        # print(self.pos)
 
 
 class Boss(EnemyBase):

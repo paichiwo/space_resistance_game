@@ -6,8 +6,10 @@ from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
 from src.high_score_manager import HighScoreManager
 
-# Redesign welcome screen - implement menu - start, options, credits
-# add the lowest score to beat to the dashboard
+# redesign: welcome screen - implement menu - start, options, credits
+# add: the lowest score to beat to the dashboard
+# implement: new enemy following paths logic
+# implement: first level message
 
 
 class Game:
