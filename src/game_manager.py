@@ -52,7 +52,7 @@ class Game:
         self.congrats_screen = CongratsScreen(self.screen)
 
         # Debug
-        self.debug_menu = DebugMenu(self.screen, self.level_manager)
+        self.debug_menu = DebugMenu(self.screen, self.level_manager, self.states)
 
     def handle_game_events(self, event):
         if event.type == pygame.QUIT:
