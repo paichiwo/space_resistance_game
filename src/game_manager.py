@@ -1,6 +1,4 @@
 import sys
-
-import pygame
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen

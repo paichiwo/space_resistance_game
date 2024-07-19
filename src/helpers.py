@@ -28,4 +28,3 @@ def generate_circular_waypoints(width, height):
         waypoints.append((x, y))
     waypoints.append((-51, start_y))
     return waypoints
-

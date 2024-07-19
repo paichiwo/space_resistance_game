@@ -1,11 +1,10 @@
-import pygame
-
 from src.config import *
 
 
 class DebugMenu:
     def __init__(self, screen, level_manager):
         self.screen = screen
+        self.level_manager = level_manager
 
         self.surf = pygame.Surface((WIDTH / 3, HEIGHT))
         self.surf.fill('indigo')

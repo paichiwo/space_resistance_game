@@ -1,9 +1,7 @@
 import math
-import random
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.helpers import import_assets
-from src.timer import Timer
 from src.dashboard import Dashboard
 from src.player import Player
 from src.enemy import Enemy, Boss
