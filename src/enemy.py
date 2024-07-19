@@ -79,35 +79,13 @@ class Enemy(EnemyBase):
         super().__init__(screen, sound_manager, player, data, group)
 
         self.enemy_type = enemy_type
-        self.enemy_speed = enemy_speed
+        self.speed = enemy_speed
+        self.original_speed = enemy_speed
         self.waypoints = waypoints
         self.current_waypoint = 0
 
         self.pos = pygame.math.Vector2(waypoints[0])
         self.rect = self.image.get_rect(center=self.pos)
-
-        # self.waypoints = [
-        #     pygame.math.Vector2(random.randint(10, WIDTH - 10), random.randint(10, HEIGHT))
-        #     for _ in range(3)
-        # ]
-        # self.current_waypoint = 0
-
-    # def move(self, dt):
-    #     if self.current_waypoint < len(self.waypoints):
-    #         target = self.waypoints[self.current_waypoint]
-    #         direction = target - self.pos
-    #         distance = direction.length()
-    #
-    #         if distance > 0:
-    #             direction.normalize_ip()
-    #             self.pos += direction * self.enemy_speed * dt
-    #             self.rect.midbottom = round(self.pos)
-    #
-    #             if distance < self.enemy_speed * dt:
-    #                 self.current_waypoint += 1
-    #     else:
-    #         self.pos.y += self.enemy_speed * dt
-    #         self.rect.midbottom = round(self.pos)
 
     def move(self, dt):
         if self.current_waypoint < len(self.waypoints):
@@ -117,20 +95,19 @@ class Enemy(EnemyBase):
 
             if dist != 0:
                 dx, dy = dx / dist, dy / dist
-                self.pos.x += dx * self.enemy_speed * dt
-                self.pos.y += dy * self.enemy_speed * dt
+                self.pos.x += dx * self.speed * dt
+                self.pos.y += dy * self.speed * dt
 
                 self.rect.x = self.pos.x
                 self.rect.y = self.pos.y
 
-            if dist < self.enemy_speed * dt:
+            if dist < self.speed * dt:
                 self.current_waypoint += 1
 
     def update(self, dt):
         super().update(dt)
         self.move(dt)
         self.kill_off_screen()
-        # print(self.pos)
 
 
 class Boss(EnemyBase):
