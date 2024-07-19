@@ -16,7 +16,7 @@ OBJECT_SPEEDS = {
     'player': 120,
     'shot': 150,
     'boss': 40,
-    'scroll': 30,
+    'scroll': 30
 }
 
 COLORS = {

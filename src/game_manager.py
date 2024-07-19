@@ -128,6 +128,7 @@ class Game:
         self.states['debug_visible'] = not self.states['debug_visible']
 
     def run(self):
+        event = None
         while True:
             self.set_music_for_game()
             self.screen.fill(COLORS['BLACK'])
@@ -135,9 +136,6 @@ class Game:
 
             for event in pygame.event.get():
                 self.handle_game_events(event)
-
-                if self.states['debug_visible']:
-                    self.debug_menu.input(event)
 
             dt = self.clock.tick() / 1000
             if self.states['welcome_screen_running']:
@@ -155,7 +153,7 @@ class Game:
                 self.check_high_score()
 
             if self.states['debug_visible']:
-                self.debug_menu.update()
+                self.debug_menu.update(event)
                 self.level_manager.pause()
             else:
                 self.level_manager.unpause()

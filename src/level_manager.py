@@ -167,26 +167,33 @@ class LevelManager:
         self.enemy_sprites.empty()
         self.player.reset()
 
-    def set_speeds(self, enemy_speed, shot_speed, boss_speed, scroll_speed, player_speed):
+    def pause(self):
         for enemy in self.enemy_sprites:
-            enemy.speed = enemy_speed
+            enemy.speed = 0
             for shot in enemy.shots_group:
-                shot.speed = shot_speed
+                shot.speed = 0
         for shot in self.player.shots_group:
-            shot.speed = shot_speed
+            shot.speed = 0
 
         if self.boss_spawned:
-            self.boss.vert_speed = boss_speed
+            self.boss.vert_speed = 0
 
-        self.scroll_speed = scroll_speed
-        self.player.speed = player_speed
-
-    def pause(self):
-        self.set_speeds(0, 0, 0, 0, 0)
+        self.scroll_speed = 0
+        self.player.speed = 0
 
     def unpause(self):
-        speed = OBJECT_SPEEDS
-        self.set_speeds(speed['enemy'], speed['shot'], speed['boss'], speed['scroll'], speed['player'])
+        for enemy in self.enemy_sprites:
+            enemy.speed = enemy.original_speed
+            for shot in enemy.shots_group:
+                shot.speed = OBJECT_SPEEDS['shot']
+        for shot in self.player.shots_group:
+            shot.speed = OBJECT_SPEEDS['shot']
+
+        if self.boss_spawned:
+            self.boss.vert_speed = OBJECT_SPEEDS['boss']
+
+        self.scroll_speed = OBJECT_SPEEDS['scroll']
+        self.player.speed = OBJECT_SPEEDS['player']
 
     def update(self, dt):
         if self.showing_level_message:

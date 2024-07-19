@@ -1,4 +1,7 @@
+import pygame
+
 from src.config import *
+from src.timer import Timer
 
 
 class DebugMenu:
@@ -15,8 +18,9 @@ class DebugMenu:
             'level': 1
         }
 
+        self.start_time = pygame.time.get_ticks()
+
         self.item_positions = []
-        self.mouse_button_down = False
 
     def draw_bg(self):
         self.screen.blit(self.surf, self.rect)
@@ -39,23 +43,26 @@ class DebugMenu:
             y += 10
 
     def input(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and not self.mouse_button_down:
-            self.mouse_button_down = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
             for item, item_rect in self.item_positions:
                 if item_rect.collidepoint(mouse_pos):
                     self.toggle_item(item)
-        elif event.type == pygame.MOUSEBUTTONUP:
-            self.mouse_button_down = False
 
     def toggle_item(self, item):
-        if item == 'god mode':
-            self.debug_items[item] = not self.debug_items[item]
-        elif item == 'level':
-            self.debug_items[item] += 1
-            if self.debug_items[item] > 4:
-                self.debug_items[item] = 1
+        current_time = pygame.time.get_ticks()
+        if current_time - self.start_time > 200:
 
-    def update(self):
+            if item == 'god mode':
+                self.debug_items[item] = not self.debug_items[item]
+            elif item == 'level':
+                self.debug_items[item] += 1
+                if self.debug_items[item] > 4:
+                    self.debug_items[item] = 1
+
+            self.start_time = pygame.time.get_ticks()
+
+    def update(self, event):
         self.draw_bg()
         self.draw_text()
+        self.input(event)
