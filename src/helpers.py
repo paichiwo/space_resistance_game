@@ -20,7 +20,6 @@ def generate_circular_waypoints(width, height):
     radius = 50
     num_points = 150
 
-    # waypoints = []
     waypoints = [(width + 30, start_y)]
     for i in range(num_points):
         angle = i * (2 * math.pi / num_points)
