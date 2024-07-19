@@ -12,7 +12,6 @@ from src.messages import MessageBetweenLevels
 
 # if player at certain scroll pos spawn 8 enemies with 300 ms delay
 
-
 class LevelManager:
     def __init__(self, screen, renderer, sound_manager):
         self.screen = screen
@@ -146,9 +145,6 @@ class LevelManager:
                         self.start_time = current_time
                         quantity -= 1
 
-
-                    print(quantity)
-
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
         self.boss_spawned = True
@@ -173,6 +169,34 @@ class LevelManager:
         self.enemy_sprites.empty()
         self.player.reset()
 
+    def pause(self):
+        for enemy in self.enemy_sprites:
+            enemy.speed = 0
+            for shot in enemy.shots_group:
+                shot.speed = 0
+        for shot in self.player.shots_group:
+            shot.speed = 0
+
+        if self.boss_spawned:
+            self.boss.vert_speed = 0
+
+        self.scroll_speed = 0
+        self.player.speed = 0
+
+    def unpause(self):
+        for enemy in self.enemy_sprites:
+            enemy.speed = enemy.original_speed
+            for shot in enemy.shots_group:
+                shot.speed = OBJECT_SPEEDS['shot']
+        for shot in self.player.shots_group:
+            shot.speed = OBJECT_SPEEDS['shot']
+
+        if self.boss_spawned:
+            self.boss.vert_speed = OBJECT_SPEEDS['boss']
+
+        self.scroll_speed = OBJECT_SPEEDS['scroll']
+        self.player.speed = OBJECT_SPEEDS['player']
+
     def update(self, dt):
         if self.showing_level_message:
             self.between_levels()
@@ -188,4 +212,3 @@ class LevelManager:
         # print(self.total_pos_count)
         # print(len(self.enemy_sprites))
         # print(self.start_time)
-
