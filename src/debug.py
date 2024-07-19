@@ -14,7 +14,7 @@ class DebugMenu:
         self.rect = self.surf.get_rect(topright=(WIDTH, 0))
 
         self.debug_items = {
-            'god mode': False,
+            'god_mode': False,
             'level': 1
         }
 
@@ -53,7 +53,7 @@ class DebugMenu:
         current_time = pygame.time.get_ticks()
         if current_time - self.start_time > 200:
 
-            if item == 'god mode':
+            if item == 'god_mode':
                 self.debug_items[item] = not self.debug_items[item]
             elif item == 'level':
                 self.debug_items[item] += 1
@@ -62,7 +62,16 @@ class DebugMenu:
 
             self.start_time = pygame.time.get_ticks()
 
+    def set_in_game(self):
+        self.level_manager.player.god_mode = self.debug_items['god_mode']
+
+        new_level_index = self.debug_items['level'] - 1
+        if new_level_index != self.level_manager.level_index:
+            self.level_manager.level_index = new_level_index
+            self.level_manager.change_bg(new_level_index)
+
     def update(self, event):
         self.draw_bg()
         self.draw_text()
         self.input(event)
+        self.set_in_game()
