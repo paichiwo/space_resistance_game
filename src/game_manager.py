@@ -1,10 +1,13 @@
 import sys
+
+import pygame
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
 from src.high_score_manager import HighScoreManager
+from src.debug import DebugMenu
 
 # redesign: welcome screen - implement menu - start, options, credits
 # add: the lowest score to beat to the dashboard
@@ -31,7 +34,8 @@ class Game:
             'game_running': False,
             'game_over_screen_running': False,
             'congrats_screen_running': False,
-            'score_entered': False
+            'score_entered': False,
+            'debug_visible': False
         }
 
         # User Name
@@ -48,6 +52,9 @@ class Game:
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
+
+        # Debug
+        self.debug_menu = DebugMenu(self.screen, self.level_manager)
 
     def handle_game_events(self, event):
         if event.type == pygame.QUIT:
@@ -66,11 +73,13 @@ class Game:
                     if len(self.user_name) >= 1:
                         self.states['score_entered'] = True
 
-        # Full screen
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-            self.window.set_fullscreen(True)
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            self.window.set_windowed()
+            # Full screen
+            if event.key == pygame.K_f:
+                self.window.set_fullscreen(True)
+            elif event.key == pygame.K_ESCAPE:
+                self.window.set_windowed()
+            elif event.key == pygame.K_d:
+                self.run_debug()
 
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
@@ -94,13 +103,11 @@ class Game:
         self.level_manager.restart()
         self.welcome_screen.reset()
 
-    def game_over(self, game_over):
+    def check_game_win_or_game_over(self, game_over, boss_killed):
         if game_over:
             self.states['game_running'] = False
             self.states['game_over_screen_running'] = True
             self.welcome_screen.reset()
-
-    def game_win(self, boss_killed):
         if boss_killed:
             self.states['game_running'] = False
             self.states['congrats_screen_running'] = True
@@ -119,6 +126,9 @@ class Game:
             self.states['congrats_screen_running'] = False
             self.states['welcome_screen_running'] = True
 
+    def run_debug(self):
+        self.states['debug_visible'] = not self.states['debug_visible']
+
     def run(self):
         while True:
             self.set_music_for_game()
@@ -128,14 +138,16 @@ class Game:
             for event in pygame.event.get():
                 self.handle_game_events(event)
 
+                if self.states['debug_visible']:
+                    self.debug_menu.input(event)
+
             dt = self.clock.tick() / 1000
             if self.states['welcome_screen_running']:
                 self.welcome_screen.update()
 
             if self.states['game_running']:
                 self.level_manager.update(dt)
-                self.game_over(self.level_manager.game_over)
-                self.game_win(self.level_manager.boss_killed)
+                self.check_game_win_or_game_over(self.level_manager.game_over, self.level_manager.boss_killed)
 
             if self.states['game_over_screen_running']:
                 self.game_over_screen.update()
@@ -143,6 +155,12 @@ class Game:
             if self.states['congrats_screen_running']:
                 self.congrats_screen.update(dt)
                 self.check_high_score()
+
+            if self.states['debug_visible']:
+                self.debug_menu.update()
+                self.level_manager.pause()
+            else:
+                self.level_manager.unpause()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
