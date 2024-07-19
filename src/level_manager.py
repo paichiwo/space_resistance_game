@@ -75,7 +75,7 @@ class LevelManager:
         self.scroll_count += 1
 
     def change_bg(self, level):
-        if 1 <= level <= len(self.level_images) and not level == 3:
+        if 0 <= level <= len(self.level_images) and not level == 3:
             self.bg_img = self.level_images[level]
             self.panels = self.get_panels()
             self.scroll_count = 0
