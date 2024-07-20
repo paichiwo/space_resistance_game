@@ -46,7 +46,7 @@ class Game:
         self.high_score_manager = HighScoreManager()
 
         # Game Objects
-        self.welcome_screen = WelcomeScreen(self.screen)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager)
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
