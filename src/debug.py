@@ -8,7 +8,7 @@ class DebugMenu:
         self.states = states
 
         self.surf = pygame.Surface((WIDTH / 3, HEIGHT))
-        self.surf.fill('indigo')
+        self.surf.fill(COLORS['INDIGO'])
         self.surf.set_alpha(200)
         self.rect = self.surf.get_rect(topright=(WIDTH, 0))
 
@@ -28,7 +28,7 @@ class DebugMenu:
         self.screen.blit(self.surf, self.rect)
 
     def draw_title(self):
-        title_text = FONT10.render('DEBUG MENU:', True, 'gold')
+        title_text = FONT10.render('DEBUG MENU:', True, COLORS['GOLD'])
         title_rect = title_text.get_rect(center=(215, 15))
         self.screen.blit(title_text, title_rect)
 
@@ -40,9 +40,9 @@ class DebugMenu:
         y = 30
         self.draw_title()
         for item, state in self.debug_items.items():
-            item_color = 'gold' if pygame.font.Font.render(FONT10, item, True, 'yellow').get_rect(
-                center=(x, y)).collidepoint(mouse_pos) else 'yellow'
-            state_color = 'red' if not state else 'green'
+            item_color = COLORS['GOLD'] if pygame.font.Font.render(FONT10, item, True, COLORS['YELLOW']).get_rect(
+                center=(x, y)).collidepoint(mouse_pos) else COLORS['YELLOW']
+            state_color = COLORS['RED'] if not state else COLORS['GREEN']
 
             item_text = FONT10.render(item, True, item_color)
             state_text = FONT10.render(str(state), True, state_color)

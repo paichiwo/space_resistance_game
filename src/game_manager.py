@@ -130,9 +130,9 @@ class Game:
     def run(self):
         event = None
         while True:
-            self.set_music_for_game()
             self.screen.fill(COLORS['BLACK'])
             self.renderer.clear()
+            self.set_music_for_game()
 
             for event in pygame.event.get():
                 self.handle_game_events(event)

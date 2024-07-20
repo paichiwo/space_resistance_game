@@ -5,14 +5,10 @@ from src.helpers import import_image
 class Dashboard:
     def __init__(self, screen, player):
         super().__init__()
-
         self.screen = screen
         self.player = player
 
         self.life_img = import_image('assets/img/ui/life/0.png')
-
-    def draw_bg(self):
-        pygame.draw.rect(self.screen, COLORS['GREY'], pygame.Rect(0, 0, 256, 14))
 
     def draw_energy(self):
         bar_length = 50
@@ -39,7 +35,6 @@ class Dashboard:
         self.screen.blit(text, rect)
 
     def update(self, level):
-        self.draw_bg()
         self.draw_score()
         self.draw_lives()
         self.draw_energy()
