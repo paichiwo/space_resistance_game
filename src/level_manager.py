@@ -8,8 +8,6 @@ from src.enemy import Enemy, Boss
 from src.messages import MessageBetweenLevels
 
 
-# if player at certain scroll pos spawn 8 enemies with 300 ms delay
-
 class LevelManager:
     def __init__(self, screen, renderer, sound_manager):
         self.screen = screen
@@ -29,7 +27,7 @@ class LevelManager:
 
         # Groups
         self.all_sprites = pygame.sprite.Group()
-        self.player_sprite = pygame.sprite.Group
+        self.player_sprite = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
 
         # Objects
@@ -203,10 +201,6 @@ class LevelManager:
             self.spawn_enemy()
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
-            # self.enemy_spawn_timer.update()
             self.set_levels()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
-        # print(self.total_pos_count)
-        # print(len(self.enemy_sprites))
-        # print(self.start_time)

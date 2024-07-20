@@ -139,7 +139,7 @@ class Game:
 
             dt = self.clock.tick() / 1000
             if self.states['welcome_screen_running']:
-                self.welcome_screen.update()
+                self.welcome_screen.update(event)
 
             if self.states['game_running']:
                 self.level_manager.update(dt)

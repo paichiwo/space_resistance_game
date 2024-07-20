@@ -58,9 +58,8 @@ class DebugMenu:
 
     def input(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = event.pos
             for item, item_rect in self.item_positions:
-                if item_rect.collidepoint(mouse_pos):
+                if item_rect.collidepoint(event.pos):
                     self.toggle_items(item)
 
     def toggle_items(self, item):

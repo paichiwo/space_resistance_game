@@ -3,6 +3,7 @@ from src.config import *
 from src.timer import Timer
 from src.helpers import import_image, import_assets
 from src.high_score_manager import HighScoreManager
+from src.main_menu import MainMenu
 
 
 class WelcomeScreen:
@@ -23,6 +24,8 @@ class WelcomeScreen:
         self.high_score_manager = HighScoreManager()
         self.high_scores = None
         self.retrieve_scores()
+
+        self.main_menu = MainMenu(self.screen)
 
     def update_animation_indices(self):
         self.bg_index = (self.bg_index + 1) % len(self.bg_frames)
@@ -55,9 +58,10 @@ class WelcomeScreen:
     def draw_version(self):
         self.draw_text(f'v{VERSION}', (WIDTH - 12, 6), FONT10, COLORS['WHITE'])
 
-    def welcome_scene(self):
+    def welcome_scene(self, event):
         self.draw_planet()
         self.draw_logo()
+        self.main_menu.update(event)
 
     def high_score_scene(self):
         self.draw_text('HIGH SCORES:', (self.mid_screen[0], self.mid_screen[1] - 60), FONT20, COLORS['WHITE'])
@@ -78,14 +82,14 @@ class WelcomeScreen:
         self.retrieve_scores()
         self.scene_switch_timer = Timer(5000, self.switch_scene, repeat=True, autostart=True)
 
-    def update(self):
+    def update(self, event):
         self.draw_background()
         self.animation_timer.update()
         self.scene_switch_timer.update()
         self.draw_version()
 
         if self.show_welcome_scene:
-            self.welcome_scene()
+            self.welcome_scene(event)
         else:
             self.high_score_scene()
 
