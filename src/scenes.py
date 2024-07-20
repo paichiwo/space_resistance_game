@@ -7,8 +7,11 @@ from src.main_menu import MainMenu
 
 
 class WelcomeScreen:
-    def __init__(self, screen):
+    def __init__(self, screen, window, states, sound_manager):
         self.screen = screen
+        self.window = window
+        self.states = states
+        self.sound_manager = sound_manager
         self.mid_screen = (WIDTH / 2, HEIGHT / 2)
 
         self.bg_frames = import_assets('assets/img/ui/welcome_screen_bg')
@@ -25,7 +28,7 @@ class WelcomeScreen:
         self.high_scores = None
         self.retrieve_scores()
 
-        self.main_menu = MainMenu(self.screen)
+        self.main_menu = MainMenu(self.screen, self.window, self.states, self.sound_manager)
 
     def update_animation_indices(self):
         self.bg_index = (self.bg_index + 1) % len(self.bg_frames)
