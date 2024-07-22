@@ -10,7 +10,7 @@ class Shot(pygame.sprite.Sprite):
         self.frames = import_assets(f'assets/img/shot/{shot_type}/')
         self.index = 0
         self.animation_speed = 30
-        self.speed = 150
+        self.speed = OBJECT_SPEEDS['shot']
 
         self.image = self.frames[0]
         self.rect = self.image.get_frect(midbottom=rect.midtop if shot_type == 'player' else rect.midbottom)

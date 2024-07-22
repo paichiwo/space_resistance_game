@@ -119,7 +119,7 @@ class Boss(EnemyBase):
         self.rect = self.image.get_rect(center=self.pos)
 
         self.direction = 1
-        self.vert_speed = 40
+        self.vert_speed = OBJECT_SPEEDS['boss']
 
     def move(self, dt):
         if self.pos.y >= 70:

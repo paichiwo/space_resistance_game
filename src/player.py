@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
 
         # Data
         self.status = 'idle'
-        self.speed = 120
+        self.speed = OBJECT_SPEEDS['player']
         self.current_energy = 100
         self.max_energy = 100
         self.lives = 4
