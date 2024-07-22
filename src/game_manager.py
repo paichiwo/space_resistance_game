@@ -26,6 +26,8 @@ class Game:
         self.screen = pygame.Surface((WIDTH, HEIGHT))
         self.window.get_surface()
 
+        self.window.position = (0, 30)
+
         # States
         self.states = {
             'welcome_screen_running': True,
