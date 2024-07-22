@@ -19,19 +19,19 @@ class Dashboard:
         pygame.draw.rect(self.screen, 'indigo', pygame.Rect(9, 6, bar_length + 2, 3), 1)
 
     def draw_lives(self):
-        x = 86
+        x = 70
         for _ in range(0, self.player.lives-1):
             self.screen.blit(self.life_img, (x, 3))
             x += 12
 
     def draw_score(self):
         text = FONT10.render('{:07}'.format(self.player.score), False, COLORS['WHITE'])
-        rect = text.get_rect(topleft=(143, 2))
+        rect = text.get_rect(topleft=(112, 2))
         self.screen.blit(text, rect)
 
     def draw_levels(self, level):
         text = FONT10.render('LEVEL {}'.format(level + 1), False, COLORS['WHITE'])
-        rect = text.get_rect(topleft=(209, 2))
+        rect = text.get_rect(topleft=(160, 2))
         self.screen.blit(text, rect)
 
     def update(self, level):

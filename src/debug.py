@@ -7,7 +7,7 @@ class DebugMenu:
         self.level_manager = level_manager
         self.states = states
 
-        self.surf = pygame.Surface((WIDTH / 3, HEIGHT))
+        self.surf = pygame.Surface((86, HEIGHT))
         self.surf.fill(COLORS['INDIGO'])
         self.surf.set_alpha(200)
         self.rect = self.surf.get_rect(topright=(WIDTH, 0))
@@ -29,14 +29,14 @@ class DebugMenu:
 
     def draw_title(self):
         title_text = FONT10.render('DEBUG MENU:', True, COLORS['GOLD'])
-        title_rect = title_text.get_rect(center=(215, 15))
+        title_rect = title_text.get_rect(center=(WIDTH-self.surf.get_width() / 2, 15))
         self.screen.blit(title_text, title_rect)
 
     def draw_text(self):
         self.item_positions.clear()
         mouse_pos = (pygame.mouse.get_pos()[0] // SCALE, pygame.mouse.get_pos()[1] // SCALE)
 
-        x = 198
+        x = WIDTH - 57
         y = 30
         self.draw_title()
         for item, state in self.debug_items.items():

@@ -24,6 +24,7 @@ class LevelManager:
         self.scroll_speed = 30
         self.scroll_count = 0
         self.total_pos_count = 0
+        self.bg_offset = 10
 
         # Groups
         self.all_sprites = pygame.sprite.Group()
@@ -55,12 +56,25 @@ class LevelManager:
     def scroll(self, dt):
         for i in range(self.panels):
             y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height())
-            self.screen.blit(self.bg_img, (0, y_pos))
+            self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
         if abs(self.scroll_pos) >= self.bg_img.get_height():
             self.scroll_pos = 0
             self.count_scrolls()
         self.scroll_pos += self.scroll_speed * dt
         self.total_pos_count += self.scroll_speed * dt
+
+    def update_bg_offset(self, dt):
+        player_direction = self.player.direction.x
+
+        if player_direction != 0:
+            self.bg_offset += player_direction * 100 * dt  # Adjust the multiplier as needed
+            self.bg_offset = max(-10, min(10, self.bg_offset))  # Clamp between -10 and 10
+
+        # Gradually reset the offset when the player stops moving
+        if player_direction == 0 and self.bg_offset != 0:
+            self.bg_offset -= (self.bg_offset / abs(self.bg_offset)) * 50 * dt
+            if abs(self.bg_offset) < 0.1:
+                self.bg_offset = 0
 
     def start_scrolling(self):
         self.scroll_speed = 30
@@ -197,6 +211,7 @@ class LevelManager:
         if self.showing_level_message:
             self.between_levels()
         else:
+            self.update_bg_offset(dt)
             self.scroll(dt)
             self.spawn_enemy()
             self.all_sprites.draw(self.screen)
