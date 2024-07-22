@@ -24,11 +24,6 @@ class MainMenu:
         self.options = False
         self.scale = SCALE
 
-        pygame.joystick.init()
-        self.joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-        for joystick in self.joysticks:
-            joystick.init()
-
     def draw_main_menu(self):
         mouse_pos = (pygame.mouse.get_pos()[0] // self.scale, pygame.mouse.get_pos()[1] // self.scale)
 
