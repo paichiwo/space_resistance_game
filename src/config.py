@@ -9,14 +9,14 @@ FONT20 = pygame.font.Font('assets/font/visitor1.ttf', 20)
 TITLE = 'Space Resistance'
 VERSION = '1.5'
 
-WIDTH, HEIGHT = 235, 250
+WIDTH, HEIGHT = 216, 250
 SCALE = 4
 
 OBJECT_SPEEDS = {
     'player': 120,
     'shot': 150,
     'boss': 40,
-    'scroll': 30
+    'scroll': 90
 }
 
 COLORS = {
