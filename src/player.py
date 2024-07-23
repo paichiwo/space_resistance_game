@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
 
         # Player image and rect
         self.image = self.ship_idle_frames
-        self.rect = self.image.get_rect(midbottom=(WIDTH // 2, HEIGHT - 10))
+        self.rect = self.image.get_frect(midbottom=(WIDTH // 2, HEIGHT - 10))
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
 
@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.god_mode_fumes_frames = [self.fumes_frames[0], self.ship_empty_frames, self.fumes_frames[1]]
         self.fumes_index = 0
         self.fumes_image = self.fumes_frames[self.fumes_index]
-        self.fumes_rect = self.image.get_rect()
+        self.fumes_rect = self.image.get_frect()
 
         # Data
         self.status = 'idle'
@@ -60,11 +60,14 @@ class Player(pygame.sprite.Sprite):
         self.god_mode = False
         self.message = Message(self.screen, 'LIFE LOST', 3000)
 
+        print(self.frame_index)
+
     def animate_player(self, frames, dt):
-        self.frame_index += 10 * dt if self.god_mode else dt
+        self.frame_index += .006
         if self.frame_index >= len(frames):
-            self.frame_index = 1
+            self.frame_index = 2
         self.image = frames[int(self.frame_index)]
+        print(self.frame_index)
 
     def animate_fumes(self, dt):
         frames = self.god_mode_fumes_frames if self.god_mode else self.fumes_frames
@@ -82,6 +85,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.status == 'idle' and not self.god_mode:
             self.image = frames['idle']
+            self.frame_index = 0
         else:
             self.animate_player(frames[self.status], dt)
 
@@ -116,7 +120,8 @@ class Player(pygame.sprite.Sprite):
             self.direction = round(self.direction.normalize())
 
         self.pos += self.direction * self.speed * dt
-        self.rect.center = (round(self.pos.x), round(self.pos.y))
+
+        self.rect.center = self.pos
 
     def move_boss_killed(self):
         self.image = self.ship_idle_frames
@@ -184,7 +189,7 @@ class Player(pygame.sprite.Sprite):
         self.enemy_kill_count = 0
         self.lives = 4
         self.current_energy = 100
-        self.rect = self.image.get_rect(midbottom=(WIDTH // 2, HEIGHT - 10))
+        self.rect = self.image.get_frect(midbottom=(WIDTH // 2, HEIGHT - 10))
         self.pos = pygame.math.Vector2(self.rect.center)
         self.direction = pygame.math.Vector2()
         self.god_mode = False
@@ -209,3 +214,7 @@ class Player(pygame.sprite.Sprite):
         self.check_collisions()
         self.deduct_life()
         self.message.update()
+        print(f'pos', self.pos)
+        print()
+        print(f'rect', self.rect.center  )
+        print()
