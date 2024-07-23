@@ -19,9 +19,9 @@ class Player(pygame.sprite.Sprite):
         self.ship_idle_frames = import_image('assets/img/ship/idle/0.png')
         self.ship_left_frames = import_assets('assets/img/ship/left/')
         self.ship_right_frames = import_assets('assets/img/ship/right/')
-        self.god_mode_idle_frames = [self.ship_idle_frames, self.ship_empty_frames, self.ship_idle_frames]
-        self.god_mode_left_frames = [self.ship_left_frames[0], self.ship_empty_frames, self.ship_left_frames[1]]
-        self.god_mode_right_frames = [self.ship_right_frames[0], self.ship_empty_frames, self.ship_right_frames[1]]
+        self.god_mode_idle_frames = [self.ship_idle_frames, self.ship_empty_frames, self.ship_idle_frames, self.ship_empty_frames]
+        self.god_mode_left_frames = [self.ship_left_frames[0], self.ship_empty_frames, self.ship_left_frames[1], self.ship_empty_frames]
+        self.god_mode_right_frames = [self.ship_right_frames[0], self.ship_empty_frames, self.ship_right_frames[1], self.ship_empty_frames]
         self.frame_index = 0
 
         # Player image and rect
@@ -60,14 +60,11 @@ class Player(pygame.sprite.Sprite):
         self.god_mode = False
         self.message = Message(self.screen, 'LIFE LOST', 3000)
 
-        print(self.frame_index)
-
     def animate_player(self, frames, dt):
-        self.frame_index += .006
+        self.frame_index += (10 if self.god_mode else 20) * dt
         if self.frame_index >= len(frames):
             self.frame_index = 2
         self.image = frames[int(self.frame_index)]
-        print(self.frame_index)
 
     def animate_fumes(self, dt):
         frames = self.god_mode_fumes_frames if self.god_mode else self.fumes_frames
@@ -110,8 +107,9 @@ class Player(pygame.sprite.Sprite):
             self.shot_timer.activate()
 
     def move_fumes(self):
-        self.screen.blit(self.fumes_image, self.fumes_rect)
-        self.fumes_rect.midtop = self.rect.midbottom[0], self.rect.midbottom[1] - 3
+        if not self.god_mode:
+            self.screen.blit(self.fumes_image, self.fumes_rect)
+            self.fumes_rect.midtop = self.rect.midbottom[0], self.rect.midbottom[1] - 3
 
     def move(self, dt):
         self.move_fumes()
@@ -120,7 +118,6 @@ class Player(pygame.sprite.Sprite):
             self.direction = round(self.direction.normalize())
 
         self.pos += self.direction * self.speed * dt
-
         self.rect.center = self.pos
 
     def move_boss_killed(self):
@@ -214,7 +211,3 @@ class Player(pygame.sprite.Sprite):
         self.check_collisions()
         self.deduct_life()
         self.message.update()
-        print(f'pos', self.pos)
-        print()
-        print(f'rect', self.rect.center  )
-        print()

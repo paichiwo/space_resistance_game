@@ -13,7 +13,7 @@ WIDTH, HEIGHT = 216, 250
 SCALE = 4
 
 OBJECT_SPEEDS = {
-    'player': 120,
+    'player': 90,
     'shot': 150,
     'boss': 40,
     'scroll': 30
