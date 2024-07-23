@@ -67,8 +67,8 @@ class LevelManager:
         player_direction = self.player.direction.x
 
         if player_direction != 0:
-            self.bg_offset += player_direction * 20 * dt
-            self.bg_offset = max(0, min(60, self.bg_offset))
+            self.bg_offset += player_direction * 24 * dt
+            self.bg_offset = max(0, min(40, self.bg_offset))
 
     def start_scrolling(self):
         self.scroll_speed = 30
