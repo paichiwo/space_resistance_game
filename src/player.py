@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
 
         # Shots
         self.shots_group = pygame.sprite.Group()
-        self.shot_speed = 10
+        self.shot_speed = 200
         self.shot_power = 10
 
         # Timers
@@ -102,7 +102,7 @@ class Player(pygame.sprite.Sprite):
             self.status = 'idle'
 
         if keys[pygame.K_SPACE] and not self.shot_timer.active:
-            Shot(self.rect, self.shots_group, 'player')
+            Shot(self.rect, self.shot_speed, self.shots_group, 'player')
             self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
             self.shot_timer.activate()
 
