@@ -18,6 +18,7 @@ class LevelManager:
         self.level_images = import_assets('assets/img/bg/')
         self.level_index = 0
         self.bg_img = self.level_images[self.level_index]
+        self.rect = self.bg_img.get_frect()
         self.panels = self.get_panels()
 
         self.scroll_pos = 0
@@ -54,14 +55,30 @@ class LevelManager:
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
 
     def scroll(self, dt):
-        for i in range(self.panels):
-            y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height()) + HEIGHT  # add HEIGHT for long bg, no loop
-            self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
-        if abs(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:  # add HEIGHT for long bg, no loop
+        """
+        #  Infinite looping bg scroll
+        #
+        #     for i in range(self.panels):
+        #         y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height())
+        #         self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
+        #     if abs(self.scroll_pos) >= self.bg_img.get_height()
+        #         self.scroll_pos = 0
+        #         self.count_scrolls()
+        #     self.scroll_pos += self.scroll_speed * dt
+        #     self.total_pos_count += self.scroll_speed * dt
+        """
+
+        self.rect.y += self.scroll_speed * dt
+        y_pos = self.rect.y - self.bg_img.get_height()
+        self.screen.blit(self.bg_img, (-self.bg_offset, y_pos + HEIGHT))
+        self.scroll_pos += self.scroll_speed * dt
+        if int(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:
             self.scroll_pos = 0
             self.count_scrolls()
-        self.scroll_pos += self.scroll_speed * dt
         self.total_pos_count += self.scroll_speed * dt
+
+        print(abs(self.scroll_pos))
+        # self.total_pos_count += self.scroll_speed * dt
 
     def update_bg_offset(self, dt):
         player_direction = self.player.direction.x
@@ -71,7 +88,7 @@ class LevelManager:
             self.bg_offset = max(0, min(40, self.bg_offset))
 
     def start_scrolling(self):
-        self.scroll_speed = 30
+        self.scroll_speed = OBJECT_SPEEDS['scroll']
 
     def stop_scrolling(self):
         self.scroll_speed = 0
@@ -213,3 +230,4 @@ class LevelManager:
             self.set_levels()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
+        print(self.scroll_count)
