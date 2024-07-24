@@ -3,14 +3,14 @@ from src.helpers import import_assets
 
 
 class Shot(pygame.sprite.Sprite):
-    def __init__(self, rect, group, shot_type='player', direction='up'):
+    def __init__(self, rect, speed, group, shot_type='player', direction='up'):
         super().__init__(group)
 
         self.direction = direction
         self.frames = import_assets(f'assets/img/shot/{shot_type}/')
         self.index = 0
-        self.animation_speed = 30
-        self.speed = OBJECT_SPEEDS['shot']
+        self.animation_speed = 10
+        self.speed = speed
 
         self.image = self.frames[0]
         self.rect = self.image.get_frect(midbottom=rect.midtop if shot_type == 'player' else rect.midbottom)
