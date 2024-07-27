@@ -55,30 +55,28 @@ class LevelManager:
         return math.ceil(HEIGHT / self.bg_img.get_height() + 1)
 
     def scroll(self, dt):
-        """
-        #  Infinite looping bg scroll
-        #
-        #     for i in range(self.panels):
-        #         y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height())
-        #         self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
-        #     if abs(self.scroll_pos) >= self.bg_img.get_height()
-        #         self.scroll_pos = 0
-        #         self.count_scrolls()
-        #     self.scroll_pos += self.scroll_speed * dt
-        #     self.total_pos_count += self.scroll_speed * dt
-        """
-
-        self.rect.y += self.scroll_speed * dt
-        y_pos = self.rect.y - self.bg_img.get_height()
-        self.screen.blit(self.bg_img, (-self.bg_offset, y_pos + HEIGHT))
-        self.scroll_pos += self.scroll_speed * dt
-        if int(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:
+        # take HEIGHTS away for background loop continuously
+        for i in range(self.panels):
+            y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height()) + HEIGHT
+            self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
+            pygame.draw.rect(self.screen, 'white', self.rect, 1)
+        if abs(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:
             self.scroll_pos = 0
             self.count_scrolls()
+        self.scroll_pos += self.scroll_speed * dt
         self.total_pos_count += self.scroll_speed * dt
 
-        print(abs(self.scroll_pos))
-        # self.total_pos_count += self.scroll_speed * dt
+        # for i in range(len(self.level_images)):
+        #     self.rect.y += self.scroll_speed * dt
+        #     y_pos = self.rect.y - self.bg_img.get_height() + HEIGHT
+        #     self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
+        #     self.scroll_pos += self.scroll_speed * dt
+        #     if int(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:
+        #         self.scroll_pos = 0
+        #         self.count_scrolls()
+        #     self.total_pos_count += self.scroll_speed * dt
+        #
+        # print(abs(self.scroll_pos))
 
     def update_bg_offset(self, dt):
         player_direction = self.player.direction.x
@@ -230,4 +228,3 @@ class LevelManager:
             self.set_levels()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
-        print(self.scroll_count)
