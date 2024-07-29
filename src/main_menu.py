@@ -186,7 +186,6 @@ class MainMenu:
         self.sound_manager.set_master_volume(self.volume_level / 100)
         self.menu_items['options'][2] = f'volume: {self.volume_level}'
 
-
     def action(self, item):
         if item == 'start game':
             self.states['welcome_screen_running'] = False
