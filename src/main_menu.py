@@ -14,7 +14,9 @@ class MainMenu:
         self.options_selected = False
         self.selected_index = 0
         self.navigate_delay = 200
+        self.button_delay = 150
         self.last_navigate_time = pygame.time.get_ticks()
+        self.last_button_time = pygame.time.get_ticks()
         self.fullscreen = False
 
         self.menu_items = {
@@ -75,11 +77,10 @@ class MainMenu:
                         self.last_navigate_time = current_time
 
         if event.type == pygame.JOYBUTTONDOWN:
-            if current_time - self.last_navigate_time > 50:
-                print(event)
+            if current_time - self.last_button_time > self.button_delay:
                 if event.button == 0:
                     self.action(list(self.current_items().keys())[self.selected_index])
-                    self.last_navigate_time = current_time
+                    self.last_button_time = current_time
 
         if event.type == pygame.KEYDOWN:
             if current_time - self.last_navigate_time > self.navigate_delay:
@@ -87,9 +88,12 @@ class MainMenu:
                     self.selected_index = (self.selected_index + 1) % len(self.current_items())
                 elif event.key == pygame.K_UP:
                     self.selected_index = (self.selected_index - 1) % len(self.current_items())
-                elif event.key == pygame.K_RETURN:
-                    self.action(list(self.current_items().keys())[self.selected_index])
                 self.last_navigate_time = current_time
+
+            elif current_time - self.last_button_time > self.button_delay:
+                if event.key == pygame.K_RETURN:
+                    self.action(list(self.current_items().keys())[self.selected_index])
+                self.last_button_time = current_time
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             for item, rect in self.current_items().items():
