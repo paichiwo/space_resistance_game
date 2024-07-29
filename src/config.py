@@ -3,7 +3,7 @@ from src.helpers import generate_circular_waypoints
 from string import ascii_letters, digits
 
 pygame.init()
-FONT10 = pygame.font.Font('assets/font/visitor1.ttf', 10)
+FONT10 = pygame.font.Font('assets/font/visitorTT1BRK.ttf', 10)
 FONT20 = pygame.font.Font('assets/font/visitor1.ttf', 20)
 
 TITLE = 'Space Resistance'
