@@ -12,11 +12,6 @@ class MainMenu:
         self.scale = SCALE
         self.volume_level = 50
         self.options_selected = False
-        self.selected_index = 0
-        self.navigate_delay = 200
-        self.button_delay = 150
-        self.last_navigate_time = pygame.time.get_ticks()
-        self.last_button_time = pygame.time.get_ticks()
         self.fullscreen = False
 
         self.menu_items = {
@@ -28,6 +23,12 @@ class MainMenu:
             'main': {item: pygame.rect.Rect() for item in self.menu_items['main']},
             'options': {item: pygame.rect.Rect() for item in self.menu_items['options']}
         }
+
+        self.selected_index = 0
+        self.navigate_delay = 200
+        self.button_delay = 200
+        self.last_navigate_time = pygame.time.get_ticks()
+        self.last_button_time = pygame.time.get_ticks()
 
     def draw_menu(self, items):
         if self.options_selected:
@@ -44,7 +45,7 @@ class MainMenu:
             y += 10
 
     def draw_volume_bar(self):
-        max_width = 100
+        max_width = 102
         height = 11
         border_color = COLORS['WHITE']
         fill_color = COLORS['GREEN']
@@ -54,6 +55,8 @@ class MainMenu:
 
         fg_rect = pygame.rect.Rect(bg_rect.x + 2, bg_rect.y + 2, (max_width - 4) * self.volume_level / 100, height - 4)
         pygame.draw.rect(self.screen, fill_color, fg_rect)
+
+        self.menu_items['options'][2] = f'volume: {self.volume_level}'
 
     def input(self, event):
         current_time = pygame.time.get_ticks()
@@ -88,6 +91,11 @@ class MainMenu:
                     self.selected_index = (self.selected_index + 1) % len(self.current_items())
                 elif event.key == pygame.K_UP:
                     self.selected_index = (self.selected_index - 1) % len(self.current_items())
+                if f'volume: {self.volume_level}' in self.current_items():
+                    if event.key == pygame.K_LEFT:
+                        self.adjust_volume(-1)
+                    elif event.key == pygame.K_RIGHT:
+                        self.adjust_volume(+1)
                 self.last_navigate_time = current_time
 
             elif current_time - self.last_button_time > self.button_delay:
@@ -105,6 +113,10 @@ class MainMenu:
                 if rect.collidepoint(event.pos):
                     self.selected_index = index
                     break
+
+    def adjust_volume(self, change):
+        self.volume_level = max(0, min(100, self.volume_level + change))
+        # self.sound_manager.set_volume(self.volume_level / 100)
 
     def handle_volume_level(self):
         pass
