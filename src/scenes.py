@@ -92,10 +92,15 @@ class WelcomeScreen:
         self.scene_switch_timer.update()
         self.draw_version()
 
+        if self.main_menu.options_selected:
+            self.scene_switch_timer.deactivate()
+
         if self.show_welcome_scene:
             self.welcome_scene(event)
         else:
             self.high_score_scene()
+
+        print(self.main_menu.options_selected)
 
 
 class GameOverScreen:
