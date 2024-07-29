@@ -10,7 +10,7 @@ class MainMenu:
         self.restart_game = restart_game
 
         self.scale = SCALE
-        self.volume_level = 50
+        self.volume_level = 0.5
         self.options_selected = False
         self.fullscreen = False
 
@@ -116,7 +116,7 @@ class MainMenu:
 
     def adjust_volume(self, change):
         self.volume_level = max(0, min(100, self.volume_level + change))
-        # self.sound_manager.set_volume(self.volume_level / 100)
+        self.sound_manager.set_volume(self.volume_level / 100)
 
     def handle_volume_level(self):
         pass

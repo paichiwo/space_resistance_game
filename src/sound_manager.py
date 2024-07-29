@@ -11,6 +11,7 @@ class SoundManager:
 
         # Create channels
         self.channels = [pygame.mixer.Channel(i) for i in range(16)]
+        self.master_volume = 1.0
 
     def play_music(self, music):
         self.clear_all_music_channels_except(music['channel'])
@@ -37,3 +38,21 @@ class SoundManager:
     def stop_all_music(self):
         for channel in self.channels:
             channel.stop()
+
+    def set_master_volume(self, volume):
+        """Set the master volume for all channels.
+
+        Args:
+            volume (float): The master volume level, between 0.0 (mute) and 1.0 (full volume).
+        """
+        # Ensure volume is within the range 0.0 to 1.0
+        self.master_volume = max(0.0, min(volume, 1.0))
+
+        # Update the volume of all currently playing sounds
+        for channel in self.channels:
+            # We need to adjust volume for currently playing sound effects
+            if channel.get_busy():
+                sound = channel.get_sound()
+                if sound:
+                    # Apply master volume to currently playing sound effects
+                    channel.set_volume(self.master_volume * sound.get_volume())

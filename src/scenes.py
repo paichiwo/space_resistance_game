@@ -100,8 +100,6 @@ class WelcomeScreen:
         else:
             self.high_score_scene()
 
-        print(self.main_menu.options_selected)
-
 
 class GameOverScreen:
     def __init__(self, screen):
