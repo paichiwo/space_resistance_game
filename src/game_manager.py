@@ -1,6 +1,4 @@
 import sys
-
-import pygame
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
@@ -53,7 +51,7 @@ class Game:
         self.high_score_manager = HighScoreManager()
 
         # Game Objects
-        self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager, self.restart_game)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager, self.restart)
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
@@ -108,7 +106,7 @@ class Game:
             elif self.level_manager.level_index == 3:
                 self.sound_manager.play_music(MUSIC_TRACKS['level_4'])
 
-    def restart_game(self):
+    def restart(self):
         self.states['welcome_screen_running'] = False
         self.states['game_running'] = True
         self.states['game_over_screen_running'] = False
