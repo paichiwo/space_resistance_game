@@ -1,4 +1,6 @@
 import sys
+
+import pygame
 import pygame._sdl2 as sdl2
 from src.config import *
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
@@ -27,6 +29,9 @@ class Game:
         self.window.get_surface()
 
         self.window.position = (0, 30)
+        self.fullscreen = False
+
+        self.joysticks = {}
 
         # States
         self.states = {
@@ -48,7 +53,7 @@ class Game:
         self.high_score_manager = HighScoreManager()
 
         # Game Objects
-        self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager)
+        self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager, self.restart_game)
         self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
@@ -56,28 +61,37 @@ class Game:
         # Debug
         self.debug_menu = DebugMenu(self.screen, self.level_manager, self.states)
 
+    def add_joystick(self, device_index):
+        joy = pygame.joystick.Joystick(device_index)
+        self.joysticks[joy.get_instance_id()] = joy
+
+    def remove_joystick(self, instance_id):
+        if instance_id in self.joysticks:
+            del self.joysticks[instance_id]
+
     def handle_game_events(self, event):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if self.states['welcome_screen_running'] and event.key == pygame.K_s:
-                self.restart_game()
 
+        # joysticks
+        elif event.type == pygame.JOYDEVICEADDED:
+            self.add_joystick(event.device_index)
+        elif event.type == pygame.JOYDEVICEREMOVED:
+            self.remove_joystick(event.instance_id)
+
+        # keyboard
+        elif event.type == pygame.KEYDOWN:
             if self.states['congrats_screen_running']:
-                if event.key == pygame.K_BACKSPACE:
-                    self.user_name = self.user_name[:-1]
-                elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
-                    self.user_name += event.unicode if event.unicode in ALLOWED_CHARACTERS else ''
-                if event.key == pygame.K_RETURN:
-                    if len(self.user_name) >= 1:
-                        self.states['score_entered'] = True
+                if not self.welcome_screen.show_welcome_scene:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.user_name = self.user_name[:-1]
+                    elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
+                        self.user_name += event.unicode if event.unicode in ALLOWED_CHARACTERS else ''
+                    if event.key == pygame.K_RETURN:
+                        if len(self.user_name) >= 1:
+                            self.states['score_entered'] = True
 
-            # Full screen
-            if event.key == pygame.K_f:
-                self.window.set_fullscreen(True)
-            elif event.key == pygame.K_ESCAPE:
-                self.window.set_windowed()
             elif event.key == pygame.K_d:
                 self.run_debug()
 
