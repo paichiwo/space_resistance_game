@@ -11,7 +11,8 @@ class SoundManager:
 
         # Create channels
         self.channels = [pygame.mixer.Channel(i) for i in range(16)]
-        self.master_volume = 1.0
+        self.master_volume = 0.5
+        self.set_master_volume(self.master_volume)
 
     def play_music(self, music):
         self.clear_all_music_channels_except(music['channel'])
