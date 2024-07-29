@@ -2,92 +2,137 @@ from src.config import *
 
 
 class MainMenu:
-    def __init__(self, screen, window, states, sound_manager):
+    def __init__(self, screen, window, states, sound_manager, restart_game):
         self.screen = screen
         self.window = window
         self.states = states
         self.sound_manager = sound_manager
+        self.restart_game = restart_game
 
-        self.main_menu_items = {
-            'start game': pygame.rect.Rect(),
-            'options': pygame.rect.Rect()
-        }
-
-        self.options_items = {
-            'scale': pygame.rect.Rect(),
-            'fullscreen': pygame.rect.Rect(),
-            'volume': pygame.rect.Rect(),
-            'accept': pygame.rect.Rect()
-        }
-
-        self.start_time = pygame.time.get_ticks()
-        self.options = False
         self.scale = SCALE
+        self.volume_level = 50
+        self.options_selected = False
+        self.selected_index = 0
+        self.navigate_delay = 200
+        self.last_navigate_time = pygame.time.get_ticks()
+        self.fullscreen = False
 
-    def draw_main_menu(self):
-        mouse_pos = (pygame.mouse.get_pos()[0] // self.scale, pygame.mouse.get_pos()[1] // self.scale)
+        self.menu_items = {
+            'main': ['start game', 'options'],
+            'options': ['scale', 'fullscreen', f'volume: {self.volume_level}', 'accept']
+        }
+
+        self.rects = {
+            'main': {item: pygame.rect.Rect() for item in self.menu_items['main']},
+            'options': {item: pygame.rect.Rect() for item in self.menu_items['options']}
+        }
+
+    def draw_menu(self, items):
+        if self.options_selected:
+            self.draw_volume_bar()
 
         x = WIDTH // 2
         y = 180
-        for item in self.main_menu_items.keys():
-            item_color = COLORS['GREEN'] if pygame.font.Font.render(FONT10, item, True, COLORS['WHITE']).get_rect(
-                center=(x, y)).collidepoint(mouse_pos) else COLORS['WHITE']
+        for index, item in enumerate(items):
+            item_color = COLORS['GREEN'] if index == self.selected_index else COLORS['WHITE']
             text = FONT10.render(item, True, item_color)
             rect = text.get_rect(center=(x, y))
-            self.main_menu_items[item] = rect
+            self.rects['main' if not self.options_selected else 'options'][item] = rect
             self.screen.blit(text, rect)
             y += 10
 
-    def draw_options_menu(self):
-        mouse_pos = (pygame.mouse.get_pos()[0] // self.scale, pygame.mouse.get_pos()[1] // self.scale)
+    def draw_volume_bar(self):
+        max_width = 100
+        height = 11
+        border_color = COLORS['WHITE']
+        fill_color = COLORS['GREEN']
 
-        x = WIDTH // 2
-        y = 180
-        for item in self.options_items.keys():
-            item_color = COLORS['GREEN'] if pygame.font.Font.render(FONT10, item, True, COLORS['WHITE']).get_rect(
-                center=(x, y)).collidepoint(mouse_pos) else COLORS['WHITE']
-            text = FONT10.render(item, True, item_color)
-            rect = text.get_rect(center=(x, y))
-            self.options_items[item] = rect
-            self.screen.blit(text, rect)
-            y += 10
+        bg_rect = pygame.rect.Rect(WIDTH // 2 - max_width // 2, HEIGHT // 2 + 69, max_width, height)
+        pygame.draw.rect(self.screen, border_color, bg_rect, 1)
+
+        fg_rect = pygame.rect.Rect(bg_rect.x + 2, bg_rect.y + 2, (max_width - 4) * self.volume_level / 100, height - 4)
+        pygame.draw.rect(self.screen, fill_color, fg_rect)
 
     def input(self, event):
+        current_time = pygame.time.get_ticks()
+
+        if event.type == pygame.JOYHATMOTION:
+            if current_time - self.last_navigate_time > self.navigate_delay:
+                if event.value[1] == 1:  # Up
+                    self.selected_index = (self.selected_index - 1) % len(self.current_items())
+                elif event.value[1] == -1:  # Down
+                    self.selected_index = (self.selected_index + 1) % len(self.current_items())
+                self.last_navigate_time = current_time
+
+        if event.type == pygame.JOYAXISMOTION:
+            if current_time - self.last_navigate_time > self.navigate_delay:
+                if abs(event.value) > 0.5:
+                    if event.axis == 1:
+                        if event.value > 0:
+                            self.selected_index = (self.selected_index + 1) % len(self.current_items())
+                        else:
+                            self.selected_index = (self.selected_index - 1) % len(self.current_items())
+                        self.last_navigate_time = current_time
+
+        if event.type == pygame.JOYBUTTONDOWN:
+            if current_time - self.last_navigate_time > 50:
+                print(event)
+                if event.button == 0:
+                    self.action(list(self.current_items().keys())[self.selected_index])
+                    self.last_navigate_time = current_time
+
+        if event.type == pygame.KEYDOWN:
+            if current_time - self.last_navigate_time > self.navigate_delay:
+                if event.key == pygame.K_DOWN:
+                    self.selected_index = (self.selected_index + 1) % len(self.current_items())
+                elif event.key == pygame.K_UP:
+                    self.selected_index = (self.selected_index - 1) % len(self.current_items())
+                elif event.key == pygame.K_RETURN:
+                    self.action(list(self.current_items().keys())[self.selected_index])
+                self.last_navigate_time = current_time
+
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not self.options:
-                for item, rect in self.main_menu_items.items():
-                    if rect and rect.collidepoint(event.pos):
-                        self.action(item)
-            else:
-                for item, rect in self.options_items.items():
-                    if rect and rect.collidepoint(event.pos):
-                        self.action(item)
+            for item, rect in self.current_items().items():
+                if rect and rect.collidepoint(event.pos):
+                    self.action(item)
+
+        if event.type == pygame.MOUSEMOTION:
+            for index, (item, rect) in enumerate(self.current_items().items()):
+                if rect.collidepoint(event.pos):
+                    self.selected_index = index
+                    break
+
+    def handle_volume_level(self):
+        pass
 
     def action(self, item):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.start_time > 200:
+        if item == 'start game':
+            self.states['welcome_screen_running'] = False
+            self.restart_game()
+            self.states['game_running'] = True
 
-            if item == 'start game':
-                self.states['welcome_screen_running'] = False
-                self.states['game_running'] = True
-            elif item == 'options':
-                self.options = True
-            elif item == 'scale':
+        elif item == 'options':
+            self.options_selected = True
+            self.selected_index = 0
+        elif item == 'scale':
+            self.scale += 1
+            if self.scale >= 5:
+                self.scale = 1
+            self.window.size = (WIDTH * self.scale, HEIGHT * self.scale)
+        elif item == 'fullscreen':
+            self.fullscreen = not self.fullscreen
+            self.window.set_fullscreen(True) if self.fullscreen else self.window.set_windowed()
 
-                self.scale += 1
-                if self.scale >= 5:
-                    self.scale = 1
-                print(self.scale)
-                self.window.size = (WIDTH * self.scale, HEIGHT * self.scale)
+        elif item == f'volume: {self.volume_level}':
+            self.handle_volume_level()
 
-            elif item == 'accept':
-                self.options = False
+        elif item == 'accept':
+            self.options_selected = False
+            self.selected_index = 0
 
-            self.start_time = pygame.time.get_ticks()
+    def current_items(self):
+        return self.rects['options'] if self.options_selected else self.rects['main']
 
     def update(self, event):
         self.input(event)
-        if self.options:
-            self.draw_options_menu()
-        else:
-            self.draw_main_menu()
+        self.draw_menu(self.menu_items['options'] if self.options_selected else self.menu_items['main'])
