@@ -13,8 +13,10 @@ class MainMenu:
         self.selected_index = 0
         self.navigate_delay = 200
         self.button_delay = 200
+        self.action_delay = 200
         self.last_navigate_time = pygame.time.get_ticks()
         self.last_button_time = pygame.time.get_ticks()
+        self.action_time = pygame.time.get_ticks()
         self.button_interaction_state = None
         self.button_interaction_time = 0
         self.volume_level = 50
@@ -23,7 +25,9 @@ class MainMenu:
 
         self.menu_items = {
             'main': ['start game', 'options'],
-            'options': ['scale', 'fullscreen', f'volume: {self.volume_level}', 'accept'],
+            'options': [f'scale: {self.scale}',
+                        f'fullscreen: {"yes" if self.fullscreen else "no"}',
+                        f'volume: {self.volume_level}', 'accept'],
             'volume': ['main', 'inside', 'minus', 'plus']
         }
         self.rects = {
@@ -112,7 +116,6 @@ class MainMenu:
                 elif event.value[0] == 1 and 'volume: ' in self.menu_items['options'][self.selected_index]:
                     self.adjust_volume(1)
                     self.start_button_effect('plus')
-
                 self.last_navigate_time = current_time
 
         if event.type == pygame.JOYAXISMOTION:
@@ -125,20 +128,20 @@ class MainMenu:
                             self.selected_index = (self.selected_index - 1) % len(self.current_items())
                         self.last_navigate_time = current_time
                     elif event.axis == 0:
-                        if 'volume: ' in self.menu_items['options'][self.selected_index]:
+                        if self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'):
                             if event.value < 0:
                                 self.adjust_volume(-1)
                                 self.start_button_effect('minus')
                             else:
                                 self.adjust_volume(1)
                                 self.start_button_effect('plus')
-                        self.last_navigate_time = current_time
+                            self.last_navigate_time = current_time
 
         if event.type == pygame.JOYBUTTONDOWN:
             if current_time - self.last_button_time > self.button_delay:
                 if event.button == 0:
                     self.action(list(self.current_items().keys())[self.selected_index])
-                    self.last_button_time = current_time
+                self.last_button_time = current_time
 
         if event.type == pygame.KEYDOWN:
             if current_time - self.last_navigate_time > self.navigate_delay:
@@ -146,7 +149,7 @@ class MainMenu:
                     self.selected_index = (self.selected_index + 1) % len(self.current_items())
                 elif event.key == pygame.K_UP:
                     self.selected_index = (self.selected_index - 1) % len(self.current_items())
-                if f'volume: {self.volume_level}' in self.current_items():
+                if self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'):
                     if event.key == pygame.K_LEFT:
                         self.adjust_volume(-1)
                         self.start_button_effect('minus')
@@ -155,7 +158,7 @@ class MainMenu:
                         self.start_button_effect('plus')
                 self.last_navigate_time = current_time
 
-            elif current_time - self.last_button_time > self.button_delay:
+            if current_time - self.last_button_time > self.button_delay:
                 if event.key == pygame.K_RETURN:
                     self.action(list(self.current_items().keys())[self.selected_index])
                 self.last_button_time = current_time
@@ -167,19 +170,21 @@ class MainMenu:
                     break
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for item, rect in self.current_items().items():
-                if rect and rect.collidepoint(event.pos):
-                    self.action(item)
+            if current_time - self.last_button_time > self.button_delay:
+                for item, rect in self.current_items().items():
+                    if rect and rect.collidepoint(event.pos):
+                        self.action(item)
+                        self.last_button_time = current_time
+                        break
 
-            if self.options_selected:
-                if current_time - self.last_button_time > self.button_delay:
+                if self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'):
                     if self.rects['volume']['minus'].collidepoint(event.pos):
                         self.adjust_volume(-1)
                         self.start_button_effect('minus')
                     elif self.rects['volume']['plus'].collidepoint(event.pos):
                         self.adjust_volume(1)
                         self.start_button_effect('plus')
-                    self.last_button_time = current_time
+                self.last_button_time = current_time
 
     def adjust_volume(self, change):
         self.volume_level = max(0, min(100, self.volume_level + change))
@@ -187,28 +192,34 @@ class MainMenu:
         self.menu_items['options'][2] = f'volume: {self.volume_level}'
 
     def action(self, item):
-        if item == 'start game':
-            self.states['welcome_screen_running'] = False
-            self.restart_game()
-            self.states['game_running'] = True
+        current_time = pygame.time.get_ticks()
+        if current_time - self.action_time > self.action_delay:
+            if item == 'start game':
+                self.states['welcome_screen_running'] = False
+                self.restart_game()
+                self.states['game_running'] = True
 
-        elif item == 'options':
-            self.options_selected = True
-            self.selected_index = 0
+            elif item == 'options':
+                self.options_selected = True
+                self.selected_index = 0
 
-        elif item == 'scale':
-            self.scale += 1
-            if self.scale >= 5:
-                self.scale = 1
-            self.window.size = (WIDTH * self.scale, HEIGHT * self.scale)
+            elif item.startswith('scale'):
+                self.scale += 1
+                if self.scale >= 5:
+                    self.scale = 1
+                self.menu_items['options'][0] = f'scale: {self.scale}'
+                self.window.size = (WIDTH * self.scale, HEIGHT * self.scale)
 
-        elif item == 'fullscreen':
-            self.fullscreen = not self.fullscreen
-            self.window.set_fullscreen(True) if self.fullscreen else self.window.set_windowed()
+            elif item.startswith('fullscreen'):
+                self.fullscreen = not self.fullscreen
+                self.window.set_fullscreen(True) if self.fullscreen else self.window.set_windowed()
+                self.menu_items['options'][1] = f'fullscreen: {"yes" if self.fullscreen else "no"}'
 
-        elif item == 'accept':
-            self.options_selected = False
-            self.selected_index = 0
+            elif item == 'accept':
+                self.options_selected = False
+                self.selected_index = 0
+
+            self.action_time = current_time
 
     def current_items(self):
         return self.rects['options'] if self.options_selected else self.rects['main']
