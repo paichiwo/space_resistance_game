@@ -9,10 +9,11 @@ from src.messages import MessageBetweenLevels
 
 
 class LevelManager:
-    def __init__(self, screen, renderer, sound_manager):
+    def __init__(self, screen, renderer, sound_manager, lowest_score):
         self.screen = screen
         self.renderer = renderer
         self.sound_manager = sound_manager
+        self.lowest_score = lowest_score
 
         # Background
         self.level_images = import_assets('assets/img/bg/')
@@ -34,7 +35,7 @@ class LevelManager:
 
         # Objects
         self.player = Player(self.screen, self.sound_manager, self.enemy_sprites, self.all_sprites)
-        self.dashboard = Dashboard(self.screen, self.player)
+        self.dashboard = Dashboard(self.screen, self.player, self.lowest_score)
 
         # Timers
         self.start_time = pygame.time.get_ticks()

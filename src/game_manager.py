@@ -7,7 +7,6 @@ from src.sound_manager import SoundManager
 from src.high_score_manager import HighScoreManager
 from src.debug import DebugMenu
 
-# redesign: welcome screen - implement menu - start, options, credits
 # add: the lowest score to beat to the dashboard
 # implement: new enemy following paths logic
 # implement: first level message
@@ -49,10 +48,11 @@ class Game:
 
         # Hi Score Manager
         self.high_score_manager = HighScoreManager()
+        lowest_score = self.high_score_manager.retrieve_lowest_score()
 
         # Game Objects
         self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager, self.restart)
-        self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager)
+        self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager, lowest_score)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
 
