@@ -22,6 +22,12 @@ class HighScoreManager:
         scores.sort(key=lambda x: x[1], reverse=True)
         return scores[:10]
 
+    def retrieve_lowest_score(self):
+        with open(self.file_path, 'r') as file:
+            data = json.load(file)
+            lowest_score = min(data['scores'], key=lambda x: x['score'])
+            return lowest_score['score']
+
     def check_high_score(self, player_score):
         top_10 = self.retrieve_all_scores()
         return True if len(top_10) < 10 or player_score > top_10[-1][1] else False
