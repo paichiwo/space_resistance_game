@@ -148,22 +148,23 @@ class LevelManager:
         if self.level_index in ENEMY_WAVES:
             for spawn_pos in ENEMY_WAVES[self.level_index].keys():
                 wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
-                quantity = wave_info['quantity']
                 delay = wave_info['delay']
 
                 if current_time - self.start_time >= delay:
-                    if round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]) and quantity > 0:
-                        Enemy(
-                            self.screen,
-                            self.sound_manager,
-                            self.player,
-                            wave_info['type'],
-                            wave_info['speed'],
-                            wave_info['waypoints'],
-                            [self.enemy_sprites, self.all_sprites]
-                        )
-                        self.start_time = current_time
-                        quantity -= 1
+                    if round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]):
+                        if wave_info['quantity'] > 0:
+                            Enemy(
+                                self.screen,
+                                self.sound_manager,
+                                self.player,
+                                wave_info['type'],
+                                wave_info['speed'],
+                                wave_info['waypoints'],
+                                [self.enemy_sprites, self.all_sprites]
+                            )
+                            self.start_time = current_time
+                            wave_info['quantity'] -= 1
+                print(wave_info['quantity'])
 
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
