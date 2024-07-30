@@ -1,5 +1,5 @@
 import pygame
-from src.helpers import generate_circular_waypoints
+from src.helpers import circular_waypoints
 from string import ascii_letters, digits
 
 pygame.init()
@@ -37,14 +37,14 @@ ENEMY_WAVES = {
             'quantity': 8,
             'delay': 500,
             'speed': 90,
-            'waypoints': generate_circular_waypoints(WIDTH, HEIGHT)
+            'waypoints': circular_waypoints(WIDTH, HEIGHT)
         },
         (400, 460): {
             'type': 'small_1',
             'quantity': 4,
             'delay': 500,
             'speed': 90,
-            'waypoints': generate_circular_waypoints(WIDTH, HEIGHT)
+            'waypoints': circular_waypoints(WIDTH, HEIGHT)
         }
 
     }

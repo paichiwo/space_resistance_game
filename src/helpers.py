@@ -15,7 +15,7 @@ def import_image(image_path):
     return pygame.image.load(image_path).convert_alpha()
 
 
-def generate_circular_waypoints(width, height):
+def circular_waypoints(width, height):
     start_x, start_y = width / 2, height / 2 - 30
     radius = 50
     num_points = 150
