@@ -8,10 +8,12 @@ from src.sound_manager import SoundManager
 from src.high_score_manager import HighScoreManager
 from src.debug import DebugMenu
 
-# add: the lowest score to beat to the dashboard
-# implement: new enemy following paths logic
-# implement: first level message
-# power-ups
+
+# move congrats input to congrats screen
+# plan level 1
+# implement first level message
+# create power-ups, think how they spawn (pos or time)
+# redraw assets: shots, player, enemies, boss (animating)
 
 
 class Game:
@@ -89,16 +91,15 @@ class Game:
         # keyboard
         elif event.type == pygame.KEYDOWN:
             if self.states['congrats_screen_running']:
-                if not self.welcome_screen.show_welcome_scene:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.user_name = self.user_name[:-1]
-                    elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
-                        self.user_name += event.unicode if event.unicode in ALLOWED_CHARACTERS else ''
-                    if event.key == pygame.K_RETURN:
-                        if len(self.user_name) >= 1:
-                            self.states['score_entered'] = True
+                if event.key == pygame.K_BACKSPACE:
+                    self.user_name = self.user_name[:-1]
+                elif len(self.user_name) < 8 and event.key != pygame.K_RETURN:
+                    self.user_name += event.unicode if event.unicode in ALLOWED_CHARACTERS else ''
+                if event.key == pygame.K_RETURN:
+                    if len(self.user_name) >= 1:
+                        self.states['score_entered'] = True
 
-            elif event.key == pygame.K_d:
+            elif event.key == pygame.K_LALT:
                 self.run_debug()
 
     def set_music_for_game(self):
@@ -177,6 +178,7 @@ class Game:
 
             if self.states['debug_visible']:
                 self.debug_menu.update(event)
+
             if self.joy_msg:
                 self.joy_msg.update()
 
