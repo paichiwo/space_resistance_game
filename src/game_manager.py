@@ -1,6 +1,7 @@
 import sys
 import pygame._sdl2 as sdl2
 from src.config import *
+from src.messages import Message
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
 from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
@@ -29,6 +30,8 @@ class Game:
         self.fullscreen = False
 
         self.joysticks = {}
+        self.joy_name = ''
+        self.joy_msg = None
 
         # States
         self.states = {
@@ -75,6 +78,11 @@ class Game:
         # joysticks
         elif event.type == pygame.JOYDEVICEADDED:
             self.add_joystick(event.device_index)
+            joy = pygame.joystick.Joystick(event.device_index)
+            self.joysticks[joy.get_instance_id()] = joy
+            self.joy_name = joy.get_name()
+            self.joy_msg = Message(self.screen, f'detected: \n{self.joy_name}', FONT10, 3000, (1, 10))
+            self.joy_msg.show()
         elif event.type == pygame.JOYDEVICEREMOVED:
             self.remove_joystick(event.instance_id)
 
@@ -152,6 +160,7 @@ class Game:
                 self.handle_game_events(event)
 
             dt = self.clock.tick() / 1000
+
             if self.states['welcome_screen_running']:
                 self.welcome_screen.update(event)
 
@@ -168,6 +177,8 @@ class Game:
 
             if self.states['debug_visible']:
                 self.debug_menu.update(event)
+            if self.joy_msg:
+                self.joy_msg.update()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
