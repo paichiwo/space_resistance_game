@@ -1,3 +1,4 @@
+import psutil
 from src.config import *
 
 
@@ -13,6 +14,8 @@ class DebugMenu:
         self.rect = self.surf.get_rect(topright=(WIDTH, 0))
 
         self.debug_items = {
+            'cpu usage': '0%',
+            'ram usage': '0%',
             'god mode': False,
             'level': 1,
             'main menu': True,
@@ -32,13 +35,19 @@ class DebugMenu:
         title_rect = title_text.get_rect(center=(WIDTH-self.surf.get_width() / 2, 15))
         self.screen.blit(title_text, title_rect)
 
+    def update_cpu_and_ram_usage(self):
+        self.debug_items['cpu usage'] = f'{psutil.cpu_percent()}%'
+        self.debug_items['ram usage'] = f'{psutil.virtual_memory().percent}%'
+
     def draw_text(self):
-        self.item_positions.clear()
         mouse_pos = (pygame.mouse.get_pos()[0] // SCALE, pygame.mouse.get_pos()[1] // SCALE)
+        self.item_positions.clear()
+        self.update_cpu_and_ram_usage()
+        self.draw_title()
 
         x = WIDTH - 57
         y = 30
-        self.draw_title()
+
         for item, state in self.debug_items.items():
             item_color = COLORS['GOLD'] if pygame.font.Font.render(FONT10, item, True, COLORS['YELLOW']).get_rect(
                 center=(x, y)).collidepoint(mouse_pos) else COLORS['YELLOW']
