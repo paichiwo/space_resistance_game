@@ -3,12 +3,13 @@ from src.timer import Timer
 
 
 class Message:
-    def __init__(self, screen, text, duration):
+    def __init__(self, screen, text, font, duration, pos):
         self.screen = screen
         self.text = text
+        self.pos = pos
 
-        self.outline = FONT20.render(text, False, COLORS['BLACK'])
-        self.text = FONT20.render(text, False, COLORS['WHITE'])
+        self.outline = font.render(text, False, COLORS['BLACK'])
+        self.text = font.render(text, False, COLORS['WHITE'])
         self.timer = Timer(duration, self.hide)
         self.visible = False
 
@@ -22,8 +23,8 @@ class Message:
     def update(self):
         self.timer.update()
         if self.visible:
-            self.screen.blit(self.outline, (WIDTH / 2 - 54, HEIGHT / 2 - 19))
-            self.screen.blit(self.text, (WIDTH / 2 - 55, HEIGHT / 2 - 20))
+            self.screen.blit(self.outline, (self.pos[0], self.pos[1]))
+            self.screen.blit(self.text, (self.pos[0] + 1, self.pos[1] + 1))
 
 
 class MessageBetweenLevels:
