@@ -27,7 +27,8 @@ class MainMenu:
             'main': ['start game', 'options'],
             'options': [f'scale: {self.scale}',
                         f'fullscreen: {"yes" if self.fullscreen else "no"}',
-                        f'volume: {self.volume_level}', 'accept'],
+                        f'volume: {self.volume_level}',
+                        'accept'],
             'volume': ['main', 'inside', 'minus', 'plus']
         }
         self.rects = {
@@ -60,8 +61,8 @@ class MainMenu:
         selected = (self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'))
 
         # bar
-        self.rects['volume']['main'] = pygame.rect.Rect(WIDTH // 2 - width // 2,
-                                                        HEIGHT // 2 + 69,
+        self.rects['volume']['main'] = pygame.rect.Rect(list(self.rects['options'].values())[2].x - width // 4 + 2,
+                                                        list(self.rects['options'].values())[2].y - 1,
                                                         width,
                                                         height)
         self.rects['volume']['inside'] = pygame.rect.Rect(self.rects['volume']['main'].x + 2,
