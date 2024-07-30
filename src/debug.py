@@ -16,6 +16,7 @@ class DebugMenu:
         self.debug_items = {
             'cpu usage': '0%',
             'ram usage': '0%',
+            'pause': False,
             'god mode': False,
             'level': 1,
             'main menu': True,
@@ -75,7 +76,19 @@ class DebugMenu:
         current_time = pygame.time.get_ticks()
         if current_time - self.start_time > 200:
 
-            if item == 'main menu':
+            if item == 'pause':
+                self.debug_items[item] = not self.debug_items[item]
+                self.level_manager.pause() if self.debug_items[item] else self.level_manager.unpause()
+
+            elif item == 'god mode':
+                self.debug_items[item] = not self.debug_items[item]
+
+            elif item == 'level':
+                self.debug_items[item] += 1
+                if self.debug_items[item] > 4:
+                    self.debug_items[item] = 1
+
+            elif item == 'main menu':
                 self.states['welcome_screen_running'] = not self.states['welcome_screen_running']
                 self.debug_items['main menu'] = self.states['welcome_screen_running']
                 self.states['game_running'] = False
@@ -102,14 +115,6 @@ class DebugMenu:
                 self.states['game_over_screen_running'] = False
                 self.states['congrats_screen_running'] = not self.states['congrats_screen_running']
                 self.debug_items['congrats'] = self.states['congrats_screen_running']
-
-            elif item == 'god mode':
-                self.debug_items[item] = not self.debug_items[item]
-
-            elif item == 'level':
-                self.debug_items[item] += 1
-                if self.debug_items[item] > 4:
-                    self.debug_items[item] = 1
 
             self.start_time = pygame.time.get_ticks()
 

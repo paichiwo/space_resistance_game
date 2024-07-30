@@ -168,9 +168,6 @@ class Game:
 
             if self.states['debug_visible']:
                 self.debug_menu.update(event)
-                self.level_manager.pause()
-            else:
-                self.level_manager.unpause()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
