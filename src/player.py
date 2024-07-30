@@ -58,7 +58,7 @@ class Player(pygame.sprite.Sprite):
 
         # Extra
         self.god_mode = False
-        self.message = Message(self.screen, 'LIFE LOST', 3000)
+        self.message = Message(self.screen, 'LIFE LOST', FONT20, 3000, (WIDTH / 2 - 54, HEIGHT / 2 - 19))
 
     def animate_player(self, frames, dt):
         self.frame_index += (10 if self.god_mode else 20) * dt
