@@ -1,38 +1,43 @@
-import pygame.gfxdraw
-
-from src.config import *
-import math
 import sys
-from src.helpers import circular_waypoints, generate_sine_wave_waypoints
+import math
+from src.config import *
+from src.helpers import circular_waypoints, sine_wave_waypoints
 
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, waypoints, group):
         super().__init__(group)
 
-        self.image = pygame.Surface((30, 30))
+        self.image = pygame.Surface((15, 15))
         self.image.fill((255, 0, 0))
-        self.rect = self.image.get_rect()
+
+        self.pos = pygame.math.Vector2(waypoints[0])
+        self.rect = self.image.get_frect(center=self.pos)
+
         self.waypoints = waypoints
         self.current_waypoint = 0
-        self.speed = 2
+        self.speed = 100
 
         if waypoints:
             self.rect.center = waypoints[0]
 
-    def update(self):
+    def move(self, dt):
         if self.current_waypoint < len(self.waypoints):
             target_x, target_y = self.waypoints[self.current_waypoint]
-            dx, dy = target_x - self.rect.centerx, target_y - self.rect.centery
+            dx, dy = target_x - self.pos.x, target_y - self.pos.y
             dist = math.hypot(dx, dy)
 
-            if dist != 0:
-                dx, dy = dx / dist, dy / dist
-                self.rect.x += dx * self.speed
-                self.rect.y += dy * self.speed
+            if dist > 0:
+                direction = pygame.math.Vector2(dx, dy).normalize()
+                self.pos += direction * self.speed * dt
 
-            if dist < self.speed:
+                self.rect.center = (int(self.pos.x), int(self.pos.y))
+
+            if dist < self.speed * dt:
                 self.current_waypoint += 1
+
+    def update(self, dt):
+        self.move(dt)
 
 
 class Game:
@@ -46,38 +51,72 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
-        self.waypoints = circular_waypoints(self.s_width, self.s_height)
+        self.waypoints_dict = {
+            'circular': circular_waypoints(self.s_width, self.s_height),
+            'sinus': sine_wave_waypoints(self.s_width, self.s_height)
+        }
+        self.waypoints_index = 0
+        self.waypoints_keys = list(self.waypoints_dict.keys())
+        self.current_waypoint_name = self.waypoints_keys[self.waypoints_index]
 
-
-        self.enemy_spawn_time = 300
+        self.enemy_spawn_time = 500
         self.last_spawn_time = pygame.time.get_ticks()
         self.enemies_to_spawn = 8
 
-    def spawn_enemy(self, waypoints):
-        Enemy(waypoints, [self.enemies, self.all_sprites])
+    def handle_events(self, event):
+        if event.type == pygame.QUIT:
+            self.running = False
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                self.waypoints_index = (self.waypoints_index - 1) % len(self.waypoints_keys)
+                self.change_waypoint()
+            elif event.key == pygame.K_RIGHT:
+                self.waypoints_index = (self.waypoints_index + 1) % len(self.waypoints_keys)
+                self.change_waypoint()
+
+    def spawn_enemy(self):
+        current_time = pygame.time.get_ticks()
+
+        if self.enemies_to_spawn > 0 and current_time - self.last_spawn_time >= self.enemy_spawn_time:
+            waypoints = self.waypoints_dict[self.current_waypoint_name]
+            Enemy(waypoints, [self.enemies, self.all_sprites])
+            self.last_spawn_time = current_time
+            self.enemies_to_spawn -= 1
+
+    def change_waypoint(self):
+        self.all_sprites.empty()
+        self.enemies.empty()
+        self.enemies_to_spawn = 8
+        self.last_spawn_time = pygame.time.get_ticks()
+        self.current_waypoint_name = self.waypoints_keys[self.waypoints_index]
+
+    def draw_waypoints_path(self):
+        pygame.draw.aalines(self.screen, 'blue', False, self.waypoints_dict[self.current_waypoint_name])
+
+    def draw_waypoint_name(self):
+        text = FONT20.render(self.current_waypoint_name, True, 'white')
+        rect = text.get_rect(center=(self.s_width // 2, self.s_height - 20))
+        self.screen.blit(text, rect)
 
     def run(self):
         while self.running:
-            current_time = pygame.time.get_ticks()
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                    pygame.quit()
-                    sys.exit()
+                self.handle_events(event)
 
-            if self.enemies_to_spawn > 0 and current_time - self.last_spawn_time >= self.enemy_spawn_time:
-                Enemy(self.waypoints, [self.enemies, self.all_sprites])
-                self.last_spawn_time = current_time
-                self.enemies_to_spawn -= 1
+            dt = self.clock.tick() / 1000
 
-            self.all_sprites.update()
+            self.spawn_enemy()
+
+            self.all_sprites.update(dt)
             self.screen.fill('black')
             self.all_sprites.draw(self.screen)
-            pygame.draw.aalines(self.screen, 'blue', False, self.waypoints)
+
+            self.draw_waypoints_path()
+            self.draw_waypoint_name()
 
             pygame.display.flip()
-
-            self.clock.tick(60)
 
 
 if __name__ == '__main__':
