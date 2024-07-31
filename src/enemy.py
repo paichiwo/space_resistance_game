@@ -96,13 +96,11 @@ class Enemy(EnemyBase):
             dx, dy = target_x - self.pos.x, target_y - self.pos.y
             dist = math.hypot(dx, dy)
 
-            if dist != 0:
-                dx, dy = dx / dist, dy / dist
-                self.pos.x += dx * self.speed * dt
-                self.pos.y += dy * self.speed * dt
+            if dist > 0:
+                direction = pygame.math.Vector2(dx, dy).normalize()
+                self.pos += direction * self.speed * dt
 
-                self.rect.x = self.pos.x
-                self.rect.y = self.pos.y
+                self.rect.center = (int(self.pos.x), int(self.pos.y))
 
             if dist < self.speed * dt:
                 self.current_waypoint += 1
