@@ -28,3 +28,19 @@ def circular_waypoints(width, height):
         waypoints.append((x, y))
     waypoints.append((-51, start_y))
     return waypoints
+
+def generate_sine_wave_waypoints(width, height):
+    waypoints = []
+
+    start_x, start_y = 50, 0
+    end_x, end_y = width, 0
+    amplitude = 200
+    wavelength = math.pi / 2
+    num_points = 150
+
+    for i in range(num_points):
+        t = i / (num_points - 1)
+        x = start_x + t * (end_x - start_x)
+        y = start_y + amplitude * math.sin(2 * math.pi * t / wavelength)
+        waypoints.append((x, y))
+    return waypoints
