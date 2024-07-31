@@ -29,7 +29,8 @@ def circular_waypoints(width, height):
     waypoints.append((-51, start_y))
     return waypoints
 
-def generate_sine_wave_waypoints(width, height):
+
+def sine_wave_waypoints(width, height):
     waypoints = []
 
     start_x, start_y = 50, 0
