@@ -1,7 +1,7 @@
 import sys
 import math
 from src.config import *
-from src.helpers import circular_waypoints, sine_wave_waypoints
+from src.helpers import circular_waypoints, sine_wave_waypoints, curve_waypoints, down_left_right_waypoints
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -53,7 +53,9 @@ class Game:
 
         self.waypoints_dict = {
             'circular': circular_waypoints(self.s_width, self.s_height),
-            'sinus': sine_wave_waypoints(self.s_width, self.s_height)
+            'sinus': sine_wave_waypoints(self.s_width, self.s_height),
+            'curve': curve_waypoints(self.s_width, self.s_height),
+            'down left right': down_left_right_waypoints(self.s_width, self.s_height)
         }
         self.waypoints_index = 0
         self.waypoints_keys = list(self.waypoints_dict.keys())
