@@ -22,10 +22,12 @@ class DebugMenu:
             'main menu': True,
             'game run': False,
             'game over': False,
-            'congrats': False
+            'congrats': False,
+            'show time': False
         }
 
         self.start_time = pygame.time.get_ticks()
+        self.show_time_start_time = None
         self.item_positions = []
 
     def draw_bg(self):
@@ -116,7 +118,24 @@ class DebugMenu:
                 self.states['congrats_screen_running'] = not self.states['congrats_screen_running']
                 self.debug_items['congrats'] = self.states['congrats_screen_running']
 
+            elif item == 'show time':
+                self.debug_items['show time'] = not self.debug_items['show time']
+                if self.debug_items['show time']:
+                    self.show_time_start_time = None
+
             self.start_time = pygame.time.get_ticks()
+
+    def show_time(self):
+        if self.level_manager.scroll_speed > 0:
+            if self.show_time_start_time is None:  # Start the timer if it hasn't started yet
+                self.show_time_start_time = pygame.time.get_ticks()
+            elapsed_time = (pygame.time.get_ticks() - self.show_time_start_time) / 1000
+        else:
+            elapsed_time = 0.0  # Reset elapsed time if scroll speed is 0
+
+        text = FONT10.render(f'{elapsed_time:.2f}', True, COLORS['WHITE'])
+        rect = text.get_rect(topleft=(10, 40))
+        self.screen.blit(text, rect)
 
     def set_in_game(self):
         self.level_manager.player.god_mode = self.debug_items['god mode']
@@ -131,3 +150,6 @@ class DebugMenu:
         self.draw_text()
         self.input(event)
         self.set_in_game()
+
+        if self.debug_items['show time']:
+            self.show_time()
