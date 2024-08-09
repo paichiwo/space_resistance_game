@@ -23,7 +23,7 @@ class LevelManager:
         self.panels = self.get_panels()
 
         self.scroll_pos = 0
-        self.scroll_speed = OBJECT_SPEEDS['scroll']
+        self.scroll_speed = 0
         self.scroll_count = 0
         self.total_pos_count = 0
         self.bg_offset = 20
@@ -38,7 +38,7 @@ class LevelManager:
         self.dashboard = Dashboard(self.screen, self.player, self.lowest_score)
 
         # Timers
-        self.start_time = pygame.time.get_ticks()
+        self.enemy_spawn_start_time = pygame.time.get_ticks()
 
         # Message display state
         self.showing_level_message = False
@@ -150,7 +150,7 @@ class LevelManager:
                 wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
                 delay = wave_info['delay']
 
-                if current_time - self.start_time >= delay:
+                if current_time - self.enemy_spawn_start_time >= delay:
                     if round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]):
                         if wave_info['quantity'] > 0:
                             Enemy(
@@ -162,7 +162,7 @@ class LevelManager:
                                 wave_info['waypoints'],
                                 [self.enemy_sprites, self.all_sprites]
                             )
-                            self.start_time = current_time
+                            self.enemy_spawn_start_time = current_time
                             wave_info['quantity'] -= 1
 
     def spawn_boss(self):
@@ -185,6 +185,7 @@ class LevelManager:
         self.bg_img = self.level_images[0]
         self.scroll_count = 0
         self.scroll_pos = 0
+        self.scroll_speed = OBJECT_SPEEDS['scroll']
         self.all_sprites.remove(sprite for sprite in self.enemy_sprites if sprite in self.all_sprites)
         self.enemy_sprites.empty()
         self.player.reset()
