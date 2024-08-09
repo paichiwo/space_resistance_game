@@ -1,8 +1,5 @@
 import math
 import random
-
-import pygame.gfxdraw
-
 from src.helpers import import_assets
 from src.config import *
 from src.timer import Timer
@@ -110,8 +107,8 @@ class Enemy(EnemyBase):
         self.move(dt)
         self.kill_off_screen()
 
+        # Debug draw
         pygame.draw.line(self.screen, 'red', self.rect.center, self.player.rect.center, 1)
-
         for i in range(len(self.waypoints) - 1):
             pygame.draw.line(self.screen, 'blue', self.waypoints[i], self.waypoints[i+1], 1)
 
