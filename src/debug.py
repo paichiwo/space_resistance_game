@@ -23,7 +23,9 @@ class DebugMenu:
             'game run': False,
             'game over': False,
             'congrats': False,
-            'show time': False
+            'show time': 0.00,
+            'total pos': 0,
+            'enemies': 0
         }
 
         self.start_time = pygame.time.get_ticks()
@@ -38,15 +40,15 @@ class DebugMenu:
         title_rect = title_text.get_rect(center=(WIDTH-self.surf.get_width() / 2, 15))
         self.screen.blit(title_text, title_rect)
 
-    def update_cpu_and_ram_usage(self):
-        self.debug_items['cpu usage'] = f'{psutil.cpu_percent()}%'
-        self.debug_items['ram usage'] = f'{psutil.virtual_memory().percent}%'
-
-    def draw_text(self):
+    def draw_items(self):
         mouse_pos = (pygame.mouse.get_pos()[0] // SCALE, pygame.mouse.get_pos()[1] // SCALE)
         self.item_positions.clear()
-        self.update_cpu_and_ram_usage()
         self.draw_title()
+
+        self.update_cpu_and_ram_usage()
+        self.update_time()
+        self.update_enemy_count()
+        self.update_total_pos()
 
         x = WIDTH - 57
         y = 30
@@ -68,6 +70,25 @@ class DebugMenu:
             self.item_positions.append((item, item_rect))
             y += 10
 
+    def update_cpu_and_ram_usage(self):
+        self.debug_items['cpu usage'] = f'{psutil.cpu_percent()}%'
+        self.debug_items['ram usage'] = f'{psutil.virtual_memory().percent}%'
+
+    def update_time(self):
+        if self.states['game_running']:
+            if self.show_time_start_time is None:
+                self.show_time_start_time = pygame.time.get_ticks()
+            elapsed_time = (pygame.time.get_ticks() - self.show_time_start_time) / 1000
+            self.debug_items['show time'] = f'{elapsed_time:.2f}'
+        else:
+            self.show_time_start_time = None
+
+    def update_total_pos(self):
+        self.debug_items['total pos'] = round(self.level_manager.total_pos_count)
+
+    def update_enemy_count(self):
+        self.debug_items['enemies'] = len(self.level_manager.enemy_sprites)
+
     def input(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             for item, item_rect in self.item_positions:
@@ -86,9 +107,7 @@ class DebugMenu:
                 self.debug_items[item] = not self.debug_items[item]
 
             elif item == 'level':
-                self.debug_items[item] += 1
-                if self.debug_items[item] > 4:
-                    self.debug_items[item] = 1
+                self.debug_items[item] = (self.debug_items[item] % 4) + 1
 
             elif item == 'main menu':
                 self.states['welcome_screen_running'] = not self.states['welcome_screen_running']
@@ -118,26 +137,9 @@ class DebugMenu:
                 self.states['congrats_screen_running'] = not self.states['congrats_screen_running']
                 self.debug_items['congrats'] = self.states['congrats_screen_running']
 
-            elif item == 'show time':
-                self.debug_items['show time'] = not self.debug_items['show time']
-                if self.debug_items['show time']:
-                    self.show_time_start_time = None
-
             self.start_time = pygame.time.get_ticks()
 
-    def show_time(self):
-        if self.level_manager.scroll_speed > 0:
-            if self.show_time_start_time is None:  # Start the timer if it hasn't started yet
-                self.show_time_start_time = pygame.time.get_ticks()
-            elapsed_time = (pygame.time.get_ticks() - self.show_time_start_time) / 1000
-        else:
-            elapsed_time = 0.0  # Reset elapsed time if scroll speed is 0
-
-        text = FONT10.render(f'{elapsed_time:.2f}', True, COLORS['WHITE'])
-        rect = text.get_rect(topleft=(10, 40))
-        self.screen.blit(text, rect)
-
-    def set_in_game(self):
+    def set_levels_in_game(self):
         self.level_manager.player.god_mode = self.debug_items['god mode']
 
         new_level_index = self.debug_items['level'] - 1
@@ -147,9 +149,6 @@ class DebugMenu:
 
     def update(self, event):
         self.draw_bg()
-        self.draw_text()
+        self.draw_items()
         self.input(event)
-        self.set_in_game()
-
-        if self.debug_items['show time']:
-            self.show_time()
+        self.set_levels_in_game()
