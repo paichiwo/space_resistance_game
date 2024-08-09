@@ -164,7 +164,6 @@ class LevelManager:
                             )
                             self.start_time = current_time
                             wave_info['quantity'] -= 1
-                print(wave_info['quantity'])
 
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
