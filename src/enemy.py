@@ -60,7 +60,8 @@ class EnemyBase(pygame.sprite.Sprite):
             self.kill()
 
     def kill_off_screen(self):
-        if self.rect.top > HEIGHT * 2 or self.rect.right < -30 or self.rect.left > WIDTH + 50:
+        if (self.rect.bottom < -30 or self.rect.top > HEIGHT + 30 or
+                self.rect.right < -30 or self.rect.left > WIDTH + 30):
             self.kill()
 
     def update(self, dt):
