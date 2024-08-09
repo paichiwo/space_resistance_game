@@ -1,5 +1,5 @@
 import pygame
-from src.helpers import circular_waypoints, sine_wave_waypoints
+from src.helpers import circular_waypoints, sine_wave_waypoints, diagonal_waypoints
 from string import ascii_letters, digits
 
 pygame.init()
@@ -46,7 +46,21 @@ ENEMY_WAVES = {
             'delay': 500,
             'speed': 90,
             'waypoints': sine_wave_waypoints(WIDTH, HEIGHT)
-        }
+        },
+        (550, 660): {
+            'type': 'small_2',
+            'quantity': 6,
+            'delay': 500,
+            'speed': 90,
+            'waypoints': diagonal_waypoints(WIDTH, HEIGHT, 'left')
+        },
+        (552, 662): {
+            'type': 'small_2',
+            'quantity': 6,
+            'delay': 500,
+            'speed': 90,
+            'waypoints': diagonal_waypoints(WIDTH, HEIGHT, 'right')
+        },
 
     }
 }

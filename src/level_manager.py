@@ -60,7 +60,6 @@ class LevelManager:
         for i in range(self.panels):
             y_pos = int((i * self.bg_img.get_height()) + self.scroll_pos - self.bg_img.get_height()) + HEIGHT
             self.screen.blit(self.bg_img, (-self.bg_offset, y_pos))
-            pygame.draw.rect(self.screen, 'white', self.rect, 1)
         if abs(self.scroll_pos) >= self.bg_img.get_height() - HEIGHT:
             self.scroll_pos = 0
             self.count_scrolls()
