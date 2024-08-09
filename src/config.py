@@ -29,10 +29,11 @@ COLORS = {
     'INDIGO': [80, 33, 173],
     'GOLD': [235, 147, 23]
 }
-
 ENEMY_WAVES = {
+    # length in time: ~91s
+    # length in pos = 2750
     0: {
-        (100, 200): {
+        (100, 210): {
             'type': 'small_1',
             'quantity': 8,
             'delay': 500,
