@@ -72,6 +72,7 @@ class EnemyBase(pygame.sprite.Sprite):
         self.shots_group.update(dt)
         self.shots_group.draw(self.screen)
         self.collisions()
+        self.kill_off_screen()
 
 
 class Enemy(EnemyBase):
@@ -106,7 +107,6 @@ class Enemy(EnemyBase):
     def update(self, dt):
         super().update(dt)
         self.move(dt)
-        self.kill_off_screen()
 
         # Debug draw
         pygame.draw.line(self.screen, 'red', self.rect.center, self.player.rect.center, 1)
