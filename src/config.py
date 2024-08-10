@@ -1,5 +1,5 @@
 import pygame
-from src.helpers import circular_waypoints, sine_wave_waypoints, diagonal_waypoints
+from src.helpers import circular_path, sine_wave_path, diagonal_path
 from string import ascii_letters, digits
 
 pygame.init()
@@ -29,39 +29,19 @@ COLORS = {
     'INDIGO': [80, 33, 173],
     'GOLD': [235, 147, 23]
 }
+# Updated ENEMY_WAVES structure to include last_spawn_time
 ENEMY_WAVES = {
-    # length in time: ~91s
-    # length in pos = 2750
     0: {
-        (100, 210): {
-            'type': 'small_1',
-            'quantity': 8,
-            'delay': 500,
-            'speed': 90,
-            'waypoints': circular_waypoints(WIDTH, HEIGHT)
-        },
-        (400, 460): {
-            'type': 'small_1',
-            'quantity': 4,
-            'delay': 500,
-            'speed': 90,
-            'waypoints': sine_wave_waypoints(WIDTH, HEIGHT)
-        },
-        (550, 660): {
-            'type': 'small_2',
-            'quantity': 6,
-            'delay': 500,
-            'speed': 90,
-            'waypoints': diagonal_waypoints(WIDTH, HEIGHT, 'left')
-        },
-        (552, 662): {
-            'type': 'small_2',
-            'quantity': 6,
-            'delay': 500,
-            'speed': 90,
-            'waypoints': diagonal_waypoints(WIDTH, HEIGHT, 'right')
-        },
-
+        (100, 210): [
+            {'type': 'small_1', 'count': 8, 'delay': 500, 'speed': 90, 'path': circular_path(WIDTH, HEIGHT)}
+        ],
+        (400, 460): [
+            {'type': 'small_1', 'count': 4, 'delay': 500, 'speed': 90, 'path': sine_wave_path(WIDTH, HEIGHT)}
+        ],
+        (550, 660): [
+            {'type': 'small_2', 'count': 6, 'delay': 500, 'speed': 90, 'path': diagonal_path(WIDTH, HEIGHT, 'left')},
+            {'type': 'medium', 'count': 6, 'delay': 500, 'speed': 90, 'path': diagonal_path(WIDTH, HEIGHT, 'right')},
+        ],
     }
 }
 
@@ -158,14 +138,5 @@ MUSIC_TRACKS = {
         'vol': 1
     }
 }
-
-
-WELCOME_SCREEN_MESSAGES = [
-    ('MADE BY PAICHIWO USING PYTHON / PYGAME', COLORS['WHITE'], 35),
-    ('SPECIAL THANKS:', COLORS['YELLOW'], 45),
-    ('DWIGHT - FOR YOUR GUIDANCE AND PATIENCE', COLORS['YELLOW'], 55),
-    ('ANSIMUZ - FOR THIS BEAUTIFUL ASSETS', COLORS['YELLOW'], 65),
-    ('PRESS [S] TO START', COLORS['RED'], 80)
-]
 
 ALLOWED_CHARACTERS = list(ascii_letters + digits)

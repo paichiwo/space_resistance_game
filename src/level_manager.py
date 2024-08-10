@@ -144,25 +144,27 @@ class LevelManager:
 
     def spawn_enemy(self):
         current_time = pygame.time.get_ticks()
-        if self.level_index in ENEMY_WAVES:
-            for spawn_pos in ENEMY_WAVES[self.level_index].keys():
-                wave_info = ENEMY_WAVES[self.level_index][spawn_pos]
-                delay = wave_info['delay']
 
-                if current_time - self.enemy_spawn_start_time >= delay:
-                    if round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]):
-                        if wave_info['quantity'] > 0:
-                            Enemy(
-                                self.screen,
-                                self.sound_manager,
-                                self.player,
-                                wave_info['type'],
-                                wave_info['speed'],
-                                wave_info['waypoints'],
-                                [self.enemy_sprites, self.all_sprites]
-                            )
-                            self.enemy_spawn_start_time = current_time
-                            wave_info['quantity'] -= 1
+        if self.level_index in ENEMY_WAVES:
+            for spawn_pos, waves_info in ENEMY_WAVES[self.level_index].items():
+                for wave_info in waves_info:
+                    if 'last_spawn_time' not in wave_info:
+                        wave_info['last_spawn_time'] = 0
+
+                    if (current_time - wave_info['last_spawn_time'] >= wave_info['delay'] and
+                            round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]) and
+                            wave_info['count'] > 0):
+                        Enemy(
+                            self.screen,
+                            self.sound_manager,
+                            self.player,
+                            wave_info['type'],
+                            wave_info['speed'],
+                            wave_info['path'],
+                            [self.enemy_sprites, self.all_sprites]
+                        )
+                        wave_info['last_spawn_time'] = current_time
+                        wave_info['count'] -= 1
 
     def spawn_boss(self):
         self.boss = Boss(self.screen, self.player, self.sound_manager, [self.enemy_sprites, self.all_sprites])
