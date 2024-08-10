@@ -15,7 +15,7 @@ def import_image(image_path):
     return pygame.image.load(image_path).convert_alpha()
 
 
-def circular_waypoints(width, height):
+def circular_path(width, height):
     start_x, start_y = width / 2, height / 2 - 30
     radius = 50
     num_points = 150
@@ -30,7 +30,7 @@ def circular_waypoints(width, height):
     return waypoints
 
 
-def sine_wave_waypoints(width, height):
+def sine_wave_path(width, height):
     start_x, start_y = 50, 0
     end_x, end_y = width, 0
     amplitude = 200
@@ -46,7 +46,7 @@ def sine_wave_waypoints(width, height):
     return waypoints
 
 
-def diagonal_waypoints(width, height, direction='left'):
+def diagonal_path(width, height, direction='left'):
     start_x = -20 if direction == 'right' else width + 20
     start_y = -20
     waypoint_increment = 20
