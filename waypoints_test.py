@@ -39,6 +39,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, dt):
         self.move(dt)
 
+
 class Game:
     def __init__(self):
         pygame.init()
