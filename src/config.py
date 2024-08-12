@@ -114,7 +114,7 @@ SOUND_EFFECTS = {
 MUSIC_TRACKS = {
     'welcome_screen_music': {
         'channel': 0,
-        'sound': pygame.mixer.Sound('assets/msx/music/Welcome_Screen.ogg'),
+        'sound': pygame.mixer.Sound('assets/msx/music/lotus2_modbootup.mod'),
         'vol': 0.5
     },
     'levels_1_3_music': {
@@ -134,7 +134,7 @@ MUSIC_TRACKS = {
     },
     'congrats_screen': {
         'channel': 4,
-        'sound': pygame.mixer.Sound('assets/msx/music/Amiga_Lotus_2.ogg'),
+        'sound': pygame.mixer.Sound('assets/msx/music/lotus2_modbootup.mod'),
         'vol': 1
     }
 }
