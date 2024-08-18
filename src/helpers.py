@@ -52,11 +52,11 @@ def diagonal_path(width, height, direction='left'):
     waypoint_increment = 20
 
     waypoints = []
-
     x, y = start_x, start_y
     while y <= height:
         waypoints.append((x, y))
         x += waypoint_increment if direction == 'right' else -waypoint_increment
         y += waypoint_increment
 
+    waypoints.append((266, 240) if direction == 'right' else (-50, 240))
     return waypoints
