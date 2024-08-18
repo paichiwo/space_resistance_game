@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.god_mode_fumes_frames = [self.fumes_frames[0], self.ship_empty_frames, self.fumes_frames[1]]
         self.fumes_index = 0
         self.fumes_image = self.fumes_frames[self.fumes_index]
-        self.fumes_rect = self.image.get_frect()
+        self.fumes_rect = self.fumes_image.get_frect()
 
         # Data
         self.status = 'idle'
@@ -109,7 +109,7 @@ class Player(pygame.sprite.Sprite):
     def move_fumes(self):
         if not self.god_mode:
             self.screen.blit(self.fumes_image, self.fumes_rect)
-            self.fumes_rect.midtop = self.rect.midbottom[0], self.rect.midbottom[1] - 3
+            self.fumes_rect.midtop = self.rect.midbottom[0], self.rect.midbottom[1] - 1
 
     def move(self, dt):
         self.move_fumes()
