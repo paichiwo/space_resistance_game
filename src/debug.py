@@ -25,7 +25,8 @@ class DebugMenu:
             'congrats': False,
             'show time': 0.00,
             'total pos': 0,
-            'enemies': 0
+            'enemies': 0,
+            'rects': False
         }
 
         self.start_time = pygame.time.get_ticks()
@@ -89,6 +90,11 @@ class DebugMenu:
     def update_enemy_count(self):
         self.debug_items['enemies'] = len(self.level_manager.enemy_sprites)
 
+    def draw_rects(self):
+        if self.debug_items['rects']:
+            pygame.draw.rect(self.screen, 'white', self.level_manager.player.fumes_rect, 1)
+            pygame.draw.rect(self.screen, 'white', self.level_manager.player.rect, 1)
+
     def input(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             for item, item_rect in self.item_positions:
@@ -137,6 +143,9 @@ class DebugMenu:
                 self.states['congrats_screen_running'] = not self.states['congrats_screen_running']
                 self.debug_items['congrats'] = self.states['congrats_screen_running']
 
+            elif item == 'rects':
+                self.debug_items['rects'] = not self.debug_items['rects']
+
             self.start_time = pygame.time.get_ticks()
 
     def set_levels_in_game(self):
@@ -152,3 +161,4 @@ class DebugMenu:
         self.draw_items()
         self.input(event)
         self.set_levels_in_game()
+        self.draw_rects()
