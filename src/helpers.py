@@ -37,7 +37,7 @@ def sine_wave_path(width, height, direction='left'):
     wavelength = math.pi / 2
     num_points = 150
 
-    start_x, end_x = (50, width) if direction == 'left' else (width - 50, 0)
+    start_x, end_x = (38, width) if direction == 'left' else (width - 38, 0)
 
     waypoints = []
     for i in range(num_points):

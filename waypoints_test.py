@@ -128,7 +128,7 @@ class Game:
             self.all_sprites.update(dt)
             self.all_sprites.draw(self.screen)
 
-            # self.draw_waypoints_path()
+            self.draw_waypoints_path()
             self.draw_waypoint_name()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
