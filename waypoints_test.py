@@ -1,5 +1,6 @@
 import sys
 import math
+import pygame._sdl2 as sdl2
 from src.config import *
 from src.helpers import circular_path, sine_wave_path, diagonal_path, down_and_oscillate_path
 
@@ -44,19 +45,28 @@ class Game:
     def __init__(self):
         pygame.init()
         self.s_width, self.s_height = 216, 250
-        self.screen = pygame.display.set_mode((self.s_width, self.s_height))
         self.clock = pygame.time.Clock()
-        self.running = True
 
+        self.scale = 4
+        self.window = pygame.Window(size=(WIDTH * self.scale, HEIGHT * self.scale), title='Paths Test')
+        self.window.resizable = True
+        self.renderer = sdl2.Renderer(self.window, accelerated=True)
+        self.renderer.logical_size = (WIDTH, HEIGHT)
+        self.screen = pygame.Surface((WIDTH, HEIGHT))
+        self.window.get_surface()
+
+        self.running = True
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
         self.waypoints_dict = {
-            'circular': circular_path(self.s_width, self.s_height),
-            'sinus': sine_wave_path(self.s_width, self.s_height),
-            'line left': diagonal_path(self.s_width, self.s_height, 'left'),
-            'line right': diagonal_path(self.s_width, self.s_height, 'right'),
-            'down_oscillation': down_and_oscillate_path(self.s_width, self.s_height)
+            'circular left': circular_path(self.s_width, self.s_height, direction='left'),
+            'circular right': circular_path(self.s_width, self.s_height, direction='right'),
+            'sinus left': sine_wave_path(self.s_width, self.s_height, direction='left'),
+            'sinus right': sine_wave_path(self.s_width, self.s_height, direction='right'),
+            'line left': diagonal_path(self.s_width, self.s_height, direction='left'),
+            'line right': diagonal_path(self.s_width, self.s_height, direction='right'),
+            'down oscillation': down_and_oscillate_path(self.s_width, self.s_height, y_pos=160)
         }
         self.waypoints_index = 0
         self.waypoints_keys = list(self.waypoints_dict.keys())
@@ -105,6 +115,9 @@ class Game:
 
     def run(self):
         while self.running:
+            self.screen.fill('black')
+            self.renderer.clear()
+
             for event in pygame.event.get():
                 self.handle_events(event)
 
@@ -113,13 +126,13 @@ class Game:
             self.spawn_enemy()
 
             self.all_sprites.update(dt)
-            self.screen.fill('black')
             self.all_sprites.draw(self.screen)
 
-            self.draw_waypoints_path()
+            # self.draw_waypoints_path()
             self.draw_waypoint_name()
 
-            pygame.display.flip()
+            sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+            self.renderer.present()
 
 
 if __name__ == '__main__':
