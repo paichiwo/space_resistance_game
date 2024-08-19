@@ -9,6 +9,7 @@ from src.high_score_manager import HighScoreManager
 from src.debug import DebugMenu
 
 
+# create in-game joystick controls
 # plan level 1
 # implement first level message
 # create power-ups, think how they spawn (pos or time)
