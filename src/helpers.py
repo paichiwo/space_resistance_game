@@ -48,7 +48,7 @@ def sine_wave_path(width, height):
 
 def diagonal_path(width, height, direction='left'):
     start_x = -20 if direction == 'right' else width + 20
-    start_y = -20
+    start_y = -20 if direction == 'right' else -10
     waypoint_increment = 20
 
     waypoints = []
@@ -60,3 +60,5 @@ def diagonal_path(width, height, direction='left'):
 
     waypoints.append((266, 240) if direction == 'right' else (-50, 240))
     return waypoints
+
+
