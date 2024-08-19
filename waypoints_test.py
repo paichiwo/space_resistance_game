@@ -1,7 +1,7 @@
 import sys
 import math
 from src.config import *
-from src.helpers import circular_path, sine_wave_path, diagonal_path
+from src.helpers import circular_path, sine_wave_path, diagonal_path, down_and_oscillate_path
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -56,6 +56,7 @@ class Game:
             'sinus': sine_wave_path(self.s_width, self.s_height),
             'line left': diagonal_path(self.s_width, self.s_height, 'left'),
             'line right': diagonal_path(self.s_width, self.s_height, 'right'),
+            'down_oscillation': down_and_oscillate_path(self.s_width, self.s_height)
         }
         self.waypoints_index = 0
         self.waypoints_keys = list(self.waypoints_dict.keys())
