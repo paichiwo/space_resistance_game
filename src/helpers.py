@@ -62,3 +62,43 @@ def diagonal_path(width, height, direction='left'):
     return waypoints
 
 
+def down_and_oscillate_path(width, height):
+    # Phase 1: Move down from the top of the screen to the middle
+    start_x, start_y = width / 2, -20  # Start just above the top of the screen
+    mid_y = height / 2  # Middle of the screen height
+    vertical_waypoints = []
+
+    # Move vertically down to the middle of the screen
+    current_y = start_y
+    while current_y < mid_y:
+        vertical_waypoints.append((start_x, current_y))
+        current_y += 5  # Increment vertically
+
+    # Phase 2: Oscillate left and right at mid_y
+    oscillation_amplitude = width / 2 - 30  # Distance from center to the edge, with some padding
+    num_points_per_oscillation = 50  # Number of points in each oscillation
+    oscillation_waypoints = []
+
+    for direction in [1, -1]:  # Right then Left
+        for j in range(num_points_per_oscillation):
+            t = j / num_points_per_oscillation
+            x = start_x + direction * oscillation_amplitude * t
+            oscillation_waypoints.append((x, mid_y))
+
+        # Return to the center before switching direction
+        oscillation_waypoints.append((start_x, mid_y))
+
+    # Combine the vertical and oscillation waypoints
+    waypoints = vertical_waypoints + oscillation_waypoints
+
+    return waypoints
+
+
+
+
+
+
+
+
+
+
