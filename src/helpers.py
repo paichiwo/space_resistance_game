@@ -21,7 +21,7 @@ def circular_path(width, height, direction='left'):
     radius = 50
     num_points = 150
 
-    waypoints, angle_direction = ([(width, start_y)], 1) if direction == 'right' else ([(-50, start_y)], -1)
+    waypoints, angle_direction = ([(width, start_y)], 1) if direction == 'right' else ([(-30, start_y)], -1)
     for i in range(num_points):
         angle = i * (2 * math.pi / num_points) * angle_direction
         x = start_x + radius * math.cos(angle)
@@ -33,7 +33,7 @@ def circular_path(width, height, direction='left'):
 
 
 def sine_wave_path(width, height, direction='left'):
-    amplitude = 200  # Wave height
+    amplitude = height - 90  # Wave height
     wavelength = math.pi / 2
     num_points = 150
 
@@ -75,7 +75,7 @@ def down_and_oscillate_path(width, height, y_pos=160):
         current_y += 5
 
     # Phase 2: Oscillate left and right at y_pos
-    oscillation_amplitude = width / 2 - 115  # Distance from center to the edge, with some padding
+    oscillation_amplitude = width / 2 - 115  # Distance from center to the edge
     num_points_per_oscillation = 50
     repeats = 5
     oscillation_waypoints = []
@@ -86,18 +86,7 @@ def down_and_oscillate_path(width, height, y_pos=160):
                 t = j / num_points_per_oscillation
                 x = start_x + direction * oscillation_amplitude * t
                 oscillation_waypoints.append((x, y_pos))
-
         oscillation_waypoints.append((start_x, y_pos))
 
     waypoints = vertical_waypoints + oscillation_waypoints
     return waypoints
-
-
-
-
-
-
-
-
-
-
