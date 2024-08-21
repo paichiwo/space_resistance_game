@@ -19,6 +19,7 @@ class MainMenu:
         self.action_time = pygame.time.get_ticks()
         self.button_interaction_state = None
         self.button_interaction_time = 0
+        self.mouse_down_on_volume = False
         self.volume_level = 50
         self.options_selected = False
         self.fullscreen = False
@@ -162,6 +163,11 @@ class MainMenu:
                 elif self.rects['volume']['plus'].collidepoint(event.pos):
                     self.adjust_volume(1)
                     self.start_button_effect('plus')
+                elif self.rects['volume']['main'].collidepoint(event.pos):
+                    click_x = event.pos[0] - self.rects['volume']['main'].x
+                    new_volume = int((click_x / self.rects['volume']['main'].width) * 100)
+                    self.adjust_volume(new_volume - self.volume_level)
+
             self.last_button_time = pygame.time.get_ticks()
 
     def update_selection(self, direction):
