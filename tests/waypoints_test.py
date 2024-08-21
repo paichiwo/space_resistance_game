@@ -2,7 +2,8 @@ import sys
 import math
 import pygame._sdl2 as sdl2
 from src.config import *
-from src.helpers import circular_path, sine_wave_path, diagonal_path, down_and_oscillate_path
+from src.helpers import (circular_path, sine_wave_path, diagonal_path, down_and_oscillate_path,
+                         diagonal_and_oscillate_path, s_shape_path)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -37,8 +38,14 @@ class Enemy(pygame.sprite.Sprite):
             if dist < self.speed * dt:
                 self.current_waypoint += 1
 
+    def kill_off_screen(self):
+        if (self.rect.bottom < -30 or self.rect.top > HEIGHT + 30 or
+                self.rect.right < -30 or self.rect.left > WIDTH + 30):
+            self.kill()
+
     def update(self, dt):
         self.move(dt)
+        self.kill_off_screen()
 
 
 class Game:
@@ -60,14 +67,19 @@ class Game:
         self.enemies = pygame.sprite.Group()
 
         self.waypoints_dict = {
-            'circular left': circular_path(self.s_width, self.s_height, direction='left'),
-            'circular right': circular_path(self.s_width, self.s_height, direction='right'),
-            'sinus left': sine_wave_path(self.s_width, self.s_height, direction='left'),
-            'sinus right': sine_wave_path(self.s_width, self.s_height, direction='right'),
-            'line left': diagonal_path(self.s_width, self.s_height, direction='left'),
-            'line right': diagonal_path(self.s_width, self.s_height, direction='right'),
-            'down oscillation': down_and_oscillate_path(self.s_width, self.s_height, y_pos=160)
+            'circular left': circular_path(self.s_width, self.s_height, 'left'),
+            'circular right': circular_path(self.s_width, self.s_height, 'right'),
+            's shape left': s_shape_path(self.s_width, self.s_height, 'left'),
+            's shape right': s_shape_path(self.s_width, self.s_height, 'right'),
+            'sinus left': sine_wave_path(self.s_width, self.s_height, 'left'),
+            'sinus right': sine_wave_path(self.s_width, self.s_height, 'right'),
+            'line left': diagonal_path(self.s_width, self.s_height, 'left'),
+            'line right': diagonal_path(self.s_width, self.s_height, 'right'),
+            'down oscillation': down_and_oscillate_path(self.s_width, self.s_height, 160),
+            'diagonal osc left': diagonal_and_oscillate_path(self.s_width, self.s_height, 'left'),
+            'diagonal osc right': diagonal_and_oscillate_path(self.s_width, self.s_height, 'right')
         }
+
         self.waypoints_index = 0
         self.waypoints_keys = list(self.waypoints_dict.keys())
         self.current_waypoint_name = self.waypoints_keys[self.waypoints_index]
@@ -113,6 +125,11 @@ class Game:
         rect = text.get_rect(center=(self.s_width // 2, self.s_height - 20))
         self.screen.blit(text, rect)
 
+    def draw_enemy_number(self):
+        text = FONT10.render(f'ENEMIES: {len(self.enemies)}', True, 'white')
+        rect = text.get_rect(center=(self.s_width // 2, self.s_height - 30))
+        self.screen.blit(text, rect)
+
     def run(self):
         while self.running:
             self.screen.fill('black')
@@ -130,6 +147,7 @@ class Game:
 
             self.draw_waypoints_path()
             self.draw_waypoint_name()
+            self.draw_enemy_number()
 
             sdl2.Texture.from_surface(self.renderer, self.screen).draw()
             self.renderer.present()
