@@ -90,3 +90,37 @@ def down_and_oscillate_path(width, height, y_pos=160):
 
     waypoints = vertical_waypoints + oscillation_waypoints
     return waypoints
+
+
+def diagonal_and_oscillate_path(width, height, direction='left'):
+    # Phase 1: Diagonal Movement
+    start_x = -20 if direction == 'right' else width + 20
+    start_y = -20
+    end_y = height / 4  # 1/4 of the screen height
+    diagonal_waypoints = []
+
+    # Calculate diagonal path
+    x, y = start_x, start_y
+    while y < end_y:
+        diagonal_waypoints.append((x, y))
+        x += 5 if direction == 'right' else -5
+        y += 5
+
+    # Phase 2: Oscillate Up and Down at 1/4 Screen Height
+    oscillation_amplitude = 10  # Oscillation amplitude in pixels
+    num_oscillations = 5
+    oscillation_waypoints = []
+
+    for i in range(num_oscillations):
+        # Move up
+        for _ in range(5):
+            end_y -= oscillation_amplitude / 5
+            oscillation_waypoints.append((x, end_y))
+        # Move down
+        for _ in range(5):
+            end_y += oscillation_amplitude / 5
+            oscillation_waypoints.append((x, end_y))
+
+    # Combine waypoints
+    waypoints = diagonal_waypoints + oscillation_waypoints
+    return waypoints

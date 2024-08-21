@@ -33,14 +33,30 @@ COLORS = {
 ENEMY_WAVES = {
     0: {
         (100, 210): [
-            {'type': 'small_1', 'count': 8, 'delay': 500, 'speed':90, 'path': circular_path(WIDTH, HEIGHT, 'left')}
+            {'type': 'small_1',
+             'count': 8,
+             'delay': 500,
+             'speed':90,
+             'path': circular_path(WIDTH, HEIGHT, 'left')}
         ],
         (400, 460): [
-            {'type': 'small_1', 'count': 4, 'delay': 500, 'speed': 90, 'path': sine_wave_path(WIDTH, HEIGHT)}
+            {'type': 'small_1',
+             'count': 4,
+             'delay': 500,
+             'speed': 90,
+             'path': sine_wave_path(WIDTH, HEIGHT)}
         ],
         (550, 660): [
-            {'type': 'small_2', 'count': 6, 'delay': 500, 'speed': 90, 'path': diagonal_path(WIDTH, HEIGHT, 'left')},
-            {'type': 'medium', 'count': 6, 'delay': 500, 'speed': 90, 'path': diagonal_path(WIDTH, HEIGHT, 'right')},
+            {'type': 'small_2',
+             'count': 6,
+             'delay': 500,
+             'speed': 90,
+             'path': diagonal_path(WIDTH, HEIGHT, 'left')},
+            {'type': 'medium',
+             'count': 6,
+             'delay': 500,
+             'speed': 90,
+             'path': diagonal_path(WIDTH, HEIGHT, 'right')},
         ],
     }
 }
