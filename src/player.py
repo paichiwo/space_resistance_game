@@ -60,6 +60,15 @@ class Player(pygame.sprite.Sprite):
         self.god_mode = False
         self.message = Message(self.screen, 'LIFE LOST', FONT20, 3000, (WIDTH / 2 - 54, HEIGHT / 2 - 19))
 
+        self.joystick_connected = False
+        self.joystick = None
+        self.check_joystick()
+
+    def check_joystick(self):
+        if pygame.joystick.get_count() > 0:
+            self.joystick = pygame.joystick.Joystick(0)
+            self.joystick_connected = True
+
     def animate_player(self, frames, dt):
         self.frame_index += (10 if self.god_mode else 20) * dt
         if self.frame_index >= len(frames):
@@ -105,6 +114,25 @@ class Player(pygame.sprite.Sprite):
             Shot(self.rect, self.shot_speed, self.shots_group, 'player')
             self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
             self.shot_timer.activate()
+
+        self.handle_joystick_input()
+
+    def handle_joystick_input(self):
+        if self.joystick_connected:
+            axis_x = self.joystick.get_axis(0)
+            axis_y = self.joystick.get_axis(1)
+
+            # Override keyboard input with joystick input if it's significant
+            if abs(axis_x) > 0.5:
+                self.direction.x = -1 if axis_x < 0 else 1
+                self.status = 'left' if axis_x < 0 else 'right'
+            if abs(axis_y) > 0.5:
+                self.direction.y = -1 if axis_y < 0 else 1
+
+            if self.joystick.get_button(0) and not self.shot_timer.active:
+                Shot(self.rect, self.shot_speed, self.shots_group, 'player')
+                self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
+                self.shot_timer.activate()
 
     def move_fumes(self):
         if not self.god_mode:
@@ -191,6 +219,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
         self.god_mode = False
         self.message.hide()
+        self.shots_group.empty()
 
     def update_groups(self, dt):
         self.shots_group.update(dt)
