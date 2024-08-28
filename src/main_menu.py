@@ -93,19 +93,33 @@ class MainMenu:
     def input(self, event):
         current_time = pygame.time.get_ticks()
 
-        if current_time - self.last_navigate_time > self.navigate_delay:
-            if event.type == pygame.JOYHATMOTION:
+        if event.type == pygame.JOYHATMOTION:
+            if current_time - self.last_navigate_time > self.navigate_delay:
                 self.handle_joystick_hat_motion(event)
-            elif event.type == pygame.JOYAXISMOTION:
+                self.last_navigate_time = current_time
+
+        elif event.type == pygame.JOYAXISMOTION:
+            if current_time - self.last_navigate_time > self.navigate_delay:
                 self.handle_joystick_axis_motion(event)
-            elif event.type == pygame.JOYBUTTONDOWN:
+                self.last_navigate_time = current_time
+
+        elif event.type == pygame.JOYBUTTONDOWN:
+            if current_time - self.last_button_time > self.button_delay:
                 self.handle_joystick_button_down(event)
-            elif event.type == pygame.KEYDOWN:
+                self.last_button_time = current_time
+
+        elif event.type == pygame.KEYDOWN:
+            if current_time - self.last_navigate_time > self.navigate_delay:
                 self.handle_key_down(event)
-            elif event.type == pygame.MOUSEMOTION:
-                self.handle_mouse_motion(event)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.last_navigate_time = current_time
+
+        elif event.type == pygame.MOUSEMOTION:
+            self.handle_mouse_motion(event)
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if current_time - self.last_button_time > self.button_delay:
                 self.handle_mouse_button_down(event)
+                self.last_button_time = current_time
 
     def handle_joystick_hat_motion(self, event):
         if not self.states['game_running']:
@@ -116,7 +130,6 @@ class MainMenu:
             elif event.value[0] in (-1, 1) and 'volume: ' in self.menu_items['options'][self.selected_index]:
                 self.adjust_volume(-1 if event.value[0] == -1 else 1)
                 self.start_button_effect('minus' if event.value[0] == -1 else 'plus')
-            self.last_navigate_time = pygame.time.get_ticks()
 
     def handle_joystick_axis_motion(self, event):
         if abs(event.value) > 0.4:
@@ -126,14 +139,11 @@ class MainMenu:
                     f'volume: {self.volume_level}'):
                 self.adjust_volume(-1 if event.value < 0 else 1)
                 self.start_button_effect('minus' if event.value < 0 else 'plus')
-        self.last_navigate_time = pygame.time.get_ticks()
 
     def handle_joystick_button_down(self, event):
         if pygame.time.get_ticks() - self.last_button_time > self.button_delay:
-
             if event.button == 0:
                 self.perform_action()
-        self.last_button_time = pygame.time.get_ticks()
 
     def handle_key_down(self, event):
         if event.key == pygame.K_DOWN:
@@ -150,7 +160,6 @@ class MainMenu:
             self.start_button_effect('plus')
         elif event.key == pygame.K_RETURN:
             self.perform_action()
-        self.last_navigate_time = pygame.time.get_ticks()
 
     def handle_mouse_motion(self, event):
         for index, (item, rect) in enumerate(self.current_items().items()):
@@ -159,26 +168,22 @@ class MainMenu:
                 break
 
     def handle_mouse_button_down(self, event):
-        if pygame.time.get_ticks() - self.last_button_time > self.button_delay:
-            for item, rect in self.current_items().items():
-                if rect.collidepoint(event.pos):
-                    self.perform_action()
-                    self.last_button_time = pygame.time.get_ticks()
-                    break
+        for item, rect in self.current_items().items():
+            if rect.collidepoint(event.pos):
+                self.perform_action()
+                break
 
-            if self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'):
-                if self.rects['volume']['minus'].collidepoint(event.pos):
-                    self.adjust_volume(-1)
-                    self.start_button_effect('minus')
-                elif self.rects['volume']['plus'].collidepoint(event.pos):
-                    self.adjust_volume(1)
-                    self.start_button_effect('plus')
-                elif self.rects['volume']['main'].collidepoint(event.pos):
-                    click_x = event.pos[0] - self.rects['volume']['main'].x
-                    new_volume = int((click_x / self.rects['volume']['main'].width) * 100)
-                    self.adjust_volume(new_volume - self.volume_level)
-
-            self.last_button_time = pygame.time.get_ticks()
+        if self.selected_index == self.menu_items['options'].index(f'volume: {self.volume_level}'):
+            if self.rects['volume']['minus'].collidepoint(event.pos):
+                self.adjust_volume(-1)
+                self.start_button_effect('minus')
+            elif self.rects['volume']['plus'].collidepoint(event.pos):
+                self.adjust_volume(1)
+                self.start_button_effect('plus')
+            elif self.rects['volume']['main'].collidepoint(event.pos):
+                click_x = event.pos[0] - self.rects['volume']['main'].x
+                new_volume = int((click_x / self.rects['volume']['main'].width) * 100)
+                self.adjust_volume(new_volume - self.volume_level)
 
     def update_selection(self, direction):
         self.selected_index = (self.selected_index + direction) % len(self.current_items())
@@ -236,4 +241,3 @@ class MainMenu:
     def update(self, event):
         self.input(event)
         self.draw_menu(self.menu_items['options'] if self.options_selected else self.menu_items['main'])
-        print(self.last_navigate_time)
