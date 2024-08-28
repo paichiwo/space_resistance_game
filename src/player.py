@@ -56,10 +56,14 @@ class Player(pygame.sprite.Sprite):
         self.bump_timer = Timer(500)
         self.god_mode_timer = Timer(5000, self.reset_god_mode)
 
+        self.first_shot_timer = pygame.time.get_ticks()
+        self.first_shot_delay = 1000
+
         # Extra
         self.god_mode = False
         self.message = Message(self.screen, 'LIFE LOST', FONT20, 3000, (WIDTH / 2 - 54, HEIGHT / 2 - 19))
 
+        # Joystick
         self.joystick_connected = False
         self.joystick = None
         self.check_joystick()
@@ -129,6 +133,7 @@ class Player(pygame.sprite.Sprite):
             if abs(axis_y) > 0.5:
                 self.direction.y = -1 if axis_y < 0 else 1
 
+        if pygame.time.get_ticks() - self.first_shot_timer > self.first_shot_delay:
             if self.joystick.get_button(0) and not self.shot_timer.active:
                 Shot(self.rect, self.shot_speed, self.shots_group, 'player')
                 self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
@@ -220,6 +225,7 @@ class Player(pygame.sprite.Sprite):
         self.god_mode = False
         self.message.hide()
         self.shots_group.empty()
+        self.first_shot_timer = pygame.time.get_ticks()
 
     def update_groups(self, dt):
         self.shots_group.update(dt)
