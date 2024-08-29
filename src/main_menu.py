@@ -11,7 +11,7 @@ class MainMenu:
         self.scale = SCALE
 
         self.selected_index = 0
-        self.navigate_delay = 150
+        self.navigate_delay = 200
         self.button_delay = 200
         self.action_delay = 200
         self.last_navigate_time = pygame.time.get_ticks()
