@@ -135,8 +135,7 @@ class LevelManager:
 
     def between_levels(self):
         self.sound_manager.stop_all_music()
-        current_time = pygame.time.get_ticks()
-        if current_time - self.message_start_time < 3000:
+        if pygame.time.get_ticks() - self.message_start_time < 3000:
             self.show_level_message()
         else:
             self.showing_level_message = False
