@@ -108,11 +108,6 @@ class Enemy(EnemyBase):
         super().update(dt)
         self.move(dt)
 
-        # Debug draw
-        pygame.draw.line(self.screen, 'red', self.rect.center, self.player.rect.center, 1)
-        for i in range(len(self.waypoints) - 1):
-            pygame.draw.line(self.screen, 'blue', self.waypoints[i], self.waypoints[i+1], 1)
-
 
 class Boss(EnemyBase):
     def __init__(self, screen, player, sound_manager, group):
