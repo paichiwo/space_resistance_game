@@ -7,6 +7,7 @@ from src.level_manager import LevelManager
 from src.sound_manager import SoundManager
 from src.high_score_manager import HighScoreManager
 from src.debug import DebugMenu
+from src.messages import MessageBetweenLevels
 
 
 # create in-game joystick controls
@@ -35,6 +36,8 @@ class Game:
         self.joy_name = ''
         self.joy_msg = None
 
+        self.first_level_message_start_time = pygame.time.get_ticks()
+
         # States
         self.states = {
             'welcome_screen_running': True,
@@ -42,7 +45,8 @@ class Game:
             'game_over_screen_running': False,
             'congrats_screen_running': False,
             'score_entered': False,
-            'debug_visible': False
+            'debug_visible': False,
+            'first_level_message_shown': False
         }
 
         # User Name
@@ -102,6 +106,18 @@ class Game:
             elif event.key == pygame.K_LALT:
                 self.run_debug()
 
+    def show_first_level_message(self):
+        if self.level_manager.level_index == 0:
+            if pygame.time.get_ticks() - self.first_level_message_start_time < 3000:
+                level, enemy_kills = self.level_manager.level_index + 1, self.level_manager.player.enemy_kill_count
+                message = [f'LEVEL {level}', f'ENEMY KILLS: {enemy_kills}']
+                MessageBetweenLevels(self.screen, message).show()
+                sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+                self.renderer.present()
+            else:
+                self.states['first_level_message_shown'] = True
+                self.level_manager.start_scrolling()
+
     def set_music_for_game(self):
         if self.states['welcome_screen_running']:
             self.sound_manager.play_music(MUSIC_TRACKS['welcome_screen_music'])
@@ -121,6 +137,7 @@ class Game:
         self.states['game_over_screen_running'] = False
         self.states['congrats_screen_running'] = False
         self.states['score_entered'] = False
+        self.states['first_level_message_shown'] = False
         self.level_manager.restart()
         self.welcome_screen.reset()
 
@@ -166,8 +183,11 @@ class Game:
                 self.welcome_screen.update(event)
 
             if self.states['game_running']:
-                self.level_manager.update(dt)
-                self.check_game_win_or_game_over(self.level_manager.game_over, self.level_manager.boss_killed)
+                if not self.states['first_level_message_shown']:
+                    self.show_first_level_message()
+                else:
+                    self.level_manager.update(dt)
+                    self.check_game_win_or_game_over(self.level_manager.game_over, self.level_manager.boss_killed)
 
             if self.states['game_over_screen_running']:
                 self.game_over_screen.update()
