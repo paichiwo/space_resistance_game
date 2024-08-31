@@ -134,7 +134,7 @@ class Player(pygame.sprite.Sprite):
                 self.direction.y = -1 if axis_y < 0 else 1
 
         if pygame.time.get_ticks() - self.first_shot_timer > self.first_shot_delay:
-            if self.joystick.get_button(0) and not self.shot_timer.active:
+            if self.joystick and self.joystick.get_button(0) and not self.shot_timer.active:
                 Shot(self.rect, self.shot_speed, self.shots_group, 'player')
                 self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
                 self.shot_timer.activate()
