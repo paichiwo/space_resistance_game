@@ -26,7 +26,9 @@ class DebugMenu:
             'show time': 0.00,
             'total pos': 0,
             'enemies': 0,
-            'rects': False
+            'rects': False,
+            'waypoints': False,
+            'enemy aims': False
         }
 
         self.start_time = pygame.time.get_ticks()
@@ -95,6 +97,18 @@ class DebugMenu:
             pygame.draw.rect(self.screen, 'white', self.level_manager.player.fumes_rect, 1)
             pygame.draw.rect(self.screen, 'white', self.level_manager.player.rect, 1)
 
+    def draw_waypoints(self):
+        # Debug draw
+        if self.debug_items['waypoints']:
+            for enemy in self.level_manager.enemy_sprites:
+                for i in range(len(enemy.waypoints) - 1):
+                    pygame.draw.line(self.screen, 'blue', enemy.waypoints[i], enemy.waypoints[i+1], 1)
+
+    def draw_enemy_aims(self):
+        if self.debug_items['enemy aims']:
+            for enemy in self.level_manager.enemy_sprites:
+                pygame.draw.line(self.screen, 'red', enemy.rect.center, self.level_manager.player.rect.center, 1)
+
     def input(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             for item, item_rect in self.item_positions:
@@ -146,6 +160,12 @@ class DebugMenu:
             elif item == 'rects':
                 self.debug_items['rects'] = not self.debug_items['rects']
 
+            elif item == 'waypoints':
+                self.debug_items['waypoints'] = not self.debug_items['waypoints']
+
+            elif item == 'enemy aims':
+                self.debug_items['enemy aims'] = not self.debug_items['enemy aims']
+
             self.start_time = pygame.time.get_ticks()
 
     def set_levels_in_game(self):
@@ -160,5 +180,8 @@ class DebugMenu:
         self.draw_bg()
         self.draw_items()
         self.input(event)
+
         self.set_levels_in_game()
         self.draw_rects()
+        self.draw_waypoints()
+        self.draw_enemy_aims()
