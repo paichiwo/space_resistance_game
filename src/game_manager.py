@@ -10,9 +10,8 @@ from src.debug import DebugMenu
 from src.messages import MessageBetweenLevels
 
 
-# create in-game joystick controls
 # plan level 1
-# implement first level message
+# create bombs and decide how they getting obtained by player and which button runs them
 # create power-ups, think how they spawn (pos or time)
 # redraw assets: shots, player, enemies, boss (animating)
 
