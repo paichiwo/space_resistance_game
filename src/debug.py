@@ -19,7 +19,7 @@ class DebugMenu:
             'pause': False,
             'god mode': False,
             'level': 1,
-            'main menu': True,
+            'main menu': self.states['welcome_screen_running'],
             'game run': False,
             'game over': False,
             'congrats': False,
@@ -77,6 +77,14 @@ class DebugMenu:
         self.debug_items['cpu usage'] = f'{psutil.cpu_percent()}%'
         self.debug_items['ram usage'] = f'{psutil.virtual_memory().percent}%'
 
+    def set_levels_in_game(self):
+        self.level_manager.player.god_mode = self.debug_items['god mode']
+
+        new_level_index = self.debug_items['level'] - 1
+        if new_level_index != self.level_manager.level_index:
+            self.level_manager.level_index = new_level_index
+            self.level_manager.change_bg(new_level_index)
+
     def update_time(self):
         if self.states['game_running']:
             if self.show_time_start_time is None:
@@ -131,7 +139,6 @@ class DebugMenu:
 
             elif item == 'main menu':
                 self.states['welcome_screen_running'] = not self.states['welcome_screen_running']
-                self.debug_items['main menu'] = self.states['welcome_screen_running']
                 self.states['game_running'] = False
                 self.states['game_over_screen_running'] = False
                 self.states['congrats_screen_running'] = False
@@ -168,20 +175,15 @@ class DebugMenu:
 
             self.start_time = pygame.time.get_ticks()
 
-    def set_levels_in_game(self):
-        self.level_manager.player.god_mode = self.debug_items['god mode']
-
-        new_level_index = self.debug_items['level'] - 1
-        if new_level_index != self.level_manager.level_index:
-            self.level_manager.level_index = new_level_index
-            self.level_manager.change_bg(new_level_index)
+    def update_items(self):
+        self.debug_items['main menu'] = self.states['welcome_screen_running']
+        self.set_levels_in_game()
+        self.draw_rects()
+        self.draw_waypoints()
+        self.draw_enemy_aims()
 
     def update(self, event):
         self.draw_bg()
         self.draw_items()
         self.input(event)
-
-        self.set_levels_in_game()
-        self.draw_rects()
-        self.draw_waypoints()
-        self.draw_enemy_aims()
+        self.update_items()
