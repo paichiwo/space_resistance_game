@@ -15,24 +15,24 @@ class Player(pygame.sprite.Sprite):
         self.group = group
 
         # Import assets
-        self.ship_empty_frames = import_image('assets/img/ship/empty.png')
-        self.ship_idle_frames = import_image('assets/img/ship/idle/0.png')
-        self.ship_left_frames = import_assets('assets/img/ship/left/')
-        self.ship_right_frames = import_assets('assets/img/ship/right/')
-        self.god_mode_idle_frames = [self.ship_idle_frames, self.ship_empty_frames, self.ship_idle_frames, self.ship_empty_frames]
-        self.god_mode_left_frames = [self.ship_left_frames[0], self.ship_empty_frames, self.ship_left_frames[1], self.ship_empty_frames]
-        self.god_mode_right_frames = [self.ship_right_frames[0], self.ship_empty_frames, self.ship_right_frames[1], self.ship_empty_frames]
+        self.empty_frames = import_image('assets/img/ship/empty.png')
+        self.idle_frames = import_image('assets/img/ship/idle/0.png')
+        self.left_frames = import_assets('assets/img/ship/left/')
+        self.right_frames = import_assets('assets/img/ship/right/')
+        self.god_mode_idle_frames = [self.idle_frames, self.empty_frames, self.idle_frames, self.empty_frames]
+        self.god_mode_left_frames = [self.left_frames[0], self.empty_frames, self.left_frames[1], self.empty_frames]
+        self.god_mode_right_frames = [self.right_frames[0], self.empty_frames, self.right_frames[1], self.empty_frames]
         self.frame_index = 0
 
         # Player image and rect
-        self.image = self.ship_idle_frames
+        self.image = self.idle_frames
         self.rect = self.image.get_frect(midbottom=(WIDTH // 2, HEIGHT - 10))
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
 
         # Fumes img and rect
         self.fumes_frames = import_assets('assets/img/ship/fumes')
-        self.god_mode_fumes_frames = [self.fumes_frames[0], self.ship_empty_frames, self.fumes_frames[1]]
+        self.god_mode_fumes_frames = [self.fumes_frames[0], self.empty_frames, self.fumes_frames[1]]
         self.fumes_index = 0
         self.fumes_image = self.fumes_frames[self.fumes_index]
         self.fumes_rect = self.fumes_image.get_frect()
@@ -74,10 +74,18 @@ class Player(pygame.sprite.Sprite):
             self.joystick_connected = True
 
     def animate_player(self, frames, dt):
-        self.frame_index += (10 if self.god_mode else 20) * dt
+        self.frame_index += (10 if self.god_mode else 10) * dt
         if self.frame_index >= len(frames):
             self.frame_index = 2
         self.image = frames[int(self.frame_index)]
+
+    def reverse_animate_player(self, from_frames, dt):
+        self.frame_index -= (10 if self.god_mode else 10) * dt
+        if self.frame_index <= 0:
+            self.status = 'idle'
+            self.frame_index = 0
+        else:
+            self.image = from_frames[int(self.frame_index)]
 
     def animate_fumes(self, dt):
         frames = self.god_mode_fumes_frames if self.god_mode else self.fumes_frames
@@ -88,14 +96,25 @@ class Player(pygame.sprite.Sprite):
 
     def animate(self, dt):
         frames = {
-            'idle': self.god_mode_idle_frames if self.god_mode else self.ship_idle_frames,
-            'left': self.god_mode_left_frames if self.god_mode else self.ship_left_frames,
-            'right': self.god_mode_right_frames if self.god_mode else self.ship_right_frames,
+            'idle': self.god_mode_idle_frames if self.god_mode else self.idle_frames,
+            'left': self.god_mode_left_frames if self.god_mode else self.left_frames,
+            'right': self.god_mode_right_frames if self.god_mode else self.right_frames,
         }
 
-        if self.status == 'idle' and not self.god_mode:
+        if self.status == 'transition_left':
+            if self.frame_index == 0:
+                self.frame_index = len(frames['left']) - 1
+            self.reverse_animate_player(frames['left'], dt)
+
+        elif self.status == 'transition_right':
+            if self.frame_index == 0:
+                self.frame_index = len(frames['right']) - 1
+            self.reverse_animate_player(frames['right'], dt)
+
+        elif self.status == 'idle' and not self.god_mode:
             self.image = frames['idle']
-            self.frame_index = 0
+            self.frame_index = 0 
+
         else:
             self.animate_player(frames[self.status], dt)
 
@@ -112,12 +131,13 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_RIGHT]:
             self.status = 'right'
         else:
-            self.status = 'idle'
+            if self.status == 'left':
+                self.status = 'transition_left'
+            elif self.status == 'right':
+                self.status = 'transition_right'
 
         if keys[pygame.K_SPACE] and not self.shot_timer.active:
-            Shot(self.rect, self.shot_speed, self.shots_group, 'player')
-            self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
-            self.shot_timer.activate()
+            self.shot()
 
         self.handle_joystick_input()
 
@@ -154,7 +174,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def move_boss_killed(self):
-        self.image = self.ship_idle_frames
+        self.image = self.idle_frames
         self.pos.y -= 2
         self.rect.topleft = self.pos
 
@@ -170,6 +190,11 @@ class Player(pygame.sprite.Sprite):
             self.pos.y = HEIGHT - self.rect.height / 2
 
         self.rect.center = self.pos
+
+    def shot(self):
+        Shot(self.rect, self.shot_speed, self.shots_group, 'player')
+        self.sound_manager.play_sound(SOUND_EFFECTS['player_shot'])
+        self.shot_timer.activate()
 
     def check_collisions(self):
         # shots
