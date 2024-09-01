@@ -17,7 +17,7 @@ def import_image(image_path):
 
 def circular_path(width, height, direction='left'):
     start_x, start_y = width / 2, height / 2 - 30
-    end_x, end_y = (-50, start_y - 3) if direction == 'right' else (width + 50, start_y + 2)
+    end_x, end_y = (-50, start_y - 2) if direction == 'right' else (width + 50, start_y + 2)
     radius = 50
     num_points = 150
 
