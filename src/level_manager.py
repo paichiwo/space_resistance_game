@@ -160,6 +160,7 @@ class LevelManager:
                             wave_info['type'],
                             wave_info['speed'],
                             wave_info['path'],
+                            wave_info['rotate'],
                             [self.enemy_sprites, self.all_sprites]
                         )
                         wave_info['last_spawn_time'] = current_time

@@ -1,5 +1,6 @@
 import pygame
-from src.helpers import circular_path, sine_wave_path, diagonal_path
+from src.helpers import (circular_path, sine_wave_path, diagonal_path, down_and_oscillate_path,  s_shape_path,
+                         diagonal_and_oscillate_path,)
 from string import ascii_letters, digits
 
 pygame.init()
@@ -35,8 +36,9 @@ ENEMY_WAVES = {
         (100, 210): [
             {'type': 'small_1',
              'count': 8,
-             'delay': 500,
+             'delay': 350,
              'speed':90,
+             'rotate': True,
              'path': circular_path(WIDTH, HEIGHT, 'left')}
         ],
         (400, 460): [
@@ -44,6 +46,7 @@ ENEMY_WAVES = {
              'count': 4,
              'delay': 500,
              'speed': 90,
+             'rotate': True,
              'path': sine_wave_path(WIDTH, HEIGHT)}
         ],
         (550, 660): [
@@ -51,12 +54,26 @@ ENEMY_WAVES = {
              'count': 6,
              'delay': 500,
              'speed': 90,
-             'path': diagonal_path(WIDTH, HEIGHT, 'left')},
-            {'type': 'medium',
+             'rotate': True,
+             'path': diagonal_path(WIDTH, HEIGHT, 'left')}
+            ],
+
+        (700, 810): [
+            {'type': 'small_2',
              'count': 6,
              'delay': 500,
              'speed': 90,
+             'rotate': True,
              'path': diagonal_path(WIDTH, HEIGHT, 'right')},
+        ],
+
+        (700, 810): [
+            {'type': 'medium',
+             'count': 1,
+             'delay': 500,
+             'speed': 30,
+             'rotate': False,
+             'path': down_and_oscillate_path(WIDTH, HEIGHT)},
         ],
     }
 }

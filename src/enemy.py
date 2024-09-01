@@ -83,13 +83,14 @@ class EnemyBase(pygame.sprite.Sprite):
 
 
 class Enemy(EnemyBase):
-    def __init__(self, screen, sound_manager, player, enemy_type, enemy_speed, waypoints, group):
+    def __init__(self, screen, sound_manager, player, enemy_type, enemy_speed, waypoints, rotate, group):
         data = ENEMY_DATA[enemy_type]
         super().__init__(screen, sound_manager, player, data, group)
 
         self.enemy_type = enemy_type
         self.speed = enemy_speed
         self.waypoints = waypoints
+        self.rotate = rotate
         self.current_waypoint = 0
 
         self.pos = pygame.math.Vector2(waypoints[0])
@@ -116,7 +117,8 @@ class Enemy(EnemyBase):
                 self.pos += direction * self.speed * dt
 
                 # Calculate the angle and rotate the image
-                self.angle = math.degrees(math.atan2(-dy, dx)) + 90
+                if self.rotate:
+                    self.angle = math.degrees(math.atan2(-dy, dx)) + 90
 
                 # Update the rect to match new image
                 self.rect = self.image.get_rect(center=self.pos)
