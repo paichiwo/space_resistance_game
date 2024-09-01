@@ -209,8 +209,7 @@ class Player(pygame.sprite.Sprite):
                     if enemy.energy <= 0:
                         self.enemy_kill_count += 1
                         self.score += enemy.kill_score
-
-                    Explosion(enemy.rect.center, self.group, self.screen)
+                    Explosion(enemy.rect.center, self.group)
                     self.sound_manager.play_sound(SOUND_EFFECTS['explosion'])
         # bumps
         if not self.bump_timer.active:
@@ -218,7 +217,7 @@ class Player(pygame.sprite.Sprite):
             for enemy in bumps:
                 if not self.god_mode:
                     self.get_damage(enemy.bump_power)
-                    Explosion(self.rect.center, self.group, self.screen)
+                    Explosion(self.rect.center, self.group)
                     self.sound_manager.play_sound(SOUND_EFFECTS['explosion'])
                     self.bump_timer.activate()
 
