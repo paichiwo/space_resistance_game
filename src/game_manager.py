@@ -11,8 +11,8 @@ from src.messages import MessageBetweenLevels
 
 
 # plan level 1
-# create bombs and decide how they getting obtained by player and which button runs them
-# create power-ups, think how they spawn (pos or time)
+# create bombs and decide how they're getting obtained by player and which button runs them
+# create power-ups, think how they spawn (pos or time) - 3 different powerups for shooting
 # redraw assets: shots, player, enemies, boss (animating)
 
 
