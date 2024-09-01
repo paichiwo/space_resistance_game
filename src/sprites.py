@@ -39,11 +39,10 @@ class Shot(pygame.sprite.Sprite):
 
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, position, group, screen):
+    def __init__(self, position, group):
         super().__init__(group)
 
         self.position = position
-        self.screen = screen
         self.animation_speed = 20
 
         self.frames = import_assets('assets/img/explosion/')
