@@ -18,6 +18,7 @@ class EnemyBase(pygame.sprite.Sprite):
 
         self.frames = import_assets(data['frames'])
         self.index = 0
+        self.angle = 0
         self.energy = data['energy']
         self.bump_power = data['bump_power']
         self.shot_score = data['shot_score']
@@ -34,7 +35,13 @@ class EnemyBase(pygame.sprite.Sprite):
         self.index += self.animation_speed * dt
         if self.index >= len(self.frames):
             self.index = 0
-        self.image = self.frames[int(self.index)]
+
+        # Get the current frame and rotate it
+        frame = self.frames[int(self.index)]
+        self.image = pygame.transform.rotate(frame, self.angle)
+
+        # Update rect after rotation to maintain position
+        self.rect = self.image.get_rect(center=self.rect.center)
 
     def shoot(self):
         if self.can_shoot:
@@ -82,12 +89,21 @@ class Enemy(EnemyBase):
 
         self.enemy_type = enemy_type
         self.speed = enemy_speed
-        self.original_speed = enemy_speed
         self.waypoints = waypoints
         self.current_waypoint = 0
 
         self.pos = pygame.math.Vector2(waypoints[0])
         self.rect = self.image.get_rect(center=self.pos)
+
+        self.rotated_images = self.pre_rotate_images(self.frames[int(self.index)], range(0, 360, 5))
+
+
+    @staticmethod
+    def pre_rotate_images(image, angles):
+        rotated_images = {}
+        for angle in angles:
+            rotated_images[angle] = pygame.transform.rotate(image, angle)
+        return rotated_images
 
     def move(self, dt):
         if self.current_waypoint < len(self.waypoints):
@@ -99,7 +115,11 @@ class Enemy(EnemyBase):
                 direction = pygame.math.Vector2(dx, dy).normalize()
                 self.pos += direction * self.speed * dt
 
-                self.rect.center = (int(self.pos.x), int(self.pos.y))
+                # Calculate the angle and rotate the image
+                self.angle = math.degrees(math.atan2(-dy, dx)) + 90
+
+                # Update the rect to match new image
+                self.rect = self.image.get_rect(center=self.pos)
 
             if dist < self.speed * dt:
                 self.current_waypoint += 1
