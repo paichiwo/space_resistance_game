@@ -23,7 +23,7 @@ class Game:
         # Scaled Window
         self.window = pygame.Window(size=(WIDTH * SCALE, HEIGHT * SCALE), title=f'{TITLE} v{VERSION}')
         self.window.resizable = True
-        self.renderer = sdl2.Renderer(self.window, accelerated=True)
+        self.renderer = sdl2.Renderer(self.window, accelerated=0, vsync=True)
         self.renderer.logical_size = (WIDTH, HEIGHT)
         self.screen = pygame.Surface((WIDTH, HEIGHT))
         self.window.get_surface()
