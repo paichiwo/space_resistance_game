@@ -1,6 +1,7 @@
 import math
 from src.config import *
 from os import listdir, path
+import pygame._sdl2 as sdl2
 
 
 def import_assets(asset_path):
@@ -8,6 +9,13 @@ def import_assets(asset_path):
     for image_path in listdir(asset_path):
         if image_path.endswith('.png'):
             frames.append(pygame.image.load(path.join(asset_path, image_path)).convert_alpha())
+    return frames
+
+def import_assets_sdl2(asset_path, renderer):
+    frames = []
+    for image_path in listdir(asset_path):
+        if image_path.endswith('.png'):
+            frames.append(sdl2.Texture.from_surface(renderer, pygame.image.load(path.join(asset_path, image_path))))
     return frames
 
 

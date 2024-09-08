@@ -11,8 +11,8 @@ class ExampleSprite(pygame.sprite.Sprite):
         super().__init__(group)
 
         self.frames = [
-            sdl2.Texture.from_surface(renderer, pygame.image.load("../assets/img/enemy/large/0.png")),
-            sdl2.Texture.from_surface(renderer, pygame.image.load("../assets/img/enemy/large/1.png")),
+            sdl2.Texture.from_surface(renderer, pygame.image.load("../assets/img/enemy/small_1/0.png")),
+            sdl2.Texture.from_surface(renderer, pygame.image.load("../assets/img/enemy/small_1/1.png")),
         ]
 
         self.frames_index = 0
@@ -80,7 +80,7 @@ class Game:
 
     def run(self):
         while True:
-            self.renderer.draw_color = "grey"
+            self.renderer.draw_color = "black"
             self.renderer.clear()
 
             for event in pygame.event.get():

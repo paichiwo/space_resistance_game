@@ -1,22 +1,24 @@
 import math
 import random
-from src.helpers import import_assets
+
+from src.helpers import import_assets_sdl2
 from src.config import *
 from src.timer import Timer
 from src.sprites import Shot, Explosion
+import pygame._sdl2 as sdl2
 
 
 class EnemyBase(pygame.sprite.Sprite):
-    def __init__(self, screen, sound_manager, player, data, group):
+    def __init__(self, renderer, sound_manager, player, data, group):
         super().__init__(group)
 
-        self.screen = screen
+        self.renderer = renderer
         self.sound_manager = sound_manager
         self.player = player
         self.group = group
         self.animation_speed = 20
 
-        self.frames = import_assets(data['frames'])
+        self.frames = import_assets_sdl2(data['frames'], self.renderer)
         self.index = 0
         self.angle = 0
         self.energy = data['energy']
@@ -36,10 +38,6 @@ class EnemyBase(pygame.sprite.Sprite):
         if self.index >= len(self.frames):
             self.index = 0
 
-        # Get the current frame and rotate it
-        frame = self.frames[int(self.index)]
-        self.image = pygame.transform.rotate(frame, self.angle)
-
         # Update rect after rotation to maintain position
         self.rect = self.image.get_rect(center=self.rect.center)
 
@@ -53,7 +51,7 @@ class EnemyBase(pygame.sprite.Sprite):
 
     def collisions(self):
         if not self.player.god_mode:
-            for sprite in self.group[0].sprites():
+            for sprite in self.group.sprites():
                 for shot in sprite.shots_group:
                     if pygame.sprite.collide_mask(shot, self.player):
                         shot.kill()
@@ -76,16 +74,16 @@ class EnemyBase(pygame.sprite.Sprite):
         self.animate(dt)
         # self.shoot()
 
-        self.shots_group.update(dt)
-        self.shots_group.draw(self.screen)
+        # self.shots_group.update(dt)
+        # self.shots_group.draw(self.screen)
         self.collisions()
         self.kill_off_screen()
 
 
 class Enemy(EnemyBase):
-    def __init__(self, screen, sound_manager, player, enemy_type, enemy_speed, waypoints, rotate, group):
+    def __init__(self, renderer, sound_manager, player, enemy_type, enemy_speed, waypoints, rotate, group):
         data = ENEMY_DATA[enemy_type]
-        super().__init__(screen, sound_manager, player, data, group)
+        super().__init__(renderer, sound_manager, player, data, group)
 
         self.enemy_type = enemy_type
         self.speed = enemy_speed
@@ -93,18 +91,9 @@ class Enemy(EnemyBase):
         self.rotate = rotate
         self.current_waypoint = 0
 
+        self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(waypoints[0])
         self.rect = self.image.get_rect(center=self.pos)
-
-        self.rotated_images = self.pre_rotate_images(self.frames[int(self.index)], range(0, 360, 5))
-
-
-    @staticmethod
-    def pre_rotate_images(image, angles):
-        rotated_images = {}
-        for angle in angles:
-            rotated_images[angle] = pygame.transform.rotate(image, angle)
-        return rotated_images
 
     def move(self, dt):
         if self.current_waypoint < len(self.waypoints):
@@ -113,15 +102,17 @@ class Enemy(EnemyBase):
             dist = math.hypot(dx, dy)
 
             if dist > 0:
-                direction = pygame.math.Vector2(dx, dy).normalize()
-                self.pos += direction * self.speed * dt
+                self.direction = pygame.math.Vector2(dx, dy).normalize()
+                self.pos += self.direction * self.speed * dt
 
                 # Calculate the angle and rotate the image
                 if self.rotate:
+                    # self.angle -= 50 * dt
                     self.angle = math.degrees(math.atan2(-dy, dx)) + 90
+                    self.rect.center = (WIDTH // 2, HEIGHT // 2)
 
                 # Update the rect to match new image
-                self.rect = self.image.get_rect(center=self.pos)
+                self.rect.center = self.pos
 
             if dist < self.speed * dt:
                 self.current_waypoint += 1
@@ -129,6 +120,10 @@ class Enemy(EnemyBase):
     def update(self, dt):
         super().update(dt)
         self.move(dt)
+
+    def render(self):
+        self.image.draw(dstrect=self.rect, angle=-self.angle)
+        self.renderer.present()
 
 
 class Boss(EnemyBase):

@@ -154,14 +154,14 @@ class LevelManager:
                             round(self.total_pos_count) in range(spawn_pos[0], spawn_pos[1]) and
                             wave_info['count'] > 0):
                         Enemy(
-                            self.screen,
+                            self.renderer,
                             self.sound_manager,
                             self.player,
                             wave_info['type'],
                             wave_info['speed'],
                             wave_info['path'],
                             wave_info['rotate'],
-                            [self.enemy_sprites, self.all_sprites]
+                            self.enemy_sprites
                         )
                         wave_info['last_spawn_time'] = current_time
                         wave_info['count'] -= 1
@@ -228,6 +228,11 @@ class LevelManager:
             self.spawn_enemy()
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
+
+            for sprite in self.enemy_sprites:
+                sprite.render()
+            self.enemy_sprites.update(dt)
+
             self.set_levels()
             self.game_win_or_game_over()
             self.dashboard.update(self.level_index)
