@@ -4,6 +4,7 @@
 /devlog/
 /assets/original_assets/
 /assets/mockup
-/test/
 /build/
-/data/scores.txt
+/data/scores.json
+
+/assets/img/enemy_

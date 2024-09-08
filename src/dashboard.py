@@ -1,86 +1,72 @@
-import os
-import pygame
+from src.config import *
+from src.helpers import import_image
 
 
 class Dashboard:
-    """All dashboard text and calculations"""
-    def __init__(self, screen, config_colors):
+    def __init__(self, screen, player, lowest_score):
         super().__init__()
-
         self.screen = screen
-        self.color = config_colors
+        self.player = player
+        self.lowest_score = lowest_score
 
-        self.planet_dir = "assets/img/ui/rotating_planet_small"
-        self.planet_frames = []
-        self.planet_index = 0
-        for planet_image in os.listdir(self.planet_dir):
-            if planet_image.endswith(".png"):
-                planet_filename = os.path.join(self.planet_dir, planet_image)
-                planet_frame = pygame.image.load(planet_filename).convert_alpha()
-                self.planet_frames.append(planet_frame)
+        self.life_img = import_image('assets/img/ui/life/0.png')
 
-        self.font = pygame.font.Font("assets/font/visitor1.ttf", 10)
-        self.life_img = pygame.image.load("assets/img/ui/ship_8x8.png").convert_alpha()
+    def draw_energy(self):
+        bar_length = 30
+        ratio = self.player.max_energy / bar_length
+        bar_width = self.player.current_energy / ratio
 
-        self.headers = ["SCORE", "LIVES", "ENERGY"]
-        self.headers_x_pos = 288
-        self.headers_y_pos = [50, 80, 115, 160]
+        pygame.draw.rect(self.screen, COLORS['RED'], pygame.Rect(10, 7, bar_width, 1))
+        pygame.draw.rect(self.screen, 'indigo', pygame.Rect(9, 6, bar_length + 2, 3), 1)
 
-        self.score = 0
-        self.lives = 3
-
-    def draw_dashboard_bg(self):
-        pygame.draw.rect(self.screen, self.color["GREY"], pygame.Rect(256, 0, 64, 180))
-
-    def draw_logo(self):
-        self.planet_index += 0.1
-        if self.planet_index >= len(self.planet_frames):
-            self.planet_index = 0
-        image = self.planet_frames[int(self.planet_index)]
-        rect = image.get_rect(midtop=(self.headers_x_pos, 6))
-        self.screen.blit(image, rect)
-
-    def draw_headers(self):
-        text_list = [self.font.render(header, False, self.color["WHITE"]) for header in self.headers]
-
-        for i, text in enumerate(text_list):
-            rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[i]))
-            self.screen.blit(text, rect)
+    def draw_lives(self):
+        x = 47
+        for _ in range(0, self.player.lives-1):
+            self.screen.blit(self.life_img, (x, 3))
+            x += 11
 
     def draw_score(self):
-        text = self.font.render("{:06}".format(self.score), False, self.color["WHITE"])
-        rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[0] + 10))
-        self.screen.blit(text, rect)
+        bg_rect = pygame.rect.Rect(83, 3, 7, 7)
 
-    def draw_lives(self, lives):
-        life_x = self.headers_x_pos - 16
-        life_y = self.headers_y_pos[1] + 12
+        icon_text = FONT10.render('S', True, COLORS['YELLOW'])
+        icon_rect = icon_text.get_rect(topleft=(bg_rect.x + 1, bg_rect.y - 1))
 
-        for _ in range(0, lives-1):
-            self.screen.blit(self.life_img, (life_x, life_y))
-            life_x += 12
+        score_text = FONT10.render('{:07}'.format(self.player.score), True, COLORS['WHITE'])
+        score_rect = score_text.get_rect(topleft=(bg_rect.x + 9, bg_rect.y - 1))
 
-    def draw_energy(self, current_energy, max_energy):
-        energy_bar_length = 50
-        ratio = max_energy / energy_bar_length
-        bar_width = current_energy / ratio
+        pygame.draw.rect(self.screen, COLORS['INDIGO'], bg_rect)
+        self.screen.blit(icon_text, icon_rect)
+        self.screen.blit(score_text, score_rect)
 
-        energy_bar = pygame.Rect(self.headers_x_pos-25, self.headers_y_pos[2]+14, bar_width, 8)
-        energy_bar_outline = pygame.Rect(self.headers_x_pos-26, self.headers_y_pos[2]+13, energy_bar_length+2, 10)
+    def draw_lowest_hi_score(self):
+        bg_rect = pygame.rect.Rect(139, 3, 7, 7)
 
-        pygame.draw.rect(self.screen, self.color["RED"], energy_bar)
-        pygame.draw.rect(self.screen, self.color["YELLOW"], energy_bar_outline, 1)
+        icon_text = FONT10.render('H', True, COLORS['YELLOW'])
+        icon_rect = icon_text.get_rect(topleft=(bg_rect.x + 1, bg_rect.y - 1))
+
+        score_text = FONT10.render(f'{self.lowest_score:07}', True, COLORS['WHITE'])
+        score_rect = score_text.get_rect(topleft=(bg_rect.x + 9, bg_rect.y - 1))
+
+        pygame.draw.rect(self.screen, COLORS['INDIGO'], bg_rect)
+        self.screen.blit(icon_text, icon_rect)
+        self.screen.blit(score_text, score_rect)
 
     def draw_levels(self, level):
-        text = self.font.render("LEVEL {}".format(level), False, self.color["WHITE"])
-        rect = text.get_rect(midtop=(self.headers_x_pos, self.headers_y_pos[3]))
-        self.screen.blit(text, rect)
+        bg_rect = pygame.rect.Rect(195, 3, 7, 7)
 
-    def update(self, lives, energy, max_energy, level):
-        self.draw_dashboard_bg()
-        self.draw_logo()
-        self.draw_headers()
+        icon_text = FONT10.render('L', True, COLORS['YELLOW'])
+        icon_rect = icon_text.get_rect(topleft=(bg_rect.x + 1, bg_rect.y - 1))
+
+        level_text = FONT10.render('{}'.format(level + 1), True, COLORS['WHITE'])
+        level_rect = level_text.get_rect(topleft=(bg_rect.x + 7, bg_rect.y - 1))
+
+        pygame.draw.rect(self.screen, COLORS['INDIGO'], bg_rect)
+        self.screen.blit(icon_text, icon_rect)
+        self.screen.blit(level_text, level_rect)
+
+    def update(self, level):
+        self.draw_energy()
+        self.draw_lives()
         self.draw_score()
-        self.draw_lives(lives)
-        self.draw_energy(energy, max_energy)
+        self.draw_lowest_hi_score()
         self.draw_levels(level)

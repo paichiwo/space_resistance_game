@@ -1,19 +1,9 @@
-import pygame
-import pygame._sdl2 as pg_sdl2
-import random
-import sys
-from src.utils import Config
-from src.player import Player, Fumes
-from src.background import Background
-from src.enemy import Enemy, Boss
-from src.explosion import Explosion
-from src.dashboard import Dashboard
-from src.powerup import PowerUp
-from src.sound_manager import SoundManager
-from src.game_screens import WelcomeScreen, GameOverScreen, CongratsScreen
-from src.high_score import HighScoreManager
+from src.game_manager import Game
 
 
+
+if __name__ == '__main__':
+    Game().run()
 
 class Game:
 
@@ -494,3 +484,4 @@ class Game:
 
 if __name__ == "__main__":
     Game().main()
+    

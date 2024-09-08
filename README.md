@@ -1,4 +1,4 @@
-## SPACE RESISTANCE GAME
+# SPACE RESISTANCE GAME
 
 This is a game I developed with love and a PYGAME framework.
 
@@ -12,17 +12,20 @@ assets, experimented with PYGAME but most importantly, had a lot of fun while de
 and I hope you will have fun playing it.
 
 ## Screenshot
+## rewrite
 ![](assets/screenshot/game_demo.gif)
 <img src="assets/screenshot/1.png" width="426">
 <img src="assets/screenshot/2.png" width="426">
 <img src="assets/screenshot/3.png" width="426">
 
 ## Features
+# rewrite
 
 - Three main levels and a boss
 - Music and sound effects
 
-## Installation
+## Installation 
+## rewrite
 
 1. Use the .exe file - (coming feature):   
     - link to come
@@ -31,7 +34,8 @@ and I hope you will have fun playing it.
     - run `python main.py`
 
     
-## Playing
+## Playing 
+## rewrite
 
 1.  Run the game
 2.  Controls: ARROW keys for movement, SPACE for shooting
@@ -40,6 +44,7 @@ and I hope you will have fun playing it.
 5.  Have fun
 
 ## Special Credit
+## rewrite
 
 I'd like to express appreciation for the outstanding work of Ansimuz (https://ansimuz.itch.io/)  
 The game uses some assets from the package available at: https://ansimuz.itch.io/spaceship-shooter-environment
