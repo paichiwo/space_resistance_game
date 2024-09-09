@@ -37,7 +37,7 @@ ENEMY_WAVES = {
             {'type': 'small_1',
              'count': 8,
              'delay': 350,
-             'speed':90,
+             'speed': 90,
              'rotate': True,
              'path': circular_path(WIDTH, HEIGHT, 'left')}
         ],
