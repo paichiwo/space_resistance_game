@@ -1,5 +1,6 @@
 import sys
 import pygame._sdl2 as sdl2
+
 from src.config import *
 from src.messages import Message
 from src.scenes import WelcomeScreen, GameOverScreen, CongratsScreen
@@ -21,12 +22,23 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Scaled Window
-        self.window = pygame.Window(size=(WIDTH * SCALE, HEIGHT * SCALE), title=f'{TITLE} v{VERSION}')
-        self.window.resizable = True
-        self.renderer = sdl2.Renderer(self.window, accelerated=0, vsync=True)
-        self.renderer.logical_size = (WIDTH, HEIGHT)
-        self.screen = pygame.Surface((WIDTH, HEIGHT))
-        self.window.get_surface()
+
+        pygame.display.set_caption(f'{TITLE} v{VERSION}')
+        self.screen = pygame.display.set_mode(size=(WIDTH, HEIGHT),
+                                              flags=pygame.RESIZABLE | pygame.HIDDEN | pygame.SCALED,
+                                              vsync=True)
+        self.window = sdl2.Window.from_display_module()
+        self.window.size = (WIDTH * SCALE, HEIGHT * SCALE)
+        self.window.show()
+
+
+
+        # self.window = pygame.Window(size=(WIDTH * SCALE, HEIGHT * SCALE), title=f'{TITLE} v{VERSION}')
+        # self.window.resizable = True
+        # self.renderer = sdl2.Renderer(self.window, accelerated=0, vsync=True)
+        # self.renderer.logical_size = (WIDTH, HEIGHT)
+        # self.screen = pygame.Surface((WIDTH, HEIGHT))
+        # self.window.get_surface()
 
         self.window.position = (0, 30)
         self.fullscreen = False
@@ -60,7 +72,7 @@ class Game:
 
         # Game Objects
         self.welcome_screen = WelcomeScreen(self.screen, self.window, self.states, self.sound_manager, self.restart)
-        self.level_manager = LevelManager(self.screen, self.renderer, self.sound_manager, lowest_score)
+        self.level_manager = LevelManager(self.screen, self.screen, self.sound_manager, lowest_score)
         self.game_over_screen = GameOverScreen(self.screen)
         self.congrats_screen = CongratsScreen(self.screen)
 
@@ -111,8 +123,8 @@ class Game:
                 level, enemy_kills = self.level_manager.level_index + 1, self.level_manager.player.enemy_kill_count
                 message = [f'LEVEL {level}', f'ENEMY KILLS: {enemy_kills}']
                 MessageBetweenLevels(self.screen, message).show()
-                sdl2.Texture.from_surface(self.renderer, self.screen).draw()
-                self.renderer.present()
+                # sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+                # self.renderer.present()
             else:
                 self.states['first_level_message_shown'] = True
                 self.level_manager.start_scrolling()
@@ -170,7 +182,7 @@ class Game:
         event = None
         while True:
             self.screen.fill(COLORS['BLACK'])
-            self.renderer.clear()
+            # self.renderer.clear()
             self.set_music_for_game()
 
             for event in pygame.event.get():
@@ -201,5 +213,7 @@ class Game:
             if self.joy_msg:
                 self.joy_msg.update()
 
-            sdl2.Texture.from_surface(self.renderer, self.screen).draw()
-            self.renderer.present()
+            pygame.display.update()
+
+            # sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+            # self.renderer.present()

@@ -119,8 +119,8 @@ class LevelManager:
     def show_level_message(self):
         message = [f'LEVEL {self.level_index + 1}', f'ENEMY KILLS: {self.player.enemy_kill_count}']
         MessageBetweenLevels(self.screen, message).show()
-        sdl2.Texture.from_surface(self.renderer, self.screen).draw()
-        self.renderer.present()
+        # sdl2.Texture.from_surface(self.renderer, self.screen).draw()
+        # self.renderer.present()
 
     def start_new_level(self):
         self.scroll_pos = 0
@@ -161,7 +161,7 @@ class LevelManager:
                             wave_info['speed'],
                             wave_info['path'],
                             wave_info['rotate'],
-                            self.enemy_sprites
+                            [self.enemy_sprites, self.all_sprites]
                         )
                         wave_info['last_spawn_time'] = current_time
                         wave_info['count'] -= 1
@@ -228,10 +228,6 @@ class LevelManager:
             self.spawn_enemy()
             self.all_sprites.draw(self.screen)
             self.all_sprites.update(dt)
-
-            for sprite in self.enemy_sprites:
-                sprite.render()
-            self.enemy_sprites.update(dt)
 
             self.set_levels()
             self.game_win_or_game_over()
