@@ -16,6 +16,7 @@ class DebugMenu:
         self.debug_items = {
             'cpu usage': '0%',
             'ram usage': '0%',
+            'fps': 0,
             'pause': False,
             'god mode': False,
             'level': 1,
@@ -34,6 +35,7 @@ class DebugMenu:
         self.start_time = pygame.time.get_ticks()
         self.show_time_start_time = None
         self.item_positions = []
+        self.clock = pygame.time.Clock()
 
     def draw_bg(self):
         self.screen.blit(self.surf, self.rect)
@@ -48,7 +50,7 @@ class DebugMenu:
         self.item_positions.clear()
         self.draw_title()
 
-        self.update_cpu_and_ram_usage()
+        self.update_cpu_ram_fps()
         self.update_time()
         self.update_enemy_count()
         self.update_total_pos()
@@ -73,9 +75,10 @@ class DebugMenu:
             self.item_positions.append((item, item_rect))
             y += 10
 
-    def update_cpu_and_ram_usage(self):
+    def update_cpu_ram_fps(self):
         self.debug_items['cpu usage'] = f'{psutil.cpu_percent()}%'
         self.debug_items['ram usage'] = f'{psutil.virtual_memory().percent}%'
+        self.debug_items['fps'] = f'{int(self.clock.get_fps())}'
 
     def set_levels_in_game(self):
         self.level_manager.player.god_mode = self.debug_items['god mode']
@@ -187,3 +190,4 @@ class DebugMenu:
         self.draw_items()
         self.input(event)
         self.update_items()
+        self.clock.tick()
